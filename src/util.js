@@ -59,6 +59,8 @@ function openDownloadDialog(){
 
 function uploadNewFiles(){
 	
+	READY_TO_DRAW = false;
+	
 	$("#fileUploading").show(300);
 	$(".showAfterTreeUpload").hide(300);
 				
@@ -66,6 +68,8 @@ function uploadNewFiles(){
 	svg.html("");
 	svg.height(0);
 	svg.width(0);
+	
+	
 	
 }
 
