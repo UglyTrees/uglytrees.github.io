@@ -275,8 +275,6 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 			  " L " + tree.scaleX_fn(node.coords.topRight.x) + " " + tree.scaleY_fn(node.coords.topRight.y) +
 			  " H " + tree.scaleX_fn(node.coords.topLeft.x) + " Z", 
 					fill: styles.fill, stroke:"black", name: node.id + "," + node.label }, "", true);
-
-
 		
 
 
@@ -633,7 +631,7 @@ function getPositionInMap(map, id){
 
 
 // Generate unscaled coordinates for a gene tree
-function planGeneTree(geneTreeNum, node, geneTree) {
+function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	
 
 
@@ -652,8 +650,18 @@ function planGeneTree(geneTreeNum, node, geneTree) {
 		var speciesRate = node.speciesNodeMap.rate;
 		var strokeWidth = roundToSF(0.5*speciesRate);
 
-		var widthScale = (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x) / mappedPos.n;
-		var cx = (mappedPos.index + geneTree.offset) * widthScale + speciesNode.coords.bottomLeft.x;
+		var widthScale = (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+
+		// Group by taxa vs group by gene tree
+		if (groupByTaxa) widthScale /= mappedPos.n;
+		else widthScale /= geneTree.offsetTotal;
+			
+		var xIndex = 0;
+		if (groupByTaxa) xIndex = mappedPos.index + (geneTree.offsetIndex+1)/(geneTree.offsetTotal+1);
+		else xIndex = (mappedPos.index+1)/(mappedPos.n+1) + geneTree.offsetIndex;
+		
+		
+		var cx = xIndex * widthScale + speciesNode.coords.bottomLeft.x;
 		var cy = 0;
 		
 		//console.log("Mapped", node.id, "to", mappedPos, widthScale, (mappedPos.index + 0.5) * widthScale);
@@ -668,8 +676,8 @@ function planGeneTree(geneTreeNum, node, geneTree) {
 	// Get initial coordinates of children
 	var left = node.children[0];
 	var right = node.children[1];
-	planGeneTree(geneTreeNum, left, geneTree);
-	planGeneTree(geneTreeNum, right, geneTree);
+	planGeneTree(geneTreeNum, left, geneTree, groupByTaxa);
+	planGeneTree(geneTreeNum, right, geneTree, groupByTaxa);
 	
 	
 	// Get species tree node this node is mapped to
@@ -718,8 +726,19 @@ function planGeneTree(geneTreeNum, node, geneTree) {
 					startX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsize;
 				}
 
-				var widthScale = (endX - startX) / mappedPos.n;
-				var segmentX = (mappedPos.index + geneTree.offset) * widthScale + startX;
+				
+				// Group by taxa vs group by gene tree
+				var widthScale = (endX - startX);
+				if (groupByTaxa) widthScale /= mappedPos.n;
+				else widthScale /= geneTree.offsetTotal;
+					
+				var xIndex = 0;
+				if (groupByTaxa) xIndex = mappedPos.index + (geneTree.offsetIndex+1)/(geneTree.offsetTotal+1);
+				else xIndex = (mappedPos.index+1)/(mappedPos.n+1) + geneTree.offsetIndex;
+
+				
+				
+				var segmentX = xIndex * widthScale + startX;
 				var segmentY = leftMappedToSpeciesNode.coords.bottomLeft.y;
 				
 				childNode.coords.x.push(segmentX);

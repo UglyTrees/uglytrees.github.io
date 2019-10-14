@@ -47,12 +47,15 @@ function initVisualSettings(){
 	GENE_NODE_SIZE = 4;
 	GENE_BRANCH_WIDTH = 1;
 	SPECIES_BRANCH_WIDTH = 1;
+	GROUP_GENES_BY_TAXA = false;
 	
 
 	$("#SUBTREE_SPACER").val(SUBTREE_SPACER);
 	$("#GENE_NODE_SIZE").val(GENE_NODE_SIZE);
 	$("#GENE_BRANCH_WIDTH").val(GENE_BRANCH_WIDTH);
 	$("#SPECIES_BRANCH_WIDTH").val(SPECIES_BRANCH_WIDTH);
+	$("#GROUP_GENES_BY_TAXA").attr("checked", GROUP_GENES_BY_TAXA);
+	
 	
 	
 	
@@ -163,6 +166,8 @@ function setVisualParams(){
 	
 	SPECIES_BRANCH_WIDTH = parseFloat($("#SPECIES_BRANCH_WIDTH").val());
 	SPECIES_BRANCH_WIDTH = Math.max(SPECIES_BRANCH_WIDTH, 0);	
+	
+	GROUP_GENES_BY_TAXA = $("#GROUP_GENES_BY_TAXA").is(":checked");
 	
 	
 	
