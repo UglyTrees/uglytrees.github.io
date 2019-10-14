@@ -1539,7 +1539,9 @@
 			function hoverNode(id){
 
 			
-
+				return;
+				
+				
 				unhover();
 
 				
@@ -1896,14 +1898,14 @@
 			
 			
 			<div class="sideNavSetting">
-				<input id="SUBTREE_SPACER" class="slider" onchange="setVisualParams();" type="range" min="0" max="2" value="0" step="0.05">
+				<input id="SUBTREE_SPACER" class="slider" onchange="setVisualParams();" type="range" min="0" max="3" value="0" step="0.05">
 				Horizontal spacing (<span></span>)
 			</div>
 
 			
 			<div class="sideNavSetting">
 				<input id="SPECIES_BRANCH_WIDTH" class="slider" onchange="setVisualParams();" type="range" min="0" max="4" value="0" step="0.05">
-				Branch line width (<span></span> px)
+				Baseline branch width (<span></span> px)
 			</div>
 
 			
@@ -1963,11 +1965,11 @@
 			
 			<div class="sideNavSetting">
 				<input id="GENE_BRANCH_WIDTH" class="slider" onchange="setVisualParams();" type="range" min="0" max="5" value="0" step="0.05">
-				Branch line width (<span></span> px)
+				Baseline branch width (<span></span> px)
 			</div>
 			
 			
-			<div class="sideNavSetting">
+			<div class="sideNavSetting" title="Group gene tree nodes by genes or taxa">
 				<div><b> Group gene trees by </b></div>
 				<span style="font-size:100%; vertical-align:middle">Genes</span>	
 				<label class="switch">

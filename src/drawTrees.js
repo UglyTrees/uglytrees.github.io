@@ -728,7 +728,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 				
 				// Group by taxa vs group by gene tree
-				var widthScale = (endX - startX);
+				var widthScale = (endX - startX) / mappedPos.n;
 				if (groupByTaxa) widthScale /= mappedPos.n;
 				else widthScale /= geneTree.offsetTotal;
 					
