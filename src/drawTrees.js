@@ -255,10 +255,10 @@ function planSpeciesTree(node) {
 
 
 // Draws a pre-scaled species tree onto the svg
-function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE_BORDER_COL, fill: SPECIES_TREE_BG_COL}) {
+function drawASpeciesTree(svg, tree, treename, node, styles = {col: "black"}) {
 
 
-	var strokeWidth = SPECIES_BRANCH_WIDTH * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
+	var strokeWidth = Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
 	
 	//console.log("node", node);
 
@@ -274,7 +274,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 			  " H " + tree.scaleX_fn(node.coords.bottomRight.x) + 
 			  " L " + tree.scaleX_fn(node.coords.topRight.x) + " " + tree.scaleY_fn(node.coords.topRight.y) +
 			  " H " + tree.scaleX_fn(node.coords.topLeft.x) + " Z", 
-					fill: styles.fill, stroke:"black", name: node.id + "," + node.label }, "", true);
+					fill:"transparent", stroke:"black", name: node.id + "," + node.label }, "", true);
 
 
 		
@@ -320,8 +320,8 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 
 
 	// Internal/root node. Draw children first
-	drawASpeciesTree(svg, tree, treename, node.children[0], styles);
-	drawASpeciesTree(svg, tree, treename, node.children[1], styles);
+	drawASpeciesTree(svg, tree, treename, node.children[0]);
+	drawASpeciesTree(svg, tree, treename, node.children[1]);
 	
 	
 	// Mouse enter parallelogram
@@ -330,7 +330,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 		  " H " + tree.scaleX_fn(node.coords.bottomRight.x) + 
 		  " L " + tree.scaleX_fn(node.coords.topRight.x) + " " + tree.scaleY_fn(node.coords.topRight.y) +
 		  " H " + tree.scaleX_fn(node.coords.topLeft.x) + " Z", 
-				fill:  styles.fill, stroke:"black", name: node.id }, "", true);
+				fill:"transparent", stroke:"black", name: node.id }, "", true);
 	
 	
 	
@@ -341,7 +341,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 								x2: tree.scaleX_fn(node.coords.dashed.right),
 								y2: tree.scaleY_fn(node.coords.bottomRight.y), 
 								stroke_dasharray: 4,
-								style: "stroke:" + styles.col + "; stroke-width:" + SPECIES_BRANCH_WIDTH + "px"});
+								style: "stroke:" + styles.col + "; stroke-width:1px"});
 								
 								
 								
@@ -810,7 +810,7 @@ function drawAGeneTree(svg, treename, node, speciesTree, geneTreeNum, styles = {
 		var x2 = node.coords.x[i+1];
 		var y1 = node.coords.y[i];
 		var y2 = node.coords.y[i+1];
-		var strokeWidth = GENE_BRANCH_WIDTH * node.coords.strokeWidths[i];
+		var strokeWidth = node.coords.strokeWidths[i];
 		
 		drawSVGobj(svg, "line", {class: "genebranch", id: id + "_B" + i, 
 									x1: speciesTree.scaleX_fn(x1), 

@@ -165,7 +165,7 @@
 			
 			.colourbox{
 				%height: 40px;
-				padding-left:1.6em;
+				padding-left:30px;
 				padding-top:5px;
 				padding-top:5px;
 				margin-right:3px;
@@ -174,10 +174,6 @@
 				border-style:solid;
 				border-width:1px;
 				cursor:pointer;
-			}
-			
-			.colourbox.selected{
-				border-width:3px;
 			}
 
 			.dialog{
@@ -242,24 +238,15 @@
 
 
 			.numberinput{
-			
 				background: transparent;
-				background-color:white;
-				color:black;
-				border-color:black;
-				border-style:solid;
-				border-width:1px;
-				min-width:10px!important;
-				max-width:99.99%!important;
-				transition: width 0s;
-				padding: 5;
-			}
-			
-			.numberinput.cranberry{
 				background-color:#DB5079;
 				border: none;
 				text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 				color:white;
+				min-width:10px!important;
+				max-width:99.99%!important;
+				transition: width 0s;
+				padding: 5;
 			}
 
 
@@ -376,6 +363,7 @@
 			}
 			
 			#treeNumContainer{
+				line-height:250%;
 				font-size:140%;
 			}
 			 
@@ -397,8 +385,10 @@
 				margin-right:5px;
 				padding:0;
 				margin-bottom:0px;
+				margin-top:1em;
 				cursor:pointer;
 				color:white;
+				vertical-align:top;
 			}
 
 			.arrow:hover{
@@ -514,15 +504,8 @@
 			.textbutton{
 				cursor:pointer;
 				vertical-align:bottom;
+				
 				font-size:120%;
-				
-				
-				-moz-user-select: none; /* Firefox */
-				-ms-user-select: none; /* IE10+ */
-
-				/* Rules below not implemented in browsers yet */
-				-o-user-select: none;
-				user-select: none;
 			}
 			
 			
@@ -644,107 +627,8 @@
 				text-align:center;
 			}
 
-			
-			#geneTreeColours, #speciesTreeLineColours, #speciesTreeBGColours{
-				width:100%;
-				margin-top:20px;
-				margin-left:2px;
-				margin-right:2px;
-			}
 
-			#geneTreeColours td, #speciesTreeLineColours td, #speciesTreeBGColours td{
-				padding-top: 0.35em;
-				padding-bottom: 0.35em;
-				font-size:90%;
-				text-align:left;
-			}
-			
-			
-			.checkbox-container{
-				display: block;
-				position: relative;
-				padding-left: 35px;
-				margin-bottom: 12px;
-				cursor: pointer;
-				font-size: 140%;
-				-webkit-user-select: none;
-				-moz-user-select: none;
-				-ms-user-select: none;
-				user-select: none;
-
-			}
-			
-			.checkbox-container.small{
-				font-size:100%;
-			 }
-			
-			
-			/* Hide the browser's default checkbox */
-			.checkbox-container input {
-				position: absolute;
-				opacity: 0;
-				cursor: pointer;
-				height: 0;
-				width: 0;
-			}
-
-			/* Create a custom checkbox */
-			.checkmark {
-				position: absolute;
-				top: -0.4em;
-				left: 0.25em;
-				height: 1em;
-				width: 1em;
-				color:black;
-				background-color: white;
-				border-radius:10px;
-				border-color:black;
-				border-style:solid;
-				border-width:1px;
-			}
-			
-			.checkbox-container.small .checkmark{
-				left: 0.5em;
-			}
-			
-			
-			/* On mouse-over, add a background color */
-			.checkbox-container:hover input ~ .checkmark {
-				background-color: #DB5079;
-			}
-
-			/* When the checkbox is checked, add a cranberry background */
-			.checkbox-container input:checked ~ .checkmark {
-				background-color: #DB5079;
-				
-			}
-
-			/* Create the checkmark/indicator (hidden when not checked) */
-			.checkmark:after {
-				content: "";
-				position: absolute;
-				display: none;
-			}
-
-			/* Show the checkmark when checked */
-			.checkbox-container input:checked ~ .checkmark:after {
-				display: block;
-			}
-
-			/* Style the checkmark/indicator */
-			.checkbox-container .checkmark:after {
-				left: 0.32em;
-				top: 0.15em;
-				width: 0.25em;
-				height: 0.5em;
-				border: solid white;
-				border-width: 0 3px 3px 0;
-				-webkit-transform: rotate(45deg);
-				-ms-transform: rotate(45deg);
-				transform: rotate(45deg);
-				text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-			}
-								
+						
 
 		</style>
 
@@ -812,7 +696,7 @@
 
 				$("#treeNum").val(0);
 				resizable(document.getElementById("treeNum"));
-				$(".showAfterTreeUpload").hide(0);
+				//$(".showAfterTreeUpload").hide(0);
 				
 				$("#speciesTreeUploadMsg").hide(0);
 				$("#geneTreeUploadMsg").hide(0);
@@ -1082,21 +966,9 @@
 				storeTree(SPECIES_TREE.root);
 
 			
-				// Count number of displayed gene trees
-				var numToDisplay = 0;
-				for (var g = 0; g < GENE_TREES.length; g++){
-					if (GENE_TREE_DISPLAYS[g] == null || GENE_TREE_DISPLAYS[g] == true) numToDisplay++;
-				}
-			
-			
 				// Add gene tree offsets so that nodes don't overlap
-				var numVisibleTreesCumulative = 0;
 				for (var g = 0;  g < GENE_TREES.length; g ++){
-					if (GENE_TREE_DISPLAYS[g] == null || GENE_TREE_DISPLAYS[g] == true) {
-						GENE_TREES[g].offset = (numVisibleTreesCumulative + 1) / (numToDisplay + 1)
-						numVisibleTreesCumulative++;
-					}
-					
+					GENE_TREES[g].offset = (g + 1) / (GENE_TREES.length + 1)
 				}
 			
 
@@ -1105,10 +977,6 @@
 
 					var gene_tree = GENE_TREES[g];
 					//gene_tree.speciesNodeMap = {};
-					
-					
-					// Do not render if unchecked
-					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) continue;
 					
 		
 					// Get the leaves
@@ -1545,10 +1413,11 @@
 			}
 
 			function unhover(){
-				$("path.node").attr("fill", SPECIES_TREE_BG_COL);
+				$("path.node").attr("fill", "transparent");
 				$("circle.node").removeClass("selected");
 				$(".node").attr("opacity", "1");
 				$(".genebranch").removeClass("selected");
+				//$(".branch").css("stroke", "black");
 				$(".currentNodeInfo").html("");
 
 				
@@ -1789,20 +1658,6 @@
 	<body  onload="init()">
 
 
-		<div id="modelSideNav" class="sidenav" style="width:0px;">
-
-			<div class="sideNavHeader">
-				Model settings 
-				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
-			</div>
-			
-
-			
-			
-
-		</div>
-	
-	
 			
 		<div id="speciesTreeSideNav" class="sidenav" style="width:0px;">
 
@@ -1818,46 +1673,6 @@
 				Horizontal spacing (<span></span>)
 			</div>
 
-			
-			<div class="sideNavSetting">
-				<input id="SPECIES_BRANCH_WIDTH" class="slider" onchange="setVisualParams();" type="range" min="0" max="4" value="0" step="0.05">
-				Branch line width (<span></span> px)
-			</div>
-
-			
-			<table id="speciesTreeBGColours">
-				<tr id="visualSettingsRowspeciesBG" class="sideNavSetting">
-					<td style="width:2em">
-					</td>
-				
-					<td>
-						<span id="colourboxspeciesBG" class="colourbox" title="Select colour" onclick='openColourPicker("speciesBG");' style="background-color:white"></span>
-					</td>
-					
-					<td>
-						Branch interior colour
-					</td>
-				</tr>
-			</table>
-			
-			
-			
-			<table id="speciesTreeLineColours">
-				<tr  id="visualSettingsRowspeciesBorder" class="sideNavSetting">
-					<td style="width:2em">
-					</td>
-				
-					<td>
-						<span id="colourboxspeciesBorder" class="colourbox" title="Select colour" onclick='openColourPicker("speciesBorder");' style="background-color:white"></span>
-					</td>
-					
-					<td>
-						Branch border colour
-					</td>
-				</tr>
-			</table>
-			
-			
 			
 			
 			
@@ -1878,15 +1693,9 @@
 				Gene node radius (<span></span> px)
 			</div>
 			
+			<div id="geneTreeColours">
 			
-			<div class="sideNavSetting">
-				<input id="GENE_BRANCH_WIDTH" class="slider" onchange="setVisualParams();" type="range" min="0" max="5" value="0" step="0.05">
-				Branch line width (<span></span> px)
 			</div>
-			
-			<table id="geneTreeColours">
-			
-			</table>
 		
 			
 		</div>
@@ -1908,7 +1717,6 @@
 						
 								<div class="textbutton left showAfterTreeUpload" onclick="uploadNewFiles()" title="Upload additional files">Open</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openDownloadDialog()" title="Download">Save As</div>
-								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('modelSideNav')" title="Configure species trees settings">Model</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('speciesTreeSideNav')" title="Configure species trees settings">Species tree</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('geneTreeSideNav')" title="Configure gene trees settings">Gene trees</div>
 							</div>
@@ -2039,11 +1847,11 @@
 
 
 				
-				<span title="Go to first tree (ctrl + &larr;)" class="arrow" onclick="prevTree(true)">&#xab;</span> 
-				<span title="Go to previous tree (&larr;)" class="arrow" onclick="prevTree()">&#x2039;</span> 
-				<span id="treeNumContainer">Tree number: <input class="numberinput cranberry" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span>
-				<span title="Go to next tree (&rarr;)" class="arrow" onclick="nextTree()">&#x203A;</span>
-				<span title="Go to last tree (ctrl + &rarr;)" class="arrow" onclick="nextTree(true)">&#xbb;</span> 
+							<span title="Go to first tree (ctrl + &larr;)" class="arrow" onclick="prevTree(true)">&#xab;</span> 
+							<span title="Go to previous tree (&larr;)" class="arrow" onclick="prevTree()">&#x2039;</span> 
+							<span id="treeNumContainer">Tree number: <input class="numberinput" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span>
+							<span title="Go to next tree (&rarr;)" class="arrow" onclick="nextTree()">&#x203A;</span>
+							<span title="Go to last tree (ctrl + &rarr;)" class="arrow" onclick="nextTree(true)">&#xbb;</span> 
 
 
 				
