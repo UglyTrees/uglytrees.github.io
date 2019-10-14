@@ -34,8 +34,8 @@ function openDownloadDialog(){
 	
 					<li style="text-align:left">
 						<b>Download tree</b> <br><br>
-						Width: <input class="numberinput" onclick="$(this).select()" id="downloadWidth" style="width:5em" value="` + SVG_WIDTH + `"> px <br><br>
-						Height: <input class="numberinput" onclick="$(this).select()" id="downloadHeight"  style="width:5em" value="` + SVG_HEIGHT + `"> px <br><br>
+						Width: <input class="numberinput cranberry" onclick="$(this).select()" id="downloadWidth" style="width:5em" value="` + SVG_WIDTH + `"> px <br><br>
+						Height: <input class="numberinput cranberry" onclick="$(this).select()" id="downloadHeight"  style="width:5em" value="` + SVG_HEIGHT + `"> px <br><br>
 						Format:
 						 <select class="dropdown" id="downloadFormat">
 							<option value="svg">.svg</option>
@@ -44,7 +44,7 @@ function openDownloadDialog(){
 						<span class="button" onclick="downloadTree(); closeDialogs()">Download</span> <br><br>
 					</li> 
 					
-					<li>
+					<li  style="float:right">
 						<b>Download template</b> <br><br>
 						<span class="button" onclick="closeDialogs()">Download</span>
 					</li>
@@ -59,6 +59,8 @@ function openDownloadDialog(){
 
 function uploadNewFiles(){
 	
+	READY_TO_DRAW = false;
+	
 	$("#fileUploading").show(300);
 	$(".showAfterTreeUpload").hide(300);
 				
@@ -66,6 +68,8 @@ function uploadNewFiles(){
 	svg.html("");
 	svg.height(0);
 	svg.width(0);
+	
+	
 	
 }
 
@@ -191,8 +195,6 @@ function saveSvg(svgEl, name) {
 	downloadLink.click();
 	document.body.removeChild(downloadLink);
 }
-
-
 
 
 
