@@ -789,7 +789,6 @@
 				MAX_TREE_HEIGHT = 0;
 				SPECIES_TREES_ALL = [];
 				GENE_TREES_ALL = [];
-				READY_TO_DRAW = false;
 
 				SVG_HEIGHT = 0;
 				SVG_WIDTH = 0;
@@ -985,17 +984,12 @@
 			    renderTrees();
 			}
 
-			
-			function userSaysDraw(){
-				READY_TO_DRAW = true;
-				renderTrees();
-			}
 
 
 			function renderTrees(options = null) {
 
 
-				if (SPECIES_TREES_ALL.length == 0 || GENE_TREES_ALL.length == 0 || !READY_TO_DRAW) return;
+				if (SPECIES_TREES_ALL.length == 0 || GENE_TREES_ALL.length == 0) return;
 				$("#fileUploading").hide(0);
 				$(".showAfterTreeUpload").show(0);
 				
@@ -1969,7 +1963,7 @@
 					<tr>
 						<td style="text-align:center" colspan=2>
 							<br><br><br><br>
-							<span id="renderTreesBtn" onclick="userSaysDraw();" class="button large disabled">Draw trees</span>
+							<span id="renderTreesBtn" onclick="renderTrees();" class="button large disabled">Draw trees</span>
 						</td>
 					</tr>
 					
