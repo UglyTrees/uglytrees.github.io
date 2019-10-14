@@ -106,6 +106,7 @@ function closeNav(id = null) {
 		
 		$("#tree").html("");
 		setTimeout(function(){
+			planTrees();
 			renderTrees();
 		}, 500);
 		
@@ -143,6 +144,7 @@ function openSettings(id){
 	if (!alreadyOpen) {
 		$("#tree").html("");
 		setTimeout(function(){
+			planTrees();
 			renderTrees();
 		}, 500);
 	}
@@ -178,7 +180,8 @@ function setVisualParams(){
 	
 
 	renderParameterValues();
-	renderTrees();
+	planTrees();
+	renderTrees(null, false);
 	
 	
 }

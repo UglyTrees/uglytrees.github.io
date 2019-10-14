@@ -25,6 +25,14 @@
 */
 
 
+
+
+
+
+
+
+
+
 // Stores the coordinates (in case of rejection)
 function storeTree(node){
 	
@@ -363,6 +371,30 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 
 
 }
+
+
+
+
+
+// Animates a pre-rendered species tree
+function animateASpeciesTree(svg, tree, node, animation_time = 1000, styles = {col: SPECIES_TREE_BORDER_COL, fill: SPECIES_TREE_BG_COL}) {
+
+
+
+	animateBranch(tree, node, "B", animation_time);
+	animateBranch(tree, node, "L", animation_time);
+	animateBranch(tree, node, "R", animation_time);
+	
+	
+	// Animate children
+	for (var c = 0; c < node.children.length; c++){
+		animateASpeciesTree(svg, tree, node.children[c], animation_time, styles);
+		animateASpeciesTree(svg, tree, node.children[c], animation_time, styles);
+	}
+
+	
+}
+
 
 
 
