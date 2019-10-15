@@ -80,6 +80,13 @@ table {
 	cursor:pointer;
 }
 
+
+path, .speciesbranch {
+	transition: fill 0.5s ease;
+}
+
+
+
 .button{
 	transition: all 0.2s ease 0s;
 	border-radius:5px;

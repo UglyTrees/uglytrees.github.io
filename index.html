@@ -265,11 +265,11 @@
 				$("#tree").html("");
 				closeDialogs();
 				clearTimeout(resizeId);
-				resizeId = setTimeout(doneResizing, 300);
+				resizeId = setTimeout(doneResizing, 100);
 			});
 
 			function doneResizing(){
-				planTrees();
+				//planTrees();
 			    renderTrees();
 			}
 
@@ -282,7 +282,7 @@
 
 
 			// Plans the species and gene trees but does not draw them
-			function planTrees(options = null){
+			function planTrees(){
 			
 				if (SPECIES_TREES_ALL.length == 0 || GENE_TREES_ALL.length == 0 || !READY_TO_DRAW) return;
 			
@@ -306,31 +306,6 @@
 				SPECIES_TREE.geneNodeMap = {};
 				//console.log("speciesTree", SPECIES_TREE);
 	
-
-
-				var svg;
-				if (options == null) {
-
-					svg = $("#tree");
-					svg.html("");
-					svg.height(0);
-					svg.width(0);
-
-
-					SVG_HEIGHT = parseFloat($("body").height()) - parseFloat($("#header").height()) - parseFloat($("#footer").height()) - SVG_UNDER_BOTTOM_MARGIN;
-					SVG_WIDTH = parseFloat($("#main").width());
-					
-
-					svg.height(SVG_HEIGHT);
-					svg.width(SVG_WIDTH);
-					
-				
-				}else{
-					svg = $(options.svgSelector);
-					svg.html("");
-					svg.height(options.height);
-					svg.width(options.width);
-				}
 
 
 				$("#treeNum").val(TREE_NUM);
@@ -373,7 +348,7 @@
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root);
-				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN, svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE, svg.width()-SVG_RIGHT_MARGIN, SVG_TOP_MARGIN);
+				
 				storeTree(SPECIES_TREE.root);
 				console.log("SPECIES_TREE", SPECIES_TREE);
 			
@@ -463,14 +438,45 @@
 				if (SPECIES_TREES_ALL.length == 0 || GENE_TREES_ALL.length == 0 || !READY_TO_DRAW) return;
 				
 
+
 				var svg;
-				if (options == null) svg = $("#tree");
-				else svg = $(options.svgSelector);
+				if (options == null) {
+
+					svg = $("#tree");
+					
+					
+					if (!animate) {
+						svg.html("");
+						svg.height(0);
+						svg.width(0);
+
+
+						SVG_HEIGHT = parseFloat($("body").height()) - parseFloat($("#header").height()) - parseFloat($("#footer").height()) - SVG_UNDER_BOTTOM_MARGIN;
+						SVG_WIDTH = parseFloat($("#main").width());
+						
+
+						svg.height(SVG_HEIGHT);
+						svg.width(SVG_WIDTH);
+					
+					}
+					
+				
+				}else{
+					svg = $(options.svgSelector);
+					svg.html("");
+					svg.height(options.height);
+					svg.width(options.width);
+				}
+
+
 	
+	
+				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN, svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE, svg.width()-SVG_RIGHT_MARGIN, SVG_TOP_MARGIN);
+				
 			
 				// Draw the species tree
 				if (!animate) drawASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root);
-				else animateASpeciesTree(svg, SPECIES_TREE, SPECIES_TREE.root);
+				else animateASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root, ANIMATION_TIME);
 
 				
 				// Draw the gene tree
@@ -481,10 +487,15 @@
 					
 					
 					// Do not render if unchecked
-					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) continue;
+					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) {
+						$(`[gNum="` + g + `"]`).remove();
+						continue;
+					}
 					
-					drawAGeneTree(svg, "gene" + g, gene_tree.root, SPECIES_TREE, g, {col: getGeneTreeColour(g)});
+					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(svg, "gene" + g, gene_tree.root, SPECIES_TREE, g, {col: getGeneTreeColour(g), strokeWidthMultiplier: GENE_BRANCH_WIDTH, nodeSize: GENE_NODE_SIZE});
+					else animateAGeneTree(svg, "gene" + g, gene_tree.root, SPECIES_TREE, g, {col: getGeneTreeColour(g), strokeWidthMultiplier: GENE_BRANCH_WIDTH, nodeSize: GENE_NODE_SIZE}, ANIMATION_TIME);
 
+					
 				}
 
 

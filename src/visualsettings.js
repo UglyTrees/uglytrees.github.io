@@ -49,6 +49,10 @@ function initVisualSettings(){
 	SPECIES_BRANCH_WIDTH = 1;
 	GROUP_GENES_BY_TAXA = false;
 	
+	ANIMATION_TIME = 500; // Remember to also update CSS sheet: path { transition: fill 0.5s ease;}
+	
+
+	
 
 	$("#SUBTREE_SPACER").val(SUBTREE_SPACER);
 	$("#GENE_NODE_SIZE").val(GENE_NODE_SIZE);
@@ -181,7 +185,7 @@ function setVisualParams(){
 
 	renderParameterValues();
 	planTrees();
-	renderTrees(null, false);
+	renderTrees(null, true);
 	
 	
 }

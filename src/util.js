@@ -142,7 +142,7 @@ function downloadTree(){
 	
 	// Draw the svg again with specified width and height
 	$("body").append(`<svg id="downloadSVG" style="display:none"></svg>`);
-	planTrees({svgSelector: "#downloadSVG", width: width, height: height});
+	//planTrees({svgSelector: "#downloadSVG", width: width, height: height});
 	renderTrees({svgSelector: "#downloadSVG", width: width, height: height});
 	
 	switch (format){
