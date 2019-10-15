@@ -93,6 +93,7 @@
 				
 				
 				initVisualSettings();
+				initMapper();
 				
 
 				$("#treeNum").val(0);
@@ -281,11 +282,12 @@
 			}
 
 
+
+
 			// Plans the species and gene trees but does not draw them
 			function planTrees(){
 			
 				if (SPECIES_TREES_ALL.length == 0 || GENE_TREES_ALL.length == 0 || !READY_TO_DRAW) return;
-			
 			
 			
 				$("#fileUploading").hide(0);
@@ -401,26 +403,9 @@
 					
 					
 					// Map the leaves to species leaves
-					for (var i = 0; i < SPECIES_LEAVES.length; i ++){
+					var successfullyMapped = mapGeneTreeToSpeciesTree(g, gene_tree.name, leaves, SPECIES_LEAVES);
+					if (!successfullyMapped) continue;
 
-						var gene_leaves_for_species = [];
-						for (var j = 0; j < leaves.length; j ++) {
-							var leaf = leaves[j];
-							var speciesOfGene = leaf.label.split("_")[1];
-							//console.log(speciesOfGene, SPECIES_LEAVES[i].label);
-							if (SPECIES_LEAVES[i].label == speciesOfGene) {
-								SPECIES_LEAVES[i].branchToGeneNodeMap[g][leaves[j].id] = leaves[j];
-								SPECIES_LEAVES[i].nodeToGeneBranchMap[g][leaves[j].id] = leaves[j];
-								
-								leaves[j].speciesNodeMap = SPECIES_LEAVES[i]
-								//gene_leaves_for_species.push(leaf);
-							}
-
-						}
-
-
-					}
-					
 
 					buildGeneTreeSpeciesTreeMap(g, gene_tree.root);
 					planGeneTree(g, gene_tree.root, gene_tree, GROUP_GENES_BY_TAXA);
