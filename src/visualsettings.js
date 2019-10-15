@@ -49,6 +49,7 @@ function initVisualSettings(){
 	SPECIES_BRANCH_WIDTH = 1;
 	GROUP_GENES_BY_TAXA = false;
 	
+	FADE_TIME = 500;
 	ANIMATION_TIME = 500; // Remember to also update CSS sheet: path { transition: fill 0.5s ease;}
 	
 

@@ -376,6 +376,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 function animateASpeciesTree(svg, tree, treename, node, animation_time = 1000, styles = {col: SPECIES_TREE_BORDER_COL, fill: SPECIES_TREE_BG_COL, lineWidthMultiplier: SPECIES_BRANCH_WIDTH}) {
 
 
+
 	var id = treename + "_" + node.id;
 	node.htmlID = id;
 
@@ -944,7 +945,15 @@ function animateGeneBranch(branchNumber, speciestree, node, gNum, styles, durati
 		var stroke = styles.col;
 
 		ele.velocity("finish");
-		ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px", stroke: stroke}, duration );
+		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px", stroke: stroke}, duration );
+
+
+
+		if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2}, duration );
+		else ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
+
+
+
 	
 	}
 

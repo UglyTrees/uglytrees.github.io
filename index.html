@@ -488,7 +488,7 @@
 					
 					// Do not render if unchecked
 					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) {
-						$(`[gNum="` + g + `"]`).remove();
+						$(`[gNum="` + g + `"]`).fadeOut(FADE_TIME, function() { $(this).remove(); });
 						continue;
 					}
 					
@@ -711,6 +711,10 @@
 
 				//console.log("attr", attr);
 				var newObj = document.createElementNS('http://www.w3.org/2000/svg', type);
+
+
+	
+
 				for (var a in attr){
 					if (a == "text_anchor") newObj.setAttribute("text-anchor", attr[a]);
 					else if (a == "alignment_baseline") newObj.setAttribute("alignment-baseline", attr[a]);
@@ -729,8 +733,8 @@
 				if (isNode) newObj.setAttribute("class", "node");
 				//console.log(styles["stroke-width"]);
 
-
 				svg.append(newObj);
+				$(newObj).hide().fadeIn(FADE_TIME);
 
 				
 				if (isNode && attr.id != null){
