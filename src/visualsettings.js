@@ -31,7 +31,7 @@ function initVisualSettings(){
 	
 	
 	DEFAULT_COLOURS = ["#50b2db",  "#50db79", "#db506d", "#7950DB", "#b2db50", "#db7950", 
-						"#4e8791", "#ff1919", "#228B22", "#91584e", "#584e91", "#009fe1", "#ffff1a", "#ff8d1a",
+						"#4e8791", "#ff1919", "#228B22", "#91584e", "#584e91", "#009fe1", "#ffff1a", "#ff8d1a", "#DB5079",
 						"#000000", "#606060", "#707070", "#A0A0A0", "#BEBEBE", "#d3d3d3", "#E0E0E0", "#FFFFFF"];
 	GENE_TREE_COLOURS = [];
 	setInitialGeneTreeColours();
@@ -42,11 +42,11 @@ function initVisualSettings(){
 	$("#colourboxspeciesBG").css("background-color", SPECIES_TREE_BG_COL);
 	$("#colourboxspeciesBorder").css("background-color", SPECIES_TREE_BORDER_COL);
 	
-	
 	SUBTREE_SPACER = 0.2
 	GENE_NODE_SIZE = 4;
 	GENE_BRANCH_WIDTH = 1;
 	SPECIES_BRANCH_WIDTH = 1;
+	SPECIES_TREE_OPACITY = 50;
 	GROUP_GENES_BY_TAXA = false;
 	
 	FADE_TIME = 500;
@@ -54,7 +54,7 @@ function initVisualSettings(){
 	
 
 	
-
+	$("#SPECIES_TREE_OPACITY").val(SPECIES_TREE_OPACITY);
 	$("#SUBTREE_SPACER").val(SUBTREE_SPACER);
 	$("#GENE_NODE_SIZE").val(GENE_NODE_SIZE);
 	$("#GENE_BRANCH_WIDTH").val(GENE_BRANCH_WIDTH);
@@ -174,6 +174,10 @@ function setVisualParams(){
 	SPECIES_BRANCH_WIDTH = parseFloat($("#SPECIES_BRANCH_WIDTH").val());
 	SPECIES_BRANCH_WIDTH = Math.max(SPECIES_BRANCH_WIDTH, 0);	
 	
+	SPECIES_TREE_OPACITY = parseFloat($("#SPECIES_TREE_OPACITY").val());
+	SPECIES_TREE_OPACITY = Math.min(Math.max(SPECIES_TREE_OPACITY, 0), 100);	
+	
+	
 	GROUP_GENES_BY_TAXA = $("#GROUP_GENES_BY_TAXA").is(":checked");
 	
 	
@@ -183,6 +187,9 @@ function setVisualParams(){
 	}
 	
 	
+	
+	if (SPECIES_TREE_BG_COL.toLowerCase() == "transparent") $("#speciesOpacityDiv").hide(300);
+	else $("#speciesOpacityDiv").show(300);
 
 	renderParameterValues();
 	planTrees();

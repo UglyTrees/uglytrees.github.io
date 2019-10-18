@@ -263,7 +263,10 @@ function planSpeciesTree(node) {
 
 
 // Draws a pre-scaled species tree onto the svg
-function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE_BORDER_COL, fill: SPECIES_TREE_BG_COL, lineWidthMultiplier: SPECIES_BRANCH_WIDTH}) {
+function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE_BORDER_COL, 
+																fill: SPECIES_TREE_BG_COL, 
+																lineWidthMultiplier: SPECIES_BRANCH_WIDTH,
+																opacity: SPECIES_TREE_OPACITY}) {
 
 	var strokeWidth = styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
 	var id = treename + "_" + node.id;
@@ -286,7 +289,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 		drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 										points: points.join(" "), 
 										fill: styles.fill,
-										style: "stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
+										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
 		
 		/*
 
@@ -362,9 +365,8 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 	drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 									points: points.join(" "), 
 									fill: styles.fill,
-									style: "stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
+									style: "opacity: " + styles.opacity / 100 + "; stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
 	
-
 	
 	
 	// Bottom horizontal dashed line
@@ -405,17 +407,17 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 
 
 // Animates a pre-rendered species tree
-function animateASpeciesTree(svg, tree, treename, node, animation_time = 1000, styles = {col: SPECIES_TREE_BORDER_COL, fill: SPECIES_TREE_BG_COL, lineWidthMultiplier: SPECIES_BRANCH_WIDTH}) {
-
+function animateASpeciesTree(svg, tree, treename, node, animation_time = 1000, styles = {col: SPECIES_TREE_BORDER_COL, 
+																						fill: SPECIES_TREE_BG_COL, 
+																						lineWidthMultiplier: SPECIES_BRANCH_WIDTH,
+																						opacity: SPECIES_TREE_OPACITY}) {
 
 
 	var id = treename + "_" + node.id;
 	node.htmlID = id;
 
-	animateSpeciesBranch(tree, node, "B", styles, animation_time);
-	animateSpeciesBranch(tree, node, "L", styles, animation_time);
-	animateSpeciesBranch(tree, node, "R", styles, animation_time);
-	
+	animateSpeciesBranch(tree, node, "P", styles, animation_time);
+
 	
 
 	
@@ -460,7 +462,8 @@ function animateSpeciesBranch(tree, node, branchLetter = "B", styles, duration =
 	//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
 	//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
 	ele.css("stroke", stroke);
-	//ele.css("stroke-width", strokeWidth + "px");
+	ele.css("fill", styles.fill);
+	ele.css("opacity", styles.opacity / 100);
 	
 
 
@@ -923,6 +926,7 @@ function animateGeneBranch(branchNumber, speciestree, node, gNum, styles, durati
 		ele.velocity("finish");
 		ele.velocity( {cx: cx, cy: cy, r: r, fill: fill}, duration);
 		
+		
 	}
 	
 	
@@ -945,6 +949,8 @@ function animateGeneBranch(branchNumber, speciestree, node, gNum, styles, durati
 
 		if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2}, duration );
 		else ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
+		
+		ele.css("stroke", stroke);
 
 
 
@@ -953,20 +959,6 @@ function animateGeneBranch(branchNumber, speciestree, node, gNum, styles, durati
 
 
 }
-
-
-
-
-
-
-function animatePolygon(){
-	
-	var ele = $("#polygon1");
-	var points = "50 300 100 300 180 200 130 200";
-	ele.velocity( {points: points}, 1000);
-}
-
-
 
 
 

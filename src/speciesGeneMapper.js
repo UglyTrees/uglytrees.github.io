@@ -129,7 +129,7 @@ function mapGeneTreeToSpeciesTree(g, treename, geneLeaves, speciesLeaves){
 				// Check that this gene taxon can be mapped to 1 and only 1 species taxon
 				if (geneMappedTo.length == 1){
 
-					console.log(gene_leaf.label, "mapped to", species_leaf.label);
+					//console.log(gene_leaf.label, "mapped to", species_leaf.label);
 					var species_leaf = geneMappedTo[0];
 					species_leaf.branchToGeneNodeMap[g][gene_leaf.id] = gene_leaf;
 					species_leaf.nodeToGeneBranchMap[g][gene_leaf.id] = gene_leaf;
