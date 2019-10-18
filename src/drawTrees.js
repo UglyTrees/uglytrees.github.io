@@ -276,6 +276,21 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 	if (node.children.length == 0){
 
 
+				
+		// Polygon
+		var points = [	tree.scaleX_fn(node.coords.bottomLeft.x), tree.scaleY_fn(node.coords.bottomLeft.y),
+						tree.scaleX_fn(node.coords.bottomRight.x), tree.scaleY_fn(node.coords.bottomLeft.y),
+						tree.scaleX_fn(node.coords.topRight.x), tree.scaleY_fn(node.coords.topRight.y),
+						tree.scaleX_fn(node.coords.topLeft.x), tree.scaleY_fn(node.coords.topRight.y)];
+						
+		drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
+										points: points.join(" "), 
+										fill: styles.fill,
+										style: "stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
+		
+		/*
+
+
 		// Mouse enter parallelogram
 		drawSVGobj(svg, "path", {class:"specieshoverbranch", id: id + "_P", 
 			d: "M " + tree.scaleX_fn(node.coords.bottomLeft.x) + " " + tree.scaleY_fn(node.coords.bottomLeft.y) + 
@@ -283,8 +298,8 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 			  " L " + tree.scaleX_fn(node.coords.topRight.x) + " " + tree.scaleY_fn(node.coords.topRight.y) +
 			  " H " + tree.scaleX_fn(node.coords.topLeft.x) + " Z", 
 					fill: styles.fill, stroke:"transparent", name: node.id + "," + node.label }, "", true);
-		
-
+		*/
+/*
 
 		// Bottom horizontal line
 		drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_B", 
@@ -312,7 +327,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 									y2: tree.scaleY_fn(node.coords.topRight.y), 
 									style: "stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"});	
 
-
+*/
 					
 		return;
 
@@ -327,16 +342,33 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 	
 	
 	// Mouse enter parallelogram
+	/*
 	drawSVGobj(svg, "path", {class:"specieshoverbranch", id: id + "_P", 
 		d: "M " + tree.scaleX_fn(node.coords.bottomLeft.x) + " " + tree.scaleY_fn(node.coords.bottomLeft.y) + 
 		  " H " + tree.scaleX_fn(node.coords.bottomRight.x) + 
 		  " L " + tree.scaleX_fn(node.coords.topRight.x) + " " + tree.scaleY_fn(node.coords.topRight.y) +
 		  " H " + tree.scaleX_fn(node.coords.topLeft.x) + " Z", 
 				fill: styles.fill, name: node.id }, "", true);
+	*/		
+
 	
+	
+	// Polygon
+	var points = [	tree.scaleX_fn(node.coords.bottomLeft.x), tree.scaleY_fn(node.coords.bottomLeft.y),
+					tree.scaleX_fn(node.coords.bottomRight.x), tree.scaleY_fn(node.coords.bottomLeft.y),
+					tree.scaleX_fn(node.coords.topRight.x), tree.scaleY_fn(node.coords.topRight.y),
+					tree.scaleX_fn(node.coords.topLeft.x), tree.scaleY_fn(node.coords.topRight.y)];
+					
+	drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
+									points: points.join(" "), 
+									fill: styles.fill,
+									style: "stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
+	
+
 	
 	
 	// Bottom horizontal dashed line
+	/*
 	drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_B", 
 								x1: tree.scaleX_fn(node.coords.dashed.left), 
 								y1: tree.scaleY_fn(node.coords.bottomLeft.y), 
@@ -344,10 +376,10 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 								y2: tree.scaleY_fn(node.coords.bottomRight.y), 
 								stroke_dasharray: 4,
 								style: "stroke:" + styles.col + "; stroke-width:" + styles.lineWidthMultiplier + "px"});
+						*/		
 								
 								
-								
-								
+			/*					
 	// Left branch
 	drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_L", 
 								x1: tree.scaleX_fn(node.coords.bottomLeft.x), 
@@ -364,7 +396,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 								x2: tree.scaleX_fn(node.coords.topRight.x),
 								y2: tree.scaleY_fn(node.coords.topRight.y), 
 								style: "stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"});		
-
+	*/
 
 }
 
@@ -402,58 +434,19 @@ function animateASpeciesTree(svg, tree, treename, node, animation_time = 1000, s
 function animateSpeciesBranch(tree, node, branchLetter = "B", styles, duration = 1000) {
 
 
+
+
 	var ele = $("#" + node.htmlID + "_" + branchLetter);
 	
 	if (ele.length == 0) return;
 	
-	var x1, x2, y1, y2;
-	
 	var stroke = rgbToHex(styles.col);
 	var strokeWidth = styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
 	
-	
-	
-	switch(branchLetter) {
-		
-		case "B": {
-			y1 = tree.scaleY_fn(node.coords.bottomLeft.y);
-			y2 = tree.scaleY_fn(node.coords.bottomRight.y);
-			if (node.coords.dashed == null) {
-				x1 = tree.scaleX_fn(node.coords.bottomLeft.x);
-				x2 = tree.scaleX_fn(node.coords.bottomRight.x);
-			} else {
-				x1 = tree.scaleX_fn(node.coords.dashed.left);
-				x2 = tree.scaleX_fn(node.coords.dashed.right);				
-			}
-			break;
-		}
-		
-		case "L": {
-			x1 = tree.scaleX_fn(node.coords.bottomLeft.x);
-			x2 = tree.scaleX_fn(node.coords.topLeft.x);
-			y1 = tree.scaleY_fn(node.coords.bottomLeft.y);
-			y2 = tree.scaleY_fn(node.coords.topLeft.y);
-			break;
-		}
-		
-		case "R": {
-			x1 = tree.scaleX_fn(node.coords.bottomRight.x);
-			x2 = tree.scaleX_fn(node.coords.topRight.x);
-			y1 = tree.scaleY_fn(node.coords.bottomRight.y);
-			y2 = tree.scaleY_fn(node.coords.topRight.y);
-			break;
-		}
-		
-		case "P": {
-			
-			break;
-		}
-		
-		default: {
-			return;
-		}
-		
-	}
+	var points = [	tree.scaleX_fn(node.coords.bottomLeft.x), tree.scaleY_fn(node.coords.bottomLeft.y),
+					tree.scaleX_fn(node.coords.bottomRight.x), tree.scaleY_fn(node.coords.bottomLeft.y),
+					tree.scaleX_fn(node.coords.topRight.x), tree.scaleY_fn(node.coords.topRight.y),
+					tree.scaleX_fn(node.coords.topLeft.x), tree.scaleY_fn(node.coords.topRight.y)];
 	
 	
 	//console.log("stroke", stroke, strokeWidth, x1, x2, y1, y2);
@@ -461,14 +454,15 @@ function animateSpeciesBranch(tree, node, branchLetter = "B", styles, duration =
 	
 	ele.velocity("finish");
 	
-	if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2}, duration );
-	else ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
+	if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {points: points.join(" ")}, duration );
+	else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth + "px"}, duration );
 	
 	//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
 	//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
 	ele.css("stroke", stroke);
 	//ele.css("stroke-width", strokeWidth + "px");
 	
+
 
 }
 
@@ -959,6 +953,22 @@ function animateGeneBranch(branchNumber, speciestree, node, gNum, styles, durati
 
 
 }
+
+
+
+
+
+
+function animatePolygon(){
+	
+	var ele = $("#polygon1");
+	var points = "50 300 100 300 180 200 130 200";
+	ele.velocity( {points: points}, 1000);
+}
+
+
+
+
 
 
 
