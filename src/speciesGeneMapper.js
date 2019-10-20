@@ -196,7 +196,7 @@ function mapGeneTreeToSpeciesTree(g, treename, geneLeaves, speciesLeaves){
 function getTreeAnnotations(tree){
 	
 	
-	var annotation_names = [];
+	var annotation_names = ["Label"];
 	
 	
 	// Get a unique list of annotations
@@ -218,17 +218,17 @@ function getTreeAnnotations(tree){
 	for (var j = 0; j < annotation_names.length; j ++){
 		
 		var ann_name = annotation_names[j];
-		var annotation = {name: ann_name, complete: true, format: "numerical", gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}};
+		var annotation = {name: ann_name, complete: true, format: "numerical", couldBeNumerical: true, gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}};
 		var isComplete = true;
 		var isNumerical = true;
-		var allInteger = false;
+		var allInteger = true;
 		
 		console.log(ann_name);
 		
 		for (var i = 0; i < tree.nodeList.length; i ++){
 			
 			
-			var value = tree.nodeList[i].annotation[ann_name];
+			var value = ann_name == "Label" ? tree.nodeList[i].label : tree.nodeList[i].annotation[ann_name];
 			
 			// Missing data
 			if (value == null){
@@ -255,6 +255,8 @@ function getTreeAnnotations(tree){
 			
 		}
 		
+
+		annotation.couldBeNumerical = isNumerical;
 		if (isNumerical && allInteger) isNumerical = false;
 		annotation.complete = isComplete;
 		annotation.format = isNumerical ? "numerical" : "nominal";
@@ -264,7 +266,8 @@ function getTreeAnnotations(tree){
 			
 			var vals = [];
 			for (var i = 0; i < tree.nodeList.length; i ++){
-				var value = tree.nodeList[i].annotation[ann_name];
+				var value = ann_name == "Label" ? tree.nodeList[i].label : tree.nodeList[i].annotation[ann_name];
+				if (value == null) continue;
 				if (!vals.includes(value)) vals.push(value);
 			}
 			
@@ -272,7 +275,7 @@ function getTreeAnnotations(tree){
 			for (var i = 0; i < vals.length; i ++){
 				var value = vals[i];
 				var col = getDefaultColour(i);
-				discreteCols[value] = col;
+				annotation.discreteCols[value] = col;
 			}
 			
 			
@@ -284,6 +287,7 @@ function getTreeAnnotations(tree){
 	}
 	
 	
+	console.log(annotations);
 	return annotations;
 	
 	

@@ -248,7 +248,17 @@ function planColour(tree, annotation_name, backgroundCol){
 		// Discrete parameter
 		if (discrete){
 			
-			
+			colour_fn = function(node) {
+				
+				var val = annotation_name == "Label" ? node.label : node.annotation[annotation_name];
+				
+				// Missing data
+				if (val == null || annotation.discreteCols[val] == null) return rgbToHex(backgroundCol); 
+				
+				return rgbToHex(annotation.discreteCols[val]);
+				
+				
+			}
 			
 		}
 		
@@ -276,11 +286,11 @@ function planColour(tree, annotation_name, backgroundCol){
 								
 			colour_fn = function(node) {
 				
-				var val = parseFloat(node.annotation[annotation_name]);
+				var val = parseFloat(annotation_name == "Label" ? node.label : node.annotation[annotation_name]);
 				
 				
 				// Missing data
-				if (val == null) rgbToHex(backgroundCol); 
+				if (val == null) return rgbToHex(backgroundCol); 
 				
 				val = (val - min)/(max - min);
 				var col_index = Math.floor(val * (ncols-1));
@@ -382,6 +392,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 	
 	var strokeWidth = tree.linewidth_fn(node); //styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
 	var fill = tree.bgcolour_fn(node);
+	var stroke = tree.bordercolour_fn(node);
 	var id = treename + "_" + node.id;
 	node.htmlID = id;
 	
@@ -402,48 +413,9 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 		drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 										points: points.join(" "), 
 										fill: fill,
-										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
+										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth + "px"}, "", true);		
 		
-		/*
 
-
-		// Mouse enter parallelogram
-		drawSVGobj(svg, "path", {class:"specieshoverbranch", id: id + "_P", 
-			d: "M " + tree.scaleX_fn(node.coords.bottomLeft.x) + " " + tree.scaleY_fn(node.coords.bottomLeft.y) + 
-			  " H " + tree.scaleX_fn(node.coords.bottomRight.x) + 
-			  " L " + tree.scaleX_fn(node.coords.topRight.x) + " " + tree.scaleY_fn(node.coords.topRight.y) +
-			  " H " + tree.scaleX_fn(node.coords.topLeft.x) + " Z", 
-					fill: styles.fill, stroke:"transparent", name: node.id + "," + node.label }, "", true);
-		*/
-/*
-
-		// Bottom horizontal line
-		drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_B", 
-									x1: tree.scaleX_fn(node.coords.bottomLeft.x), 
-									y1: tree.scaleY_fn(node.coords.bottomLeft.y), 
-									x2: tree.scaleX_fn(node.coords.bottomRight.x),
-									y2: tree.scaleY_fn(node.coords.bottomRight.y), 
-									style: "stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"});
-										
-																	
-		// Left branch
-		drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_L", 
-									x1: tree.scaleX_fn(node.coords.bottomLeft.x), 
-									y1: tree.scaleY_fn(node.coords.bottomLeft.y), 
-									x2: tree.scaleX_fn(node.coords.topLeft.x),
-									y2: tree.scaleY_fn(node.coords.topLeft.y), 
-									style: "stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"});			
-
-
-		// Right branch
-		drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_R", 
-									x1: tree.scaleX_fn(node.coords.bottomRight.x), 
-									y1: tree.scaleY_fn(node.coords.bottomRight.y), 
-									x2: tree.scaleX_fn(node.coords.topRight.x),
-									y2: tree.scaleY_fn(node.coords.topRight.y), 
-									style: "stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"});	
-
-*/
 					
 		return;
 
@@ -456,16 +428,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 	drawASpeciesTree(svg, tree, treename, node.children[0], styles);
 	drawASpeciesTree(svg, tree, treename, node.children[1], styles);
 	
-	
-	// Mouse enter parallelogram
-	/*
-	drawSVGobj(svg, "path", {class:"specieshoverbranch", id: id + "_P", 
-		d: "M " + tree.scaleX_fn(node.coords.bottomLeft.x) + " " + tree.scaleY_fn(node.coords.bottomLeft.y) + 
-		  " H " + tree.scaleX_fn(node.coords.bottomRight.x) + 
-		  " L " + tree.scaleX_fn(node.coords.topRight.x) + " " + tree.scaleY_fn(node.coords.topRight.y) +
-		  " H " + tree.scaleX_fn(node.coords.topLeft.x) + " Z", 
-				fill: styles.fill, name: node.id }, "", true);
-	*/		
+
 
 	
 	
@@ -478,40 +441,9 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 	drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 									points: points.join(" "), 
 									fill: fill,
-									style: "opacity: " + styles.opacity / 100 + "; stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth}, "", true);		
+									style: "opacity: " + styles.opacity / 100 + "; stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth}, "", true);		
 	
 	
-	
-	// Bottom horizontal dashed line
-	/*
-	drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_B", 
-								x1: tree.scaleX_fn(node.coords.dashed.left), 
-								y1: tree.scaleY_fn(node.coords.bottomLeft.y), 
-								x2: tree.scaleX_fn(node.coords.dashed.right),
-								y2: tree.scaleY_fn(node.coords.bottomRight.y), 
-								stroke_dasharray: 4,
-								style: "stroke:" + styles.col + "; stroke-width:" + styles.lineWidthMultiplier + "px"});
-						*/		
-								
-								
-			/*					
-	// Left branch
-	drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_L", 
-								x1: tree.scaleX_fn(node.coords.bottomLeft.x), 
-								y1: tree.scaleY_fn(node.coords.bottomLeft.y), 
-								x2: tree.scaleX_fn(node.coords.topLeft.x),
-								y2: tree.scaleY_fn(node.coords.topLeft.y), 
-								style: "stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"});		
-	
-	
-	// Right branch
-	drawSVGobj(svg, "line", {class: "speciesbranch", id: id + "_R", 
-								x1: tree.scaleX_fn(node.coords.bottomRight.x), 
-								y1: tree.scaleY_fn(node.coords.bottomRight.y), 
-								x2: tree.scaleX_fn(node.coords.topRight.x),
-								y2: tree.scaleY_fn(node.coords.topRight.y), 
-								style: "stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"});		
-	*/
 
 }
 
@@ -555,10 +487,10 @@ function animateSpeciesBranch(tree, node, branchLetter = "B", styles, duration =
 	
 	if (ele.length == 0) return;
 	
-	var stroke = rgbToHex(styles.col);
 	//var strokeWidth = styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
 	var strokeWidth = tree.linewidth_fn(node);
 	var fill = tree.bgcolour_fn(node);
+	var stroke = tree.bordercolour_fn(node);
 	//console.log(node.htmlID, node.rate, strokeWidth);
 	
 	var points = [	tree.scaleX_fn(node.coords.bottomLeft.x), tree.scaleY_fn(node.coords.bottomLeft.y),

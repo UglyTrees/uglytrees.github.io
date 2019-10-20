@@ -41,6 +41,7 @@ function initVisualSettings(){
 	SPECIES_TREE_ANNOTATIONS = [];
 	CURRENTLY_SELECTED_SPECIES_ANNOTATION = {};
 	SPECIES_BRANCH_BGCOL_ANNOTATION = "_none";
+	SPECIES_BRANCH_BORDER_ANNOTATION = "_none";
 	SPECIES_BRANCH_MULTIPLIER = "_none";
 	SPECIES_TREE_BG_COL = "transparent";
 	SPECIES_TREE_BORDER_COL = "#000000";
@@ -67,6 +68,8 @@ function initVisualSettings(){
 	$("#GROUP_GENES_BY_TAXA").attr("checked", GROUP_GENES_BY_TAXA);
 	$("#SPECIES_BRANCH_MULTIPLIER").val(SPECIES_BRANCH_MULTIPLIER);
 	$("#SPECIES_BRANCH_BGCOL_ANNOTATION").val(SPECIES_BRANCH_BGCOL_ANNOTATION);
+	$("#SPECIES_BRANCH_BORDER_ANNOTATION").val(SPECIES_BRANCH_BORDER_ANNOTATION);
+	
 	
 	
 	
@@ -189,6 +192,8 @@ function setVisualParams(){
 	GROUP_GENES_BY_TAXA = $("#GROUP_GENES_BY_TAXA").is(":checked");
 	SPECIES_BRANCH_MULTIPLIER = $("#SPECIES_BRANCH_MULTIPLIER").val();
 	SPECIES_BRANCH_BGCOL_ANNOTATION = $("#SPECIES_BRANCH_BGCOL_ANNOTATION").val();
+	SPECIES_BRANCH_BORDER_ANNOTATION = $("#SPECIES_BRANCH_BORDER_ANNOTATION").val();
+	
 	
 	
 	
@@ -398,14 +403,22 @@ function getDefaultColour(index){
 
 // Get the colour of a gene tree
 function getGeneTreeColour(geneTreeNumber){
+	
+	if (geneTreeNumber == parseFloat(geneTreeNumber)) {
+		var index = geneTreeNumber % GENE_TREE_COLOURS.length;
+		return rgbToHex(GENE_TREE_COLOURS[index]);
+	}
 
 	if (geneTreeNumber == "speciesBorder") return rgbToHex(SPECIES_TREE_BORDER_COL);
 	else if (geneTreeNumber == "speciesBG") return rgbToHex(SPECIES_TREE_BG_COL);
 	else if (geneTreeNumber == "speciesTreeAnnotationMinCol") return rgbToHex(CURRENTLY_SELECTED_SPECIES_ANNOTATION.gradientMin);
 	else if (geneTreeNumber == "speciesTreeAnnotationMaxCol") return rgbToHex(CURRENTLY_SELECTED_SPECIES_ANNOTATION.gradientMax);
+	else if (geneTreeNumber.includes("speciesAnnotationDiscreteRow_")) {
+		var value = geneTreeNumber.split("_")[1];
+		return rgbToHex(CURRENTLY_SELECTED_SPECIES_ANNOTATION.discreteCols[value]);
+	}
 
-	var index = geneTreeNumber % GENE_TREE_COLOURS.length;
-	return rgbToHex(GENE_TREE_COLOURS[index]);
+	return null;
 
 }
 
@@ -413,7 +426,12 @@ function getGeneTreeColour(geneTreeNumber){
 // Set the colour a gene tree
 function setGeneTreeColours(geneTreeNumber, colour){
 	
-	if (geneTreeNumber == "speciesBorder") SPECIES_TREE_BORDER_COL = colour;
+	
+	if (geneTreeNumber == parseFloat(geneTreeNumber)) {
+		GENE_TREE_COLOURS[parseFloat(geneTreeNumber)] = colour;
+	}
+	
+	else if (geneTreeNumber == "speciesBorder") SPECIES_TREE_BORDER_COL = colour;
 	else if (geneTreeNumber == "speciesBG") SPECIES_TREE_BG_COL = colour;
 	else if (geneTreeNumber == "speciesTreeAnnotationMinCol") {
 		CURRENTLY_SELECTED_SPECIES_ANNOTATION.gradientMin = colour;
@@ -425,7 +443,16 @@ function setGeneTreeColours(geneTreeNumber, colour){
 		$("#colourboxSpeciesMax").css("background-color", CURRENTLY_SELECTED_SPECIES_ANNOTATION.gradientMax);
 		updateSpeciesAnnotationPalette();
 	}
-	else GENE_TREE_COLOURS[parseFloat(geneTreeNumber)] = colour;
+	
+	else if (geneTreeNumber.includes("speciesAnnotationDiscreteRow_")) {
+		var value = geneTreeNumber.split("_")[1];
+		if (value != null) {
+			CURRENTLY_SELECTED_SPECIES_ANNOTATION.discreteCols[value] = colour;
+			$("#colourboxDiscrete_" + value).css("background-color", colour);
+		}
+	}
+	
+	 
 	
 	
 	$("#colourbox" + geneTreeNumber).css("background-color", colour);
@@ -565,7 +592,6 @@ function selectSpeciesAnnotationSettings() {
 	
 
 	$(".showOnSpeciesAnnotationSelect").show(300);
-	
 	CURRENTLY_SELECTED_SPECIES_ANNOTATION = annotation;
 	var missingValues = !annotation.complete;
 	if (missingValues) $("#speciesAnnotationsMissingDataWarning").show(300);
@@ -577,7 +603,32 @@ function selectSpeciesAnnotationSettings() {
 	// Annotation is discrete
 	if (discrete){
 		$("#speciesAnnotationDiscreteChk").attr("checked", true);
-		$("#speciesAnnotationNumerical").hide(0);
+		$(".speciesAnnotationNumerical").hide(0);
+		$(".speciesAnnotationDiscrete").show(300);
+		$("#speciesAnnotationDiscreteTable").html("");
+		
+		// Render all nominal values
+		for (var val in annotation.discreteCols){
+			var col = rgbToHex(annotation.discreteCols[val]);
+			var html = `<tr id="speciesAnnotationDiscreteRow_` + val + `" class="sideNavSetting">
+							<td style="width:2em">
+							</td>
+						
+							<td>
+								<span id="colourboxDiscrete_` + val + `" class="colourbox" title="Select colour" onclick='openColourPicker("speciesAnnotationDiscreteRow_` + val + `");' style="background-color:` + col + `"></span>
+							</td>
+							
+							<td>` + val + `</td>
+						</tr>`;
+				
+				
+			$("#speciesAnnotationDiscreteTable").append(html);
+			
+			
+			
+		}
+		
+		
 	}
 	
 	// Annotation is numeric
@@ -590,7 +641,8 @@ function selectSpeciesAnnotationSettings() {
 		
 		updateSpeciesAnnotationPalette();
 
-		$("#speciesAnnotationNumerical").show(300);
+		$(".speciesAnnotationNumerical").show(300);
+		$(".speciesAnnotationDiscrete").hide(0);
 		
 		
 	}
@@ -602,6 +654,14 @@ function selectSpeciesAnnotationSettings() {
 	
 	
 }
+
+
+function setAnnotationDataType(){
+	
+	
+}
+
+
 
 
 

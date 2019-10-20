@@ -107,6 +107,10 @@
 				resizable(document.getElementById("treeNum"));
 				//$(".showAfterTreeUpload").hide(0);
 				$(".showOnSpeciesAnnotationSelect").hide(0);
+				$(".speciesAnnotationDiscrete").hide(0);
+				$(".speciesAnnotationNumerical").hide(0);
+				
+				
 				
 				$("#speciesTreeUploadMsg").hide(0);
 				$("#geneTreeUploadMsg").hide(0);
@@ -142,7 +146,7 @@
 							}
 							
 							NTREES = SPECIES_TREES_ALL.length;
-							TREE_NUM = Math.floor(NTREES * BURNIN) + 1;
+							TREE_NUM = Math.floor(NTREES * BURNIN);
 							console.log(theFile);
 							$("#speciesTreeUploadMsg").html(theFile.name + " successfully parsed<br>");
 							$("#speciesTreeUploadMsg").show(300);
@@ -321,6 +325,9 @@
 				renderAnnotations(newSpeciesTreeAnnotations);
 				SPECIES_TREE.linewidth_fn = planLineWidths(SPECIES_TREE, SPECIES_BRANCH_MULTIPLIER, SPECIES_BRANCH_WIDTH);
 				SPECIES_TREE.bgcolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BGCOL_ANNOTATION, SPECIES_TREE_BG_COL);
+				SPECIES_TREE.bordercolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BORDER_ANNOTATION, SPECIES_TREE_BORDER_COL);
+				
+				
 				
 
 
@@ -1134,7 +1141,7 @@
 		<div id="modelSideNav" class="sidenav" style="width:0px;">
 
 			<div class="sideNavHeader">
-				Model settings 
+				Annotation settings 
 				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
 			</div>
 			
@@ -1144,10 +1151,11 @@
 				<b>Species tree annotations</b><br><br>
 				<select class="dropdown speciesAnnotationsDropdown" id="MODEL_ANNOTATIONS_SPECIES" onchange="selectSpeciesAnnotationSettings();" title="Species tree annotation settings">
 						<option value="_none">Select annotation...</option>
+						<option value="Label">Label</option>
 				</select>
 				
 				<div id="speciesAnnotationsMissingDataWarning" style="display:none; font-size:70%">
-					Warning: missing data. Some nodes are not annotated with this parameter.
+					Warning: missing values. Some nodes are not annotated with this annotation.
 				</div>
 
 			</div>
@@ -1165,7 +1173,7 @@
 			
 
 	
-			<div class="sideNavSetting showOnSpeciesAnnotationSelect speciesAnnotationNumerical">
+			<div class="sideNavSetting speciesAnnotationNumerical">
 				<table style="width:100%;">
 					<tr id="speciesTreeAnnotationColGradient" class="colourGradientRow">
 					</tr>
@@ -1175,7 +1183,7 @@
 			</div>
 			
 			
-			<table class="colourSetting showOnSpeciesAnnotationSelect speciesAnnotationNumerical">
+			<table class="colourSetting speciesAnnotationNumerical">
 				<tr id="speciesTreeAnnotationMinCol" class="sideNavSetting">
 					<td style="width:2em">
 					</td>
@@ -1191,7 +1199,7 @@
 			</table>
 			
 			
-			<table class="colourSetting showOnSpeciesAnnotationSelect speciesAnnotationNumerical">
+			<table class="colourSetting  speciesAnnotationNumerical">
 				<tr id="speciesTreeAnnotationMaxCol" class="sideNavSetting">
 					<td style="width:2em">
 					</td>
@@ -1207,9 +1215,16 @@
 			</table>
 			
 			
-			<div class="sideNavSetting showOnSpeciesAnnotationSelect speciesAnnotationNumerical">
+			<div class="sideNavSetting speciesAnnotationNumerical">
 				Number of colours: <input type="number" min=1 max=100 step=1 id="speciesAnnotationNumCols" class="numberinput cranberry" onclick="$(this).select()" onchange="updateSpeciesAnnotationPalette(); setVisualParams();" style="width:5em">
 			</div>
+			
+			
+			<table id="speciesAnnotationDiscreteTable" class="colourSetting speciesAnnotationDiscrete">
+
+			</table>
+			
+			
 			
 			<hr>
 			
@@ -1232,7 +1247,13 @@
 				Horizontal spacing (<span></span>)
 			</div>
 
-
+		
+			
+			<div class="sideNavSetting" id="speciesOpacityDiv">
+				<input id="SPECIES_TREE_OPACITY" class="slider" onchange="setVisualParams();" type="range" min="0" max="100" value="0" step="1">
+				Opacity (<span></span>%)
+			</div>
+			
 			<hr>
 			
 			<div class="sideNavSetting" title="Species tree line width">
@@ -1254,10 +1275,10 @@
 
 			
 			<div class="sideNavSetting" title="Species tree line width">
-				Colour branch by
+				Colour branch background by
 				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_BRANCH_BGCOL_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branch backgrounds by">
 						<option value="_none">None</option>
-						<option value="_none">Label</option>
+						<option value="Label">Label</option>
 				</select>
 
 			</div>
@@ -1282,6 +1303,17 @@
 			<hr>
 			
 			
+				
+			<div class="sideNavSetting" title="Species tree line width">
+				Colour branch border by
+				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_BRANCH_BORDER_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branch borders by">
+						<option value="_none">None</option>
+						<option value="Label">Label</option>
+				</select>
+
+			</div>
+			
+			
 			<table class="colourSetting">
 				<tr id="speciesBorder" class="sideNavSetting">
 					<td style="width:2em">
@@ -1299,14 +1331,7 @@
 			
 			
 			<hr>
-			
-			
-			<div class="sideNavSetting" id="speciesOpacityDiv">
-				<input id="SPECIES_TREE_OPACITY" class="slider" onchange="setVisualParams();" type="range" min="0" max="100" value="0" step="1">
-				Opacity (<span></span>%)
-			</div>
-			
-			<hr>
+
 
 		</div>
 		
@@ -1368,7 +1393,7 @@
 						
 								<div class="textbutton left showAfterTreeUpload" onclick="uploadNewFiles()" title="Upload additional files">Open</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openDownloadDialog()" title="Download">Save As</div>
-								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('modelSideNav')" title="Configure species trees settings">Model</div>
+								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('modelSideNav')" title="Configure annotation settings">Annotations</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('speciesTreeSideNav')" title="Configure species trees settings">Species tree</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('geneTreeSideNav')" title="Configure gene trees settings">Gene trees</div>
 							</div>
