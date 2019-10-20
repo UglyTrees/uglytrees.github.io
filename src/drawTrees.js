@@ -193,6 +193,117 @@ function scaleTreeMultiplier(node, scaleX_fn, scaleY_fn) {
 
 
 
+// Returns a function for calculating the line width of a branch
+function planLineWidths(tree, annotation_name, baseLineWidth){
+	
+	var linewidth_fn;
+	
+	if (annotation_name == "_none") linewidth_fn = function(node) { return baseLineWidth + "px"; };
+	
+	else {
+		
+		// Get min and max value
+		// Normalise values into range [1, 4]
+		var min = Infinity;
+		var max = -Infinity;
+		for (var i = 0; i < tree.nodeList.length; i ++){
+			
+			var value = parseFloat(tree.nodeList[i].annotation[annotation_name]);
+			min = Math.min(min, value);
+			max = Math.max(max, value);
+			
+		}
+		
+
+		linewidth_fn = function(node) {
+			var val = parseFloat(node.annotation[annotation_name]);
+			
+			// Missing value
+			if (val == null) return baseLineWidth + "px";
+			
+			val = 1 + 3 * (val - min)/(max - min) ;
+			return val * baseLineWidth + "px";
+		};
+		
+	}
+	
+	return linewidth_fn;
+	
+}
+
+// Returns a function to compute a colour from an annotation
+function planColour(tree, annotation_name, backgroundCol){
+	
+	var colour_fn;
+	if (annotation_name == "_none") colour_fn = function(node) { return rgbToHex(backgroundCol); };
+	
+	else {
+		
+		
+		// Get annotation from name
+		var annotation = getAnnotation(annotation_name);
+		
+		var discrete = annotation.format == "nominal";
+		
+		// Discrete parameter
+		if (discrete){
+			
+			
+			
+		}
+		
+		// Numerical
+		else{
+			
+					
+			// Get min and max value
+			var min = Infinity;
+			var max = -Infinity;
+			for (var i = 0; i < tree.nodeList.length; i ++){
+				
+				var value = parseFloat(tree.nodeList[i].annotation[annotation_name]);
+				min = Math.min(min, value);
+				max = Math.max(max, value);
+				
+			}
+			
+			
+			console.log("annotation", annotation);
+			
+			// Get colour list
+			var ncols = annotation.ncols;
+			var colours = chroma.scale([annotation.gradientMin, annotation.gradientMax]).mode('lch').colors(ncols);
+								
+			colour_fn = function(node) {
+				
+				var val = parseFloat(node.annotation[annotation_name]);
+				
+				
+				// Missing data
+				if (val == null) rgbToHex(backgroundCol); 
+				
+				val = (val - min)/(max - min);
+				var col_index = Math.floor(val * (ncols-1));
+				//console.log(val, col_index, ncols, colours[col_index]);
+				return colours[col_index];
+				
+				
+			}
+			
+			
+			
+		}
+
+		
+	}
+	
+	return colour_fn;
+	
+}
+
+
+
+
 // Generates the initial coordinated, later to be linearly transformed onto the svg
 function planSpeciesTree(node) {
 
@@ -268,7 +379,9 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 																lineWidthMultiplier: SPECIES_BRANCH_WIDTH,
 																opacity: SPECIES_TREE_OPACITY}) {
 
-	var strokeWidth = styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
+	
+	var strokeWidth = tree.linewidth_fn(node); //styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
+	var fill = tree.bgcolour_fn(node);
 	var id = treename + "_" + node.id;
 	node.htmlID = id;
 	
@@ -288,7 +401,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 						
 		drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 										points: points.join(" "), 
-										fill: styles.fill,
+										fill: fill,
 										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
 		
 		/*
@@ -364,8 +477,8 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 					
 	drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 									points: points.join(" "), 
-									fill: styles.fill,
-									style: "opacity: " + styles.opacity / 100 + "; stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth + "px"}, "", true);		
+									fill: fill,
+									style: "opacity: " + styles.opacity / 100 + "; stroke-linejoin:round; stroke:" + styles.col + "; stroke-width:" + strokeWidth}, "", true);		
 	
 	
 	
@@ -443,7 +556,10 @@ function animateSpeciesBranch(tree, node, branchLetter = "B", styles, duration =
 	if (ele.length == 0) return;
 	
 	var stroke = rgbToHex(styles.col);
-	var strokeWidth = styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
+	//var strokeWidth = styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
+	var strokeWidth = tree.linewidth_fn(node);
+	var fill = tree.bgcolour_fn(node);
+	//console.log(node.htmlID, node.rate, strokeWidth);
 	
 	var points = [	tree.scaleX_fn(node.coords.bottomLeft.x), tree.scaleY_fn(node.coords.bottomLeft.y),
 					tree.scaleX_fn(node.coords.bottomRight.x), tree.scaleY_fn(node.coords.bottomLeft.y),
@@ -451,18 +567,18 @@ function animateSpeciesBranch(tree, node, branchLetter = "B", styles, duration =
 					tree.scaleX_fn(node.coords.topLeft.x), tree.scaleY_fn(node.coords.topRight.y)];
 	
 	
-	//console.log("stroke", stroke, strokeWidth, x1, x2, y1, y2);
+	//console.log("fill", fill, node, node.annotation.pop);
 	
 	
 	ele.velocity("finish");
 	
 	if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {points: points.join(" ")}, duration );
-	else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth + "px"}, duration );
+	else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, duration );
 	
 	//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
 	//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
 	ele.css("stroke", stroke);
-	ele.css("fill", styles.fill);
+	ele.css("fill", fill);
 	ele.css("opacity", styles.opacity / 100);
 	
 
@@ -846,7 +962,7 @@ function animateAGeneTree(svg, treename, node, speciesTree, geneTreeNum, styles,
 	for (var i = 0; i < node.coords.x.length-1; i ++){
 		
 		
-		animateGeneBranch(i, speciesTree, node, geneTreeNum, styles, animation_time);
+		animateGeneBranch(svg, i, speciesTree, node, geneTreeNum, styles, animation_time);
 		
 		var x1 = node.coords.x[i];
 		var x2 = node.coords.x[i+1];
@@ -870,7 +986,19 @@ function animateAGeneTree(svg, treename, node, speciesTree, geneTreeNum, styles,
 			
 	}
 	
-	animateGeneBranch(-1, speciesTree, node, geneTreeNum, styles, animation_time);
+	
+	// If there are any further branch lines for this node then delete them
+	var branchNumToDelete = node.coords.x.length-1;
+	var branchToDelete = $("#" + node.htmlID + "_B" + branchNumToDelete);
+	while (branchToDelete.length > 0){
+		branchToDelete.remove();
+		branchNumToDelete++;
+		branchToDelete = $("#" + node.htmlID + "_B" + branchNumToDelete);
+	}
+	
+	
+	
+	animateGeneBranch(svg, -1, speciesTree, node, geneTreeNum, styles, animation_time);
 	/*
 	// The circle
 	drawSVGobj(svg, "circle", {class: "genenode", id: id, 
@@ -905,7 +1033,7 @@ function animateAGeneTree(svg, treename, node, speciesTree, geneTreeNum, styles,
 
 
 
-function animateGeneBranch(branchNumber, speciestree, node, gNum, styles, duration = 1000) {
+function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, styles, duration = 1000) {
 
 
 
@@ -921,11 +1049,31 @@ function animateGeneBranch(branchNumber, speciestree, node, gNum, styles, durati
 		var r = styles.nodeSize;
 		var fill = styles.col;
 		
+		// Draw it from scratch if it does not already exist
+		if (ele.length == 0) {
+			
+				drawSVGobj(svg, "circle", {class: "genenode", id: node.htmlID, 
+								cx: cx, 
+								cy: cy, 
+								r: r,
+								gNum: gNum,
+								name: (node.children.length == 0 ? node.id + "," + node.label : node.id),
+								fill: fill}, "", true);
+
+		} 
+		
+		// Animate it
+		else {
+			ele.velocity("finish");
+			ele.velocity( {cx: cx, cy: cy, r: r}, duration);
+			ele.css("fill", fill);
+			
+		}
+		
+				
 
 		
-		ele.velocity("finish");
-		ele.velocity( {cx: cx, cy: cy, r: r, fill: fill}, duration);
-		
+	
 		
 	}
 	
@@ -942,17 +1090,35 @@ function animateGeneBranch(branchNumber, speciestree, node, gNum, styles, durati
 		var strokeWidth = styles.strokeWidthMultiplier * node.coords.strokeWidths[branchNumber];
 		var stroke = styles.col;
 
-		ele.velocity("finish");
-		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px", stroke: stroke}, duration );
+
+		// Draw it from scratch if it does not already exist
+		if (ele.length == 0) {
+			
+			drawSVGobj(svg, "line", {class: "genebranch", id: node.htmlID + "_B" + branchNumber, 
+				x1: x1, 
+				y1: y1, 
+				x2: x2,
+				y2: y2, 
+				gNum: gNum,
+				branchfornode: node.htmlID,
+				style: "stroke:" + stroke + "; stroke-width:" + strokeWidth + "px"});
+			
+		}
+
+		// Animate it
+		else {
+			
+			ele.velocity("finish");
+			//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px", stroke: stroke}, duration );
 
 
 
-		if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2}, duration );
-		else ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
-		
-		ele.css("stroke", stroke);
+			if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2}, duration );
+			else ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
+			
+			ele.css("stroke", stroke);
 
-
+		}
 
 	
 	}

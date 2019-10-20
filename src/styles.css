@@ -81,8 +81,12 @@ table {
 }
 
 
-polygon, .speciesbranch {
+polygon, line, circle {
 	transition: fill 0.2s ease;
+}
+
+line {
+	transition: stroke 0.2s ease;
 }
 
 
@@ -460,6 +464,11 @@ input[type=number] {
 	background: none;
 }
 
+
+.sideNavSetting .dropdown{
+	width:100%;
+}
+
 .flex-container {
 	padding: 0;
 	margin: 0;
@@ -694,18 +703,31 @@ input {
 	width:80%;
 	margin-left:10%;
 	margin-top:20px;
+	margin-bottom:20px;
 	text-align:center;
 }
 
+.colourGradientRow{
+	
 
-#geneTreeColours, #speciesTreeLineColours, #speciesTreeBGColours{
+	
+}
+
+.colourGradientRow td{
+	padding-top:0.6em;
+	padding-bottom:0.6em;
+	%border-width: 1px;
+    %border-style: solid;
+}
+
+.colourSetting {
 	width:100%;
 	margin-top:20px;
 	margin-left:2px;
 	margin-right:2px;
 }
 
-#geneTreeColours td, #speciesTreeLineColours td, #speciesTreeBGColours td{
+.colourSetting td {
 	padding-top: 0.35em;
 	padding-bottom: 0.35em;
 	font-size:90%;
@@ -798,3 +820,6 @@ input {
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 					
+.speciesAnnotationsDropdown{
+	width:75% !important;
+}

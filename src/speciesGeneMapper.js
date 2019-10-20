@@ -191,11 +191,103 @@ function mapGeneTreeToSpeciesTree(g, treename, geneLeaves, speciesLeaves){
 
 
 
+// Find all of the node annotations, and determine whether they have missing values,
+// and if they are nominal or numerical
+function getTreeAnnotations(tree){
+	
+	
+	var annotation_names = [];
+	
+	
+	// Get a unique list of annotations
+	for (var i = 0; i < tree.nodeList.length; i ++){
+		
+		var ann = tree.nodeList[i].annotation;
+		for (var a in ann) {
+			if (!annotation_names.includes(a)) annotation_names.push(a);
+		}
+		
+	}
+	
+	
+	
+	// Verify completeness and data format
+	// Assumed to be nominal if there is a single non-numeric character or integer only
+	// User can revise this assumption 
+	var annotations = [];
+	for (var j = 0; j < annotation_names.length; j ++){
+		
+		var ann_name = annotation_names[j];
+		var annotation = {name: ann_name, complete: true, format: "numerical", gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}};
+		var isComplete = true;
+		var isNumerical = true;
+		var allInteger = false;
+		
+		console.log(ann_name);
+		
+		for (var i = 0; i < tree.nodeList.length; i ++){
+			
+			
+			var value = tree.nodeList[i].annotation[ann_name];
+			
+			// Missing data
+			if (value == null){
+				isComplete = false;
+				continue;
+			}
+			
+			
+			if (!isNumerical && !isComplete) break;
+			
+			if (!isNumerical) continue;
+			
+			// Contains non-numerical character
+			if (value != parseFloat(value)) {
+				isNumerical = false;
+			}
+			
+			
+			// Check if is integer 
+			else if (Math.round(value) != value) {
+				allInteger = false;
+			}
 
-
-
-
-
+			
+		}
+		
+		if (isNumerical && allInteger) isNumerical = false;
+		annotation.complete = isComplete;
+		annotation.format = isNumerical ? "numerical" : "nominal";
+		
+		// If discrete then get values and assign colours
+		if (!isNumerical) {
+			
+			var vals = [];
+			for (var i = 0; i < tree.nodeList.length; i ++){
+				var value = tree.nodeList[i].annotation[ann_name];
+				if (!vals.includes(value)) vals.push(value);
+			}
+			
+			
+			for (var i = 0; i < vals.length; i ++){
+				var value = vals[i];
+				var col = getDefaultColour(i);
+				discreteCols[value] = col;
+			}
+			
+			
+		}
+		
+		
+		annotations.push(annotation);
+		
+	}
+	
+	
+	return annotations;
+	
+	
+}
 
 
 

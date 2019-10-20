@@ -57,6 +57,7 @@
 		<script language='JavaScript' type='text/JavaScript' src="lib/velocity.min.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src='lib/d3.v5.min.js'></script> 
 		<script language='JavaScript' type='text/JavaScript' src="lib/dropzone.js"></script>
+		<script language='JavaScript' type='text/JavaScript' src="lib/chroma.js-master/chroma.js"></script>
 		<script>
 
 
@@ -105,6 +106,7 @@
 				$("#treeNum").val(0);
 				resizable(document.getElementById("treeNum"));
 				//$(".showAfterTreeUpload").hide(0);
+				$(".showOnSpeciesAnnotationSelect").hide(0);
 				
 				$("#speciesTreeUploadMsg").hide(0);
 				$("#geneTreeUploadMsg").hide(0);
@@ -233,7 +235,7 @@
 				else if (TREE_NUM >= NTREES-1) return;
 				else TREE_NUM++;
 				planTrees();
-				renderTrees();
+				renderTrees(null, true);
 
 			}
 
@@ -243,7 +245,7 @@
 				else if (TREE_NUM <= 0) return;
 				else TREE_NUM--;
 				planTrees();
-				renderTrees();
+				renderTrees(null, true);
 
 			}
 
@@ -257,7 +259,7 @@
 				if (TREE_NUM < 0) TREE_NUM = 0;
 				if (TREE_NUM >= NTREES) TREE_NUM = NTREES-1;
 				planTrees();
-				renderTrees();
+				renderTrees(null, true);
 			}
 
 
@@ -314,8 +316,12 @@
 
 				SPECIES_TREE = SPECIES_TREES_ALL[TREE_NUM];
 				SPECIES_TREE.geneNodeMap = {};
-				//console.log("speciesTree", SPECIES_TREE);
-	
+				console.log("speciesTree", SPECIES_TREE);
+				var newSpeciesTreeAnnotations = getTreeAnnotations(SPECIES_TREE);
+				renderAnnotations(newSpeciesTreeAnnotations);
+				SPECIES_TREE.linewidth_fn = planLineWidths(SPECIES_TREE, SPECIES_BRANCH_MULTIPLIER, SPECIES_BRANCH_WIDTH);
+				SPECIES_TREE.bgcolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BGCOL_ANNOTATION, SPECIES_TREE_BG_COL);
+				
 
 
 				$("#treeNum").val(TREE_NUM);
@@ -358,6 +364,7 @@
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root);
+			
 				
 				storeTree(SPECIES_TREE.root);
 				console.log("SPECIES_TREE", SPECIES_TREE);
@@ -392,6 +399,10 @@
 					
 					// Do not render if unchecked
 					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) continue;
+					
+					
+					
+					//getTreeAnnotations(gene_tree);
 					
 		
 					// Get the leaves
@@ -1127,8 +1138,80 @@
 				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
 			</div>
 			
-
+			<hr>
 			
+			<div class="sideNavSetting" title="Specify annotation properties">
+				<b>Species tree annotations</b><br><br>
+				<select class="dropdown speciesAnnotationsDropdown" id="MODEL_ANNOTATIONS_SPECIES" onchange="selectSpeciesAnnotationSettings();" title="Species tree annotation settings">
+						<option value="_none">Select annotation...</option>
+				</select>
+				
+				<div id="speciesAnnotationsMissingDataWarning" style="display:none; font-size:70%">
+					Warning: missing data. Some nodes are not annotated with this parameter.
+				</div>
+
+			</div>
+			
+			
+			<div class="sideNavSetting showOnSpeciesAnnotationSelect">
+				<div><b> Data type </b></div>
+				<span style="font-size:100%; vertical-align:middle">Numerical</span>	
+				<label class="switch">
+						 <input class="modelSetting" type="checkbox" id="speciesAnnotationDiscreteChk" OnChange="setAnnotationDataType();"> </input>
+						 <span class="switchslider notboolean"></span>
+					</label> 
+				<span style="font-size:100%; vertical-align:middle">Discrete</span>	
+			</div>
+			
+
+	
+			<div class="sideNavSetting showOnSpeciesAnnotationSelect speciesAnnotationNumerical">
+				<table style="width:100%;">
+					<tr id="speciesTreeAnnotationColGradient" class="colourGradientRow">
+					</tr>
+				</table>
+				<span id="speciesAnnotationMinVal" style="font-size:70%; float:left;">Min</span>
+				<span id="speciesAnnotationMaxVal" style="font-size:70%; float:right;">Max</span>
+			</div>
+			
+			
+			<table class="colourSetting showOnSpeciesAnnotationSelect speciesAnnotationNumerical">
+				<tr id="speciesTreeAnnotationMinCol" class="sideNavSetting">
+					<td style="width:2em">
+					</td>
+				
+					<td>
+						<span id="colourboxSpeciesMin" class="colourbox" title="Select colour" onclick='openColourPicker("speciesTreeAnnotationMinCol");' style="background-color:white"></span>
+					</td>
+					
+					<td>
+						Palette min
+					</td>
+				</tr>
+			</table>
+			
+			
+			<table class="colourSetting showOnSpeciesAnnotationSelect speciesAnnotationNumerical">
+				<tr id="speciesTreeAnnotationMaxCol" class="sideNavSetting">
+					<td style="width:2em">
+					</td>
+				
+					<td>
+						<span id="colourboxSpeciesMax" class="colourbox" title="Select colour" onclick='openColourPicker("speciesTreeAnnotationMaxCol");' style="background-color:white"></span>
+					</td>
+					
+					<td>
+						Palette max
+					</td>
+				</tr>
+			</table>
+			
+			
+			<div class="sideNavSetting showOnSpeciesAnnotationSelect speciesAnnotationNumerical">
+				Number of colours: <input type="number" min=1 max=100 step=1 id="speciesAnnotationNumCols" class="numberinput cranberry" onclick="$(this).select()" onchange="updateSpeciesAnnotationPalette(); setVisualParams();" style="width:5em">
+			</div>
+			
+			<hr>
 			
 
 		</div>
@@ -1142,29 +1225,45 @@
 				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
 			</div>
 			
-			
+			<hr>
 			
 			<div class="sideNavSetting">
 				<input id="SUBTREE_SPACER" class="slider" onchange="setVisualParams();" type="range" min="0" max="3" value="0" step="0.05">
 				Horizontal spacing (<span></span>)
 			</div>
 
+
+			<hr>
+			
+			<div class="sideNavSetting" title="Species tree line width">
+				Line width multiplier
+				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_BRANCH_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to multiply species tree branch width baseline by">
+						<option value="_none">None</option>
+				</select>
+			</div>
+			
 			
 			<div class="sideNavSetting">
-				<input id="SPECIES_BRANCH_WIDTH" class="slider" onchange="setVisualParams();" type="range" min="0" max="4" value="0" step="0.05">
-				Baseline branch width (<span></span> px)
-			</div>
-			
-			
-						
-			<div class="sideNavSetting" id="speciesOpacityDiv" style="display:none">
-				<input id="SPECIES_TREE_OPACITY" class="slider" onchange="setVisualParams();" type="range" min="0" max="100" value="0" step="1">
-				Branch interior opacity (<span></span>%)
+				<input id="SPECIES_BRANCH_WIDTH" class="slider" onchange="setVisualParams();" type="range" min="0" max="10" value="0" step="0.05">
+				Line width baseline (<span></span> px)
 			</div>
 
+			<hr>
 			
-			<table id="speciesTreeBGColours">
-				<tr id="visualSettingsRowspeciesBG" class="sideNavSetting">
+						
+
+			
+			<div class="sideNavSetting" title="Species tree line width">
+				Colour branch by
+				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_BRANCH_BGCOL_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branch backgrounds by">
+						<option value="_none">None</option>
+						<option value="_none">Label</option>
+				</select>
+
+			</div>
+			
+			<table class="colourSetting">
+				<tr id="speciesBG" class="sideNavSetting">
 					<td style="width:2em">
 					</td>
 				
@@ -1173,16 +1272,18 @@
 					</td>
 					
 					<td>
-						Branch interior colour
+						Branch background colour
 					</td>
 				</tr>
 			</table>
 			
+			
 
+			<hr>
 			
 			
-			<table id="speciesTreeLineColours">
-				<tr  id="visualSettingsRowspeciesBorder" class="sideNavSetting">
+			<table class="colourSetting">
+				<tr id="speciesBorder" class="sideNavSetting">
 					<td style="width:2em">
 					</td>
 				
@@ -1197,9 +1298,15 @@
 			</table>
 			
 			
+			<hr>
 			
 			
+			<div class="sideNavSetting" id="speciesOpacityDiv">
+				<input id="SPECIES_TREE_OPACITY" class="slider" onchange="setVisualParams();" type="range" min="0" max="100" value="0" step="1">
+				Opacity (<span></span>%)
+			</div>
 			
+			<hr>
 
 		</div>
 		
@@ -1211,18 +1318,18 @@
 				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
 			</div>
 			
-			
+			<hr>
 			<div class="sideNavSetting">
 				<input id="GENE_NODE_SIZE" class="slider" onchange="setVisualParams();" type="range" min="0" max="10" value="0" step="0.05">
 				Gene node radius (<span></span> px)
 			</div>
-			
+			<hr>
 			
 			<div class="sideNavSetting">
 				<input id="GENE_BRANCH_WIDTH" class="slider" onchange="setVisualParams();" type="range" min="0" max="5" value="0" step="0.05">
-				Baseline branch width (<span></span> px)
+				 Line width baseline (<span></span> px)
 			</div>
-			
+			<hr>
 			
 			<div class="sideNavSetting" title="Group gene tree nodes by genes or taxa">
 				<div><b> Group gene trees by </b></div>
@@ -1235,12 +1342,12 @@
 				
 			</div>
 			
-
+			<hr>
 			
-			<table id="geneTreeColours">
+			<table id="geneTreeColours"  class="colourSetting">
 			
 			</table>
-		
+			<hr>
 			
 		</div>
 		
