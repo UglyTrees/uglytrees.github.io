@@ -218,7 +218,7 @@ function getTreeAnnotations(tree){
 	for (var j = 0; j < annotation_names.length; j ++){
 		
 		var ann_name = annotation_names[j];
-		var annotation = {name: ann_name, complete: true, format: "numerical", couldBeNumerical: true, gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}};
+		var annotation = {name: ann_name, complete: true, format: "numerical", mustBeNumerical: false, mustBeNominal: false, gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}};
 		var isComplete = true;
 		var isNumerical = true;
 		var allInteger = true;
@@ -229,7 +229,8 @@ function getTreeAnnotations(tree){
 			
 			
 			var value = ann_name == "Label" ? tree.nodeList[i].label : tree.nodeList[i].annotation[ann_name];
-			
+			var float = parseFloat(value);  
+
 			// Missing data
 			if (value == null){
 				isComplete = false;
@@ -242,13 +243,13 @@ function getTreeAnnotations(tree){
 			if (!isNumerical) continue;
 			
 			// Contains non-numerical character
-			if (value != parseFloat(value)) {
+			if (isNaN(float) || value != float) {
 				isNumerical = false;
 			}
 			
 			
 			// Check if is integer 
-			else if (Math.round(value) != value) {
+			if (isNaN(float) || Math.round(value) != value) {
 				allInteger = false;
 			}
 
@@ -256,12 +257,14 @@ function getTreeAnnotations(tree){
 		}
 		
 
-		annotation.couldBeNumerical = isNumerical;
+		if (isNumerical && !allInteger) annotation.mustBeNumerical = true;
 		if (isNumerical && allInteger) isNumerical = false;
+		if (!isNumerical && !allInteger) annotation.mustBeNominal = true;
+
 		annotation.complete = isComplete;
 		annotation.format = isNumerical ? "numerical" : "nominal";
 		
-		// If discrete then get values and assign colours
+		// Get discrete values and assign colours
 		if (!isNumerical) {
 			
 			var vals = [];
@@ -280,7 +283,6 @@ function getTreeAnnotations(tree){
 			
 			
 		}
-		
 		
 		annotations.push(annotation);
 		

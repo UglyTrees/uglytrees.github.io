@@ -209,6 +209,9 @@ function planLineWidths(tree, annotation_name, baseLineWidth){
 		for (var i = 0; i < tree.nodeList.length; i ++){
 			
 			var value = parseFloat(tree.nodeList[i].annotation[annotation_name]);
+
+			// Missing data
+			if (isNaN(value) || value == null) continue;
 			min = Math.min(min, value);
 			max = Math.max(max, value);
 			
@@ -217,9 +220,12 @@ function planLineWidths(tree, annotation_name, baseLineWidth){
 
 		linewidth_fn = function(node) {
 			var val = parseFloat(node.annotation[annotation_name]);
+
+
+			console.log("val", val);
 			
 			// Missing value
-			if (val == null) return baseLineWidth + "px";
+			if (isNaN(val) || val == null) return baseLineWidth + "px";
 			
 			val = 1 + 3 * (val - min)/(max - min) ;
 			return val * baseLineWidth + "px";
@@ -272,6 +278,10 @@ function planColour(tree, annotation_name, backgroundCol){
 			for (var i = 0; i < tree.nodeList.length; i ++){
 				
 				var value = parseFloat(tree.nodeList[i].annotation[annotation_name]);
+
+				// Missing data
+				if (isNaN(value) || value == null) continue;
+
 				min = Math.min(min, value);
 				max = Math.max(max, value);
 				
@@ -290,7 +300,7 @@ function planColour(tree, annotation_name, backgroundCol){
 				
 				
 				// Missing data
-				if (val == null) return rgbToHex(backgroundCol); 
+				if (isNaN(val) || val == null) return rgbToHex(backgroundCol); 
 				
 				val = (val - min)/(max - min);
 				var col_index = Math.floor(val * (ncols-1));

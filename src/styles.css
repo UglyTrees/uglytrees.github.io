@@ -645,6 +645,12 @@ input:checked + .switchslider:before {
 	transform: translateX(2em);
 }
 
+.switchslider.disabled{
+	cursor:auto !important;
+	background-color: #d3d3d3 !important;
+}
+
+
 .input[type=checkbox].modelSetting {
 	vertical-align:middle;
 }

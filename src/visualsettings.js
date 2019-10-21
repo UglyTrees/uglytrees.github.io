@@ -43,6 +43,9 @@ function initVisualSettings(){
 	SPECIES_BRANCH_BGCOL_ANNOTATION = "_none";
 	SPECIES_BRANCH_BORDER_ANNOTATION = "_none";
 	SPECIES_BRANCH_MULTIPLIER = "_none";
+	SPECIES_WIDTH_ANNOTATION = "_none";
+	GENE_BRANCH_MULTIPLIER = "_none";
+
 	SPECIES_TREE_BG_COL = "transparent";
 	SPECIES_TREE_BORDER_COL = "#000000";
 	$("#colourboxspeciesBG").css("background-color", SPECIES_TREE_BG_COL);
@@ -67,6 +70,8 @@ function initVisualSettings(){
 	$("#SPECIES_BRANCH_WIDTH").val(SPECIES_BRANCH_WIDTH);
 	$("#GROUP_GENES_BY_TAXA").attr("checked", GROUP_GENES_BY_TAXA);
 	$("#SPECIES_BRANCH_MULTIPLIER").val(SPECIES_BRANCH_MULTIPLIER);
+	$("#GENE_BRANCH_MULTIPLIER").val(GENE_BRANCH_MULTIPLIER);
+	$("#SPECIES_WIDTH_ANNOTATION").val(SPECIES_WIDTH_ANNOTATION);
 	$("#SPECIES_BRANCH_BGCOL_ANNOTATION").val(SPECIES_BRANCH_BGCOL_ANNOTATION);
 	$("#SPECIES_BRANCH_BORDER_ANNOTATION").val(SPECIES_BRANCH_BORDER_ANNOTATION);
 	
@@ -191,8 +196,10 @@ function setVisualParams(){
 	
 	GROUP_GENES_BY_TAXA = $("#GROUP_GENES_BY_TAXA").is(":checked");
 	SPECIES_BRANCH_MULTIPLIER = $("#SPECIES_BRANCH_MULTIPLIER").val();
+	GENE_BRANCH_MULTIPLIER = $("#GENE_BRANCH_MULTIPLIER").val();
 	SPECIES_BRANCH_BGCOL_ANNOTATION = $("#SPECIES_BRANCH_BGCOL_ANNOTATION").val();
 	SPECIES_BRANCH_BORDER_ANNOTATION = $("#SPECIES_BRANCH_BORDER_ANNOTATION").val();
+	SPECIES_WIDTH_ANNOTATION = $("#SPECIES_WIDTH_ANNOTATION").val();
 	
 	
 	
@@ -485,7 +492,7 @@ function rgbToHex(rgb) {
 
 
 // Populate the annotation lists (but do not replace if the elements already exist)
-function renderAnnotations(newAnnotations) {
+function renderAnnotations(newAnnotations = []) {
 	
 	
 	for (var i = 0; i < newAnnotations.length; i ++){
@@ -515,9 +522,13 @@ function renderAnnotations(newAnnotations) {
 		for (var j = 0; j < dropdown_elements.length; j ++){
 			
 			var ele = $(dropdown_elements[j]);
-			
-			if (ele.children(`[value="` + name + `"]`).length == 0) { 
+			var compatible = !ele.hasClass("numericalOnly")	|| annotation.format == "numerical";
+
+
+			if (compatible && ele.children(`[value="` + name + `"]`).length == 0) { 
 				ele.append(`<option value="` + name + `">` + name + `</option>`);
+			}else if (!compatible && ele.children(`[value="` + name + `"]`).length == 1){
+				ele.children(`[value="` + name + `"]`).remove();
 			}
 
 		}
@@ -599,10 +610,16 @@ function selectSpeciesAnnotationSettings() {
 	
 	var discrete = annotation.format == "nominal";
 
-
 	// Annotation is discrete
 	if (discrete){
-		$("#speciesAnnotationDiscreteChk").attr("checked", true);
+
+		$("#speciesAnnotationDiscreteChk").prop("checked", true);
+		if (annotation.mustBeNumerical) return;
+		else if (annotation.mustBeNominal) $("#speciesAnnotationDiscreteSpan").addClass("disabled");
+		else $("#speciesAnnotationDiscreteSpan").removeClass("disabled");
+
+
+		
 		$(".speciesAnnotationNumerical").hide(0);
 		$(".speciesAnnotationDiscrete").show(300);
 		$("#speciesAnnotationDiscreteTable").html("");
@@ -633,7 +650,13 @@ function selectSpeciesAnnotationSettings() {
 	
 	// Annotation is numeric
 	else{
-		$("#speciesAnnotationDiscreteChk").attr("checked", false);
+
+		$("#speciesAnnotationDiscreteChk").prop("checked", false);
+		if (annotation.mustBeNominal) return;
+		else if (annotation.mustBeNumerical) $("#speciesAnnotationDiscreteSpan").addClass("disabled");
+		else $("#speciesAnnotationDiscreteSpan").removeClass("disabled");
+
+
 		$("#colourboxSpeciesMin").css("background-color", annotation.gradientMin);
 		$("#colourboxSpeciesMax").css("background-color", annotation.gradientMax);
 		$("#speciesAnnotationNumCols").val(annotation.ncols);
@@ -656,10 +679,43 @@ function selectSpeciesAnnotationSettings() {
 }
 
 
+// Toggle the current annotation between numerical and discrete
 function setAnnotationDataType(){
 	
-	
+	var switchTo = $("#speciesAnnotationDiscreteChk").is(":checked") ? "nominal" : "numerical";
+
+	if (CURRENTLY_SELECTED_SPECIES_ANNOTATION != null) {
+
+		if (switchTo == "nominal" && CURRENTLY_SELECTED_SPECIES_ANNOTATION.mustBeNumerical) {
+			$("#speciesAnnotationDiscreteChk").prop("checked", false);
+			return;
+		}
+
+		if (switchTo == "numerical" && CURRENTLY_SELECTED_SPECIES_ANNOTATION.mustBeNominal) {
+			$("#speciesAnnotationDiscreteChk").prop("checked", true);
+			return;
+		}
+
+
+
+		CURRENTLY_SELECTED_SPECIES_ANNOTATION.format = switchTo;
+	}
+
+	renderAnnotations();
+	selectSpeciesAnnotationSettings();
+
+
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
