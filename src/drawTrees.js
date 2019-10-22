@@ -1164,6 +1164,8 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 
 
 
+	$(".axis_" + side).remove();
+
 	var stroke = "black";
 	var strokeWidth = 1 + "px";
 	var x1 = 0;
@@ -1211,7 +1213,7 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 
 	}
 
-	drawSVGobj(svg, "line", {class: "axis" ,id: "axis_" + side, 
+	drawSVGobj(svg, "line", {class: "axis axis_" + side ,id: "axis_" + side, 
 				x1: x1, 
 				y1: y1, 
 				x2: x2,
@@ -1230,8 +1232,8 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 		var val = axis.vals[i];
 
 		if (side == 1 || side == 3){
-			ty1 = axisMargin;
-			ty2 = svg.height() - axisMargin;
+			ty1 = svg.height() - axisMargin;
+			ty2 = axisMargin;
 			tx1 = scaleFn_x(val);
 			tx2 = tx1;
 
@@ -1245,12 +1247,19 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 		} 
 
 		
-		drawSVGobj(svg, "line", {class: "axis" ,id: "axis_" + side + "_" + i, 
+		drawSVGobj(svg, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
 				x1: tx1, 
 				y1: ty1, 
 				x2: tx2,
 				y2: ty2, 
 				style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+
+
+		drawSVGobj(svg, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
+				x: tx1, 
+				y: ty1, 
+				style: ""}, val);
+
 
 
 		
