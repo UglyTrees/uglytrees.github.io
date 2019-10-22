@@ -436,7 +436,7 @@ AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root);
-	Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	X_AXIS = planAxis("pop", 0, totalNAtLeaves);	
+	Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, SPECIES_TREE.root.coords.xrange.right);	
 				
 				storeTree(SPECIES_TREE.root);
 				console.log("SPECIES_TREE", SPECIES_TREE);
