@@ -36,6 +36,7 @@ function initVisualSettings(){
 	GENE_TREE_COLOURS = [];
 	setInitialGeneTreeColours();
 	GENE_TREE_DISPLAYS = {};
+	START_PLAYING = false;
 	
 	
 	SPECIES_TREE_ANNOTATIONS = [];
@@ -60,6 +61,9 @@ function initVisualSettings(){
 	
 	FADE_TIME = 500;
 	ANIMATION_TIME = 500; // Remember to also update CSS sheet: path { transition: fill 0.5s ease;}
+	PLAY_TIME = 500;
+
+	CURRENT_ANIMATION_TIME = ANIMATION_TIME;
 	
 
 	
@@ -126,6 +130,7 @@ function closeNav(id = null) {
 		//$("#footer").width(parseFloat($("#innerBody").width()) * 0.99);
 		
 		$("#tree").html("");
+		stop();
 		setTimeout(function(){
 			planTrees();
 			renderTrees();
@@ -164,6 +169,7 @@ function openSettings(id){
 	closeAllNavsExcept(id);
 	if (!alreadyOpen) {
 		$("#tree").html("");
+		stop();
 		setTimeout(function(){
 			planTrees();
 			renderTrees();

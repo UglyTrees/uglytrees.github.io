@@ -222,7 +222,7 @@ function planLineWidths(tree, annotation_name, baseLineWidth){
 			var val = parseFloat(node.annotation[annotation_name]);
 
 
-			console.log("val", val);
+			//console.log("val", val);
 			
 			// Missing value
 			if (isNaN(val) || val == null) return baseLineWidth + "px";

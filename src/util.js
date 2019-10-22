@@ -201,7 +201,9 @@ function saveSvg(svgEl, name) {
 
 
 
-
+function isPageHidden(){
+     return document.hidden || document.msHidden || document.webkitHidden || document.mozHidden;
+ }
 
 
 
