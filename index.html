@@ -73,7 +73,8 @@
 				SVG_BOTTOM_MARGIN = 5;
 				SVG_UNDER_BOTTOM_MARGIN = 25;
 				SVG_LEFT_MARGIN = 20;
-				SVG_RIGHT_MARGIN = 20;
+	
+AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
 				SPECIES_LEAVES = [];
 				textLabelPadding = 5;
 				SPECIES_TREE = null;
@@ -435,7 +436,7 @@
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root);
-			
+	Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	X_AXIS = planAxis("pop", 0, totalNAtLeaves);	
 				
 				storeTree(SPECIES_TREE.root);
 				console.log("SPECIES_TREE", SPECIES_TREE);
@@ -548,10 +549,17 @@
 
 	
 	
-				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN, svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE, svg.width()-SVG_RIGHT_MARGIN, SVG_TOP_MARGIN);
+				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN + AXIS_MARGIN , svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE-AXIS_MARGIN, svg.width()-SVG_RIGHT_MARGIN-AXIS_MARGIN , SVG_TOP_MARGIN+AXIS_MARGIN );
 				
 			
-				// Draw the species tree
+				
+
+
+drawAxis(svg, X_AXIS, 3, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_BOTTOM_MARGIN);
+drawAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN);
+
+
+// Draw the species tree
 				if (!animate) drawASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root);
 				else animateASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME);
 
