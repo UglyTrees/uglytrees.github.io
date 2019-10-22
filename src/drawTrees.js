@@ -1075,3 +1075,211 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, styles, d
 
 
 
+
+
+
+
+
+
+
+// Plan axes
+function planAxis(label, min, max, minAtZero = min == 0, zeroLabel = true, niceBinSizes = [1, 2, 5]){
+
+	if (min > max) max = min+1;
+
+	var maxNumLabels = 8;
+	var nLabels = maxNumLabels;
+
+	var niceBinSizeID = niceBinSizes.length - 1;
+	var basePower = Math.floor(log(max, base = 10));
+	
+	var binSize = niceBinSizes[niceBinSizeID] * Math.pow(10, basePower);
+
+
+	if (minAtZero) min = 0;
+
+	var numLoops = 0;	
+	if (min != max) {
+		while(true){
+
+
+			if (numLoops > 50 || (max - min) / binSize - nLabels > 0) break;
+			niceBinSizeID --;
+			if (niceBinSizeID < 0) {
+				niceBinSizeID = niceBinSizes.length - 1;
+				basePower --;
+			}
+			binSize = niceBinSizes[niceBinSizeID] * Math.pow(10, basePower);
+			numLoops++;
+
+		}
+
+
+
+		if (!minAtZero){
+			if (min > 0) min = min - min % binSize;
+			else		 min = min - (binSize + min % binSize);
+		}
+
+		if (max > 0) max = max + binSize - max % binSize;
+		else		 max = max + binSize - (binSize + max % binSize);
+
+
+		nLabels = Math.ceil((max - min) / binSize);
+
+		
+
+
+	}else{
+		binSize = 1;
+		if (!minAtZero) min--;
+		max++;
+		nLabels = Math.ceil((max - min) / binSize);
+	}
+	
+
+
+	var vals = [];
+	var tooBigByFactorOf =  Math.max(Math.ceil(nLabels / maxNumLabels), 1)
+	for(var labelID = 0; labelID < nLabels; labelID ++){
+		if (labelID == 0 && !zeroLabel) continue;
+		if (labelID % tooBigByFactorOf == 0 && labelID * binSize / (max - min) < 0.95) vals.push(roundToSF(labelID * binSize + min));
+	}
+
+
+
+
+	return {label: label, min: min, max: max, vals: vals};
+	
+
+
+}
+
+
+
+
+
+// Draw an axis. Sides: 1, 2, 3, 4 correspond to top, right, bottom, left
+function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSize = 5){
+
+
+
+	var stroke = "black";
+	var strokeWidth = 1 + "px";
+	var x1 = 0;
+	var x2 = 0;
+	var y1 = 0;
+	var y2 = 0;
+
+
+
+	
+
+
+	// Draw the axis line
+	if (side == 1){
+		x1 = scaleFn_x(axis.min);
+		x2 = scaleFn_x(axis.max);
+		y1 = axisMargin;
+		y2 = axisMargin;
+
+	}
+
+
+	else if (side == 2){
+		x1 = svg.width() - axisMargin;
+		x2 = svg.width() - axisMargin;
+		y1 = scaleFn_y(axis.min);
+		y2 = scaleFn_y(axis.max);
+
+	}
+
+	else if (side == 3){
+		x1 = scaleFn_x(axis.min);
+		x2 = scaleFn_x(axis.max);
+		y1 = svg.height() - axisMargin;
+		y2 = svg.height() - axisMargin;
+
+	}
+
+
+	else {
+		x1 = axisMargin;
+		x2 = axisMargin;
+		y1 = scaleFn_y(axis.min);
+		y2 = scaleFn_y(axis.max);
+
+	}
+
+	drawSVGobj(svg, "line", {class: "axis" ,id: "axis_" + side, 
+				x1: x1, 
+				y1: y1, 
+				x2: x2,
+				y2: y2, 
+				style: "stroke:" + stroke + "; stroke-width:" + strokeWidth });
+
+
+
+
+
+	// Draw the ticks
+	var strokeWidth = "0.1px";
+	var tx1, tx2, ty1, ty2;
+
+	for (var i = 0; i < axis.vals.length; i++){
+		var val = axis.vals[i];
+
+		if (side == 1 || side == 3){
+			ty1 = axisMargin;
+			ty2 = svg.height() - axisMargin;
+			tx1 = scaleFn_x(val);
+			tx2 = tx1;
+
+		}
+		else {
+			tx1 = axisMargin;
+			tx2 = svg.width() - axisMargin;
+			ty1 = scaleFn_y(val);
+			ty2 = ty1;
+
+		} 
+
+		
+		drawSVGobj(svg, "line", {class: "axis" ,id: "axis_" + side + "_" + i, 
+				x1: tx1, 
+				y1: ty1, 
+				x2: tx2,
+				y2: ty2, 
+				style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+
+
+		
+
+
+	}
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
