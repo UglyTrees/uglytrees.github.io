@@ -74,7 +74,8 @@
 				SVG_UNDER_BOTTOM_MARGIN = 25;
 				SVG_LEFT_MARGIN = 20;
 	
-AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
+				AXIS_MARGIN = 20;			
+				SVG_RIGHT_MARGIN = 20;
 				SPECIES_LEAVES = [];
 				textLabelPadding = 5;
 				SPECIES_TREE = null;
@@ -297,24 +298,49 @@ AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
 			}
 
 
-			function nextTree(toEnd = false) {
-				if (toEnd) TREE_NUM = NTREES-1;
-				else if (TREE_NUM >= NTREES-1) return;
-				else TREE_NUM++;
+			function nextTree(skip = false) {
+			
+				if (skip) {
+					var skipBy = Math.round(roundToSF(NTREES / 20, 0));
+					if (skipBy < 1) {
+						nextTree();
+						return;
+					}
+					TREE_NUM += skipBy;
+					TREE_NUM = Math.min(TREE_NUM, NTREES-1);
+				}
+				else {
+					if (TREE_NUM >= NTREES-1) return;
+					TREE_NUM++;
+				}
+				
 				planTrees();
 				renderTrees(null, true);
 
 			}
 
 
-			function prevTree(toEnd = false) {
-				if (toEnd) TREE_NUM = 0;
-				else if (TREE_NUM <= 0) return;
-				else TREE_NUM--;
+			
+			function prevTree(skip = false) {
+				if (skip) {
+					var skipBy = Math.round(roundToSF(NTREES / 20, 0));
+					if (skipBy < 1) {
+						prevTree();
+						return;
+					}
+					TREE_NUM -= skipBy;
+					TREE_NUM = Math.max(TREE_NUM, 0);
+				}
+				else {
+					if (TREE_NUM <= 0) return;
+					TREE_NUM--;
+				}
+				
 				planTrees();
 				renderTrees(null, true);
 
 			}
+
 
 
 			function setTree(){
@@ -403,6 +429,7 @@ AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
 				for (var g = 0;  g < GENE_TREES.length; g ++){
 					MAX_TREE_HEIGHT = Math.max(MAX_TREE_HEIGHT, GENE_TREES[g].root.height);
 				}
+				if (GENE_TREES.length == 0) MAX_TREE_HEIGHT *= 1.1;
 
 
 				var totalNAtLeaves = 0;
@@ -427,7 +454,7 @@ AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
 					//console.log(i, SPECIES_TREE.nodeList[i].populationsize);
 					
 					if (node.label != null) {	
-						node.height = 0;
+						//node.height = 0;
 						totalNAtLeaves += node.populationsize;
 						SPECIES_LEAVES.push(node);
 					}
@@ -436,7 +463,11 @@ AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root);
-	Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, SPECIES_TREE.root.coords.xrange.right);	
+				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	
+				else Y_AXIS = null;
+				
+				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, SPECIES_TREE.root.coords.xrange.right);	
+				else X_AXIS = null;
 				
 				storeTree(SPECIES_TREE.root);
 				console.log("SPECIES_TREE", SPECIES_TREE);
@@ -490,7 +521,7 @@ AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
 						
 						if (geneNode.children.length == 0) {
 							leaves.push(geneNode);
-							geneNode.height = 0;
+							//geneNode.height = 0;
 						}
 					}
 					
@@ -555,8 +586,11 @@ AXIS_MARGIN = 10;			SVG_RIGHT_MARGIN = 20;
 				
 
 
-drawAxis(svg, X_AXIS, 3, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_BOTTOM_MARGIN);
-drawAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN);
+				if (!animate) drawAxis(svg, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN);
+				else animateAxis(svg, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN, CURRENT_ANIMATION_TIME);
+				
+				if (!animate) drawAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN);
+				else animateAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN, CURRENT_ANIMATION_TIME);
 
 
 // Draw the species tree
@@ -1212,10 +1246,42 @@ drawAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEF
 	<body  onload="init()">
 
 
+
+		<div id="viewNav" class="sidenav" style="width:0px;">	
+		
+			<div class="sideNavHeader">
+				View 
+				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
+			</div>
+
+			<hr>
+			
+			
+			<div class="sideNavSetting">
+			
+				<label class="chk_container">
+					<input type="checkbox" id="SHOW_X_AXIS" checked="checked" name="radio" onchange="setVisualParams();">
+					<span class="checkmark"></span> Show x-axis
+				</label>
+			
+				
+				<label class="chk_container">
+					<input type="checkbox" id="SHOW_Y_AXIS" checked="checked" name="radio" onchange="setVisualParams();">
+					<span class="checkmark"></span> Show y-axis
+				</label>
+
+			</div>
+			
+			<hr>
+			
+		</div>
+
+
+
 		<div id="modelSideNav" class="sidenav" style="width:0px;">
 
 			<div class="sideNavHeader">
-				Annotation settings 
+				Annotations 
 				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
 			</div>
 			
@@ -1502,6 +1568,7 @@ drawAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEF
 						
 								<div class="textbutton left showAfterTreeUpload" onclick="uploadNewFiles()" title="Upload additional files">Open</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openDownloadDialog()" title="Download">Save As</div>
+								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('viewNav')" title="Configure general visual settings">View</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('modelSideNav')" title="Configure annotation settings">Annotations</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('speciesTreeSideNav')" title="Configure species trees settings">Species tree</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('geneTreeSideNav')" title="Configure gene trees settings">Gene trees</div>

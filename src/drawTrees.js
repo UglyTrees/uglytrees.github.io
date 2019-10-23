@@ -385,8 +385,12 @@ function planSpeciesTree(node) {
 
 	
 
-	//console.log(node.id, node)
-	//alert(5);
+	// If root then shift everything so that the leftmost position is at x=0
+	if (node.parent == null){
+		//console.log("Translating" node, "by",  -left.coords.xrange.left);
+		translateTree(node, -left.coords.xrange.left, 0);
+		
+	}
 	
 
 }
@@ -1159,23 +1163,27 @@ function planAxis(label, min, max, minAtZero = min == 0, zeroLabel = true, niceB
 
 
 
+
 // Draw an axis. Sides: 1, 2, 3, 4 correspond to top, right, bottom, left
 function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSize = 5){
 
 
 
 	$(".axis_" + side).remove();
+	
+	
+	if (axis == null) return;
 
 	var stroke = "black";
 	var strokeWidth = 1 + "px";
+	
+	
+	/*
 	var x1 = 0;
 	var x2 = 0;
 	var y1 = 0;
 	var y2 = 0;
 
-
-
-	
 
 
 	// Draw the axis line
@@ -1219,7 +1227,7 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 				x2: x2,
 				y2: y2, 
 				style: "stroke:" + stroke + "; stroke-width:" + strokeWidth });
-
+	*/
 
 
 
@@ -1232,15 +1240,15 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 		var val = axis.vals[i];
 
 		if (side == 1 || side == 3){
-			ty1 = svg.height() - axisMargin;
-			ty2 = axisMargin;
+			ty2 = side == 1 ? svg.height() - axisMargin : axisMargin;
+			ty1 = side == 3 ? svg.height() - axisMargin : axisMargin;
 			tx1 = scaleFn_x(val);
 			tx2 = tx1;
 
 		}
 		else {
-			tx1 = axisMargin;
-			tx2 = svg.width() - axisMargin;
+			tx1 = side == 4 ? axisMargin : svg.width() - axisMargin;
+			tx2 = side == 2 ? axisMargin : svg.width() - axisMargin;
 			ty1 = scaleFn_y(val);
 			ty2 = ty1;
 
@@ -1268,11 +1276,97 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 	}
 
 
-
-
-
-
 }
+
+
+// Animates an axis
+function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, duration = 100){
+	
+	
+	if (axis == null) {
+		$(".axis_" + side).remove();
+		return;
+	}
+	
+	// Animate the ticks
+	var stroke = "black";
+	var strokeWidth = "0.1px";
+	var tx1, tx2, ty1, ty2;
+
+	for (var i = 0; i < axis.vals.length; i++){
+		
+		var ele = $("#axis_" + side + "_" + i);
+
+		var val = axis.vals[i];
+
+		if (side == 1 || side == 3){
+			ty2 = side == 1 ? svg.height() - axisMargin : axisMargin;
+			ty1 = side == 3 ? svg.height() - axisMargin : axisMargin;
+			tx1 = scaleFn_x(val);
+			tx2 = tx1;
+
+		}
+		else {
+			tx1 = side == 4 ? axisMargin : svg.width() - axisMargin;
+			tx2 = side == 2 ? axisMargin : svg.width() - axisMargin;
+			ty1 = scaleFn_y(val);
+			ty2 = ty1;
+
+		} 
+
+
+		if (ele.length == 0) {
+			
+			drawSVGobj(svg, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
+				x1: tx1, 
+				y1: ty1, 
+				x2: tx2,
+				y2: ty2, 
+				style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+				
+				
+			drawSVGobj(svg, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
+				x: tx1, 
+				y: ty1, 
+				style: ""}, val);
+			
+		}
+		
+		else {
+			
+			//ele.velocity("finish");
+			ele.velocity({x1: tx1, x2: tx2, y1: ty1, y2: ty2}, duration);
+			
+			var textEle = $("#axisText_" + side + "_" + i);
+			textEle.velocity({x: tx1, y: ty1}, duration);
+			textEle.html(val);
+			
+			
+		}
+
+
+
+
+	}
+	
+	
+	// If there are leftover ticks delete them
+	var i = axis.vals.length;
+	var ele = $("#axis_" + side + "_" + i);
+	while (ele.length != 0){
+		ele.remove();
+		$("#axisText_" + side + "_" + i).remove();
+		i++;
+		ele = $("#axis_" + side + "_" + i);
+	}
+
+
+	
+	
+}
+
+
+
 
 
 
