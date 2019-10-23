@@ -299,7 +299,7 @@
 
 
 			function nextTree(skip = false) {
-			
+				stop();
 				if (skip) {
 					var skipBy = Math.round(roundToSF(NTREES / 20, 0));
 					if (skipBy < 1) {
@@ -322,6 +322,7 @@
 
 			
 			function prevTree(skip = false) {
+				stop();
 				if (skip) {
 					var skipBy = Math.round(roundToSF(NTREES / 20, 0));
 					if (skipBy < 1) {
@@ -345,7 +346,7 @@
 
 			function setTree(){
 
-	
+				stop();
 				var newVal = parseFloat($("#treeNum").val());
 				if (TREE_NUM == newVal) return;
 				TREE_NUM = newVal;
