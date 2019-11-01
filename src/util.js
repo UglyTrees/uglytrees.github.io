@@ -63,10 +63,11 @@ function initUtil(){
 					SPECIES_TREES_ALL[0].successfullyMapped = true;
 
 					// Attempts to map to any pre-existing gene trees
-					if (GENE_TREES_ALL.length > 0) {		
+					if (NUMBER_OF_GENE_TREES > 0) {		
 						var geneTrees = [];
 						for (var i = 0; i < GENE_TREES_ALL.length; i ++){
-							if (GENE_TREES_ALL[i] != null) geneTrees.push(GENE_TREES_ALL[i][0]);
+							if (GENE_TREES_ALL[i] == null) geneTrees.push(null);
+							else geneTrees.push(GENE_TREES_ALL[i][0]);
 						}
 						SPECIES_TREES_ALL[0].successfullyMapped = mapAllGeneTreesToSpeciesTree(speciesLeaves, geneTrees)
 					}

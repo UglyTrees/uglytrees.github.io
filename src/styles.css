@@ -839,3 +839,54 @@ input {
 .speciesAnnotationsDropdown{
 	width:75% !important;
 }
+
+#hoverAnnotationDiv {
+	z-index:100;
+	position:absolute;
+	color:white; 
+	word-break: break-all; 
+	border-radius:8px; 
+	border-top-left-radius: 0px;
+	text-align:left; 
+	font-size:120%; 
+	padding: 3; 
+	border-style:solid; 
+	background-color:#BEBEBE;
+	border-color:#BEBEBE;;
+	
+}
+
+#hoverAnnotationDiv > div{
+	border-style:solid; 
+	border-color:white;
+	border-width:1px;
+	%border-radius:8px; 
+}
+
+#hoverAnnotationDiv table{
+	width:100%;
+	color:white;
+
+}
+
+#hoverAnnotationDiv td{
+	padding:5px;
+}
+
+.rowbutton td{
+	cursor:pointer;
+	border-top: 0.5px solid white;
+	%border-top: 0.5px solid white;
+}
+
+.rowbutton:hover{
+	color:#BEBEBE;
+	background-color:white;
+}
+
+
+
+
+
+
+

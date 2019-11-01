@@ -338,7 +338,7 @@
 					if (GENE_TREES[g] == null) continue;
 					MAX_TREE_HEIGHT = Math.max(MAX_TREE_HEIGHT, GENE_TREES[g].root.height);
 				}
-				if (MAX_TREE_HEIGHT == SPECIES_TREE.root.height) MAX_TREE_HEIGHT *= 1.05;
+				if (MAX_TREE_HEIGHT == SPECIES_TREE.root.height) MAX_TREE_HEIGHT *= 1.1;
 
 				
 				
@@ -407,7 +407,7 @@
 				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW || !SPECIES_TREE.successfullyMapped) return;
 				
 
-
+				unhover();
 				var svg;
 				if (options == null) {
 
@@ -708,7 +708,7 @@
 
 				
 				if (isNode && attr.id != null){
-					$("#" + attr.id).hover(function() { hoverNode(attr.id) },  function() {  });
+					$("#" + attr.id).click(function(e) { hoverNode(attr.id, e) });
 				}
 				
 				
@@ -760,9 +760,45 @@
 			}
 
 
-			function hoverNode(id){
+			function hoverNode(id, event){
 
 			
+				var treeName = id.split("_")[0];
+				var tree = treeName == "speciestree" ? SPECIES_TREE : GENE_TREES[parseFloat(treeName.split("gene")[1])];
+				var nodeID = parseFloat(id.split("_")[1]);
+
+				// Get the node
+				var node = null;
+				for (var i = 0; i < tree.nodeList.length; i ++) {
+					if (tree.nodeList[i].id == nodeID) {
+						node = tree.nodeList[i];
+						break;
+					}
+				}
+
+
+				// Annotations
+				$(".annotationRow").remove();
+				for (var a in node.annotation){
+					var val = roundToSF(node.annotation[a]);
+					$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>` + a + `: ` + val + `</td></tr>`);
+				}
+				if (node.label != null) $("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Label: ` + node.label + `</td></tr>`);
+
+
+				var x = event.pageX;
+				var y = event.pageY;
+				console.log(x, y, treeName, node);
+				if ($("#hoverAnnotationDiv").is(":hidden")){
+					$("#hoverAnnotationDiv").show(0);
+					$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, 0)
+				}
+				else {
+					$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, 200);
+				}
+				
+
+
 				return;
 				
 				
@@ -853,6 +889,9 @@
 			}
 
 			function unhover(){
+
+				$("#hoverAnnotationDiv").hide(0);
+
 				$("path.node").attr("fill", SPECIES_TREE_BG_COL);
 				$("circle.node").removeClass("selected");
 				$(".node").attr("opacity", "1");
@@ -1095,6 +1134,30 @@
 
 	</head>
 	<body  onload="init()">
+
+
+		
+		<div id="hoverAnnotationDiv" style="display:none">
+
+			<div>
+				<table cellpadding="5">
+					<tr id="hoverAnnotationTitle">
+						<td><b>Node information</b></td>
+					</tr>
+					
+
+					<tr  class="rowbutton" title="Swap the two children of this node" onclick="$('#hoverAnnotationDiv').hide(0);">
+						<td>Flip clade</td>
+					</tr>
+					<tr  class="rowbutton" title="Close annotation box" onclick="$('#hoverAnnotationDiv').hide(0);">
+						<td>Close</td>
+					</tr>
+				</table>
+			</div>
+
+		</div>
+
+
 
 
 		<div id="modelSideNav" class="sidenav" style="width:0px;">
