@@ -833,10 +833,11 @@
 				var x = event.pageX;
 				var y = event.pageY;
 				console.log(x, y, treeName, node);
-				$("#hoverAnnotationDiv").show(0);
+				
 				
 				// If mouse on bottom half of tree, add the .top class and set bottom to mouse
 				$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, $("#hoverAnnotationDiv").is(":hidden") ? 0 : 200);
+				$("#hoverAnnotationDiv").show(0);
 
 
 				return;
