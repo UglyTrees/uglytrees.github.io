@@ -61,9 +61,11 @@ function initVisualSettings(){
 	
 	FADE_TIME = 500;
 	ANIMATION_TIME = 500; // Remember to also update CSS sheet: path { transition: fill 0.5s ease;}
-	PLAY_TIME = 500;
+	PLAY_TIME = 800;
 
 	CURRENT_ANIMATION_TIME = ANIMATION_TIME;
+	SHOW_X_AXIS = false;
+	SHOW_Y_AXIS = true;
 	
 
 	
@@ -72,7 +74,7 @@ function initVisualSettings(){
 	$("#GENE_NODE_SIZE").val(GENE_NODE_SIZE);
 	$("#GENE_BRANCH_WIDTH").val(GENE_BRANCH_WIDTH);
 	$("#SPECIES_BRANCH_WIDTH").val(SPECIES_BRANCH_WIDTH);
-	$("#GROUP_GENES_BY_TAXA").attr("checked", GROUP_GENES_BY_TAXA);
+	$("#GROUP_GENES_BY_TAXA").prop("checked", GROUP_GENES_BY_TAXA);
 	$("#SPECIES_BRANCH_MULTIPLIER").val(SPECIES_BRANCH_MULTIPLIER);
 	$("#GENE_BRANCH_MULTIPLIER").val(GENE_BRANCH_MULTIPLIER);
 	$("#SPECIES_WIDTH_ANNOTATION").val(SPECIES_WIDTH_ANNOTATION);
@@ -80,7 +82,8 @@ function initVisualSettings(){
 	$("#SPECIES_BRANCH_BORDER_ANNOTATION").val(SPECIES_BRANCH_BORDER_ANNOTATION);
 	
 	
-	
+	$("#SHOW_X_AXIS").prop("checked", SHOW_X_AXIS);
+	$("#SHOW_Y_AXIS").prop("checked", SHOW_Y_AXIS);
 	
 	
 	
@@ -205,16 +208,24 @@ function setVisualParams(){
 	GENE_BRANCH_MULTIPLIER = $("#GENE_BRANCH_MULTIPLIER").val();
 	SPECIES_BRANCH_BGCOL_ANNOTATION = $("#SPECIES_BRANCH_BGCOL_ANNOTATION").val();
 	SPECIES_BRANCH_BORDER_ANNOTATION = $("#SPECIES_BRANCH_BORDER_ANNOTATION").val();
-	SPECIES_WIDTH_ANNOTATION = $("#SPECIES_WIDTH_ANNOTATION").val();
 	
+	var newSpeciesWidthAnnotation = $("#SPECIES_WIDTH_ANNOTATION").val();
+	if (SPECIES_WIDTH_ANNOTATION != newSpeciesWidthAnnotation) {
+		if (newSpeciesWidthAnnotation != "_none") SHOW_X_AXIS = true;
+		$("#SHOW_X_AXIS").prop("checked", SHOW_X_AXIS);
+		
+	}
+	SPECIES_WIDTH_ANNOTATION = newSpeciesWidthAnnotation;
 	
-	
+	SHOW_X_AXIS = $("#SHOW_X_AXIS").is(":checked");
+	SHOW_Y_AXIS = $("#SHOW_Y_AXIS").is(":checked");
 	
 	for (var g = 0; g < GENE_TREES_ALL.length; g ++){
 		if (GENE_TREES_ALL[g] == null) continue;
 		GENE_TREE_DISPLAYS[g] = $("#selectGeneTree" + g).is(":checked");
 	}
 	
+
 	
 	
 	//if (SPECIES_TREE_BG_COL.toLowerCase() == "transparent") $("#speciesOpacityDiv").hide(300);

@@ -810,6 +810,8 @@ input {
 	
 }
 
+
+
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
 	content: "";
@@ -856,6 +858,12 @@ input {
 	
 }
 
+
+#hoverAnnotationDiv.top {
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 0px;
+}
+
 #hoverAnnotationDiv > div{
 	border-style:solid; 
 	border-color:white;
@@ -883,9 +891,6 @@ input {
 	color:#BEBEBE;
 	background-color:white;
 }
-
-
-
 
 
 

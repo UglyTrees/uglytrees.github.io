@@ -73,6 +73,8 @@
 				SVG_BOTTOM_MARGIN = 5;
 				SVG_UNDER_BOTTOM_MARGIN = 25;
 				SVG_LEFT_MARGIN = 20;
+	
+				AXIS_MARGIN = 20;			
 				SVG_RIGHT_MARGIN = 20;
 				SPECIES_LEAVES = [];
 				textLabelPadding = 5;
@@ -191,29 +193,55 @@
 			}
 
 
-			function nextTree(toEnd = false) {
-				if (toEnd) TREE_NUM = NTREES-1;
-				else if (TREE_NUM >= NTREES-1) return;
-				else TREE_NUM++;
+			function nextTree(skip = false) {
+				stop();
+				if (skip) {
+					var skipBy = Math.round(roundToSF(NTREES / 20, 0));
+					if (skipBy < 1) {
+						nextTree();
+						return;
+					}
+					TREE_NUM += skipBy;
+					TREE_NUM = Math.min(TREE_NUM, NTREES-1);
+				}
+				else {
+					if (TREE_NUM >= NTREES-1) return;
+					TREE_NUM++;
+				}
+				
 				planTrees();
 				renderTrees(null, true);
 
 			}
 
 
-			function prevTree(toEnd = false) {
-				if (toEnd) TREE_NUM = 0;
-				else if (TREE_NUM <= 0) return;
-				else TREE_NUM--;
+			
+			function prevTree(skip = false) {
+				stop();
+				if (skip) {
+					var skipBy = Math.round(roundToSF(NTREES / 20, 0));
+					if (skipBy < 1) {
+						prevTree();
+						return;
+					}
+					TREE_NUM -= skipBy;
+					TREE_NUM = Math.max(TREE_NUM, 0);
+				}
+				else {
+					if (TREE_NUM <= 0) return;
+					TREE_NUM--;
+				}
+				
 				planTrees();
 				renderTrees(null, true);
 
 			}
+
 
 
 			function setTree(){
 
-	
+				stop();
 				var newVal = parseFloat($("#treeNum").val());
 				if (TREE_NUM == newVal) return;
 				TREE_NUM = newVal;
@@ -270,6 +298,7 @@
 
 				// Get the species tree and its leaves
 				SPECIES_TREE = SPECIES_TREES_ALL[TREE_NUM];
+
 				var totalNAtLeaves = 0;
 				SPECIES_LEAVES = [];
 				for (var i = 0; i < SPECIES_TREE.nodeList.length; i ++) {
@@ -345,7 +374,11 @@
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root);
-			
+				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	
+				else Y_AXIS = null;
+				
+				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, SPECIES_TREE.root.coords.xrange.right);	
+				else X_AXIS = null;
 				
 				storeTree(SPECIES_TREE.root);
 				console.log("SPECIES_TREE", SPECIES_TREE);
@@ -388,6 +421,7 @@
 						var geneNode = gene_tree.nodeList[i];
 						geneNode.coords = { cx: -1, cy: -1, x: [], y: [], strokeWidths: [] };
 						geneNode.coordsStored = JSON.parse(JSON.stringify(geneNode.coords));
+
 					}
 					
 
@@ -440,10 +474,20 @@
 
 	
 	
-				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN, svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE, svg.width()-SVG_RIGHT_MARGIN, SVG_TOP_MARGIN);
+				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN + AXIS_MARGIN , svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE-AXIS_MARGIN, svg.width()-SVG_RIGHT_MARGIN-AXIS_MARGIN , SVG_TOP_MARGIN+AXIS_MARGIN );
 				
 			
-				// Draw the species tree
+				
+
+
+				if (!animate) drawAxis(svg, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN);
+				else animateAxis(svg, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN, CURRENT_ANIMATION_TIME);
+				
+				if (!animate) drawAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN);
+				else animateAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN, CURRENT_ANIMATION_TIME);
+
+
+// Draw the species tree
 				if (!animate) drawASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root);
 				else animateASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME);
 
@@ -789,14 +833,10 @@
 				var x = event.pageX;
 				var y = event.pageY;
 				console.log(x, y, treeName, node);
-				if ($("#hoverAnnotationDiv").is(":hidden")){
-					$("#hoverAnnotationDiv").show(0);
-					$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, 0)
-				}
-				else {
-					$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, 200);
-				}
+				$("#hoverAnnotationDiv").show(0);
 				
+				// If mouse on bottom half of tree, add the .top class and set bottom to mouse
+				$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, ($("#hoverAnnotationDiv").is(":hidden") ? 0 : 200)
 
 
 				return;
@@ -1136,6 +1176,7 @@
 	<body  onload="init()">
 
 
+
 		
 		<div id="hoverAnnotationDiv" style="display:none">
 
@@ -1147,7 +1188,7 @@
 					
 
 					<tr  class="rowbutton" title="Swap the two children of this node" onclick="$('#hoverAnnotationDiv').hide(0);">
-						<td>Flip clade</td>
+						<td>Flip subtree</td>
 					</tr>
 					<tr  class="rowbutton" title="Close annotation box" onclick="$('#hoverAnnotationDiv').hide(0);">
 						<td>Close</td>
@@ -1157,13 +1198,39 @@
 
 		</div>
 
+		<div id="viewNav" class="sidenav" style="width:0px;">	
+		
+			<div class="sideNavHeader">
+				View 
+				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
+			</div>
 
+			<hr>
+			
+			
+			<div class="sideNavSetting" style="font-size:80%">
+			
+				<label class="checkbox-container">
+					<input type="checkbox" id="SHOW_X_AXIS" checked="checked" name="radio" onchange="setVisualParams();">
+					<span class="checkmark"></span> Show x-axis
+				</label>
+			
+				
+				<label class="checkbox-container">
+					<input type="checkbox" id="SHOW_Y_AXIS" checked="checked" name="radio" onchange="setVisualParams();">
+					<span class="checkmark"></span> Show y-axis
+				</label>
 
+			</div>
+			
+			<hr>
+
+		</div>
 
 		<div id="modelSideNav" class="sidenav" style="width:0px;">
 
 			<div class="sideNavHeader">
-				Annotation settings 
+				Annotations 
 				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
 			</div>
 			
@@ -1450,6 +1517,7 @@
 						
 								<div class="textbutton left showAfterTreeUpload" onclick="uploadNewFiles()" title="Upload additional files">Open</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openDownloadDialog()" title="Download">Save As</div>
+								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('viewNav')" title="Configure general visual settings">View</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('modelSideNav')" title="Configure annotation settings">Annotations</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('speciesTreeSideNav')" title="Configure species trees settings">Species tree</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('geneTreeSideNav')" title="Configure gene trees settings">Gene trees</div>
