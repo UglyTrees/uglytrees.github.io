@@ -68,8 +68,21 @@ function initMapper(){
 
 
 // Attempts to map a gene tree to a species tree, or returns an error message
-function mapGeneTreeToSpeciesTree(g, treename, geneLeaves, speciesLeaves){
+function mapGeneTreeToSpeciesTree(g, geneLeaves, speciesLeaves){
 	
+
+
+	// Reset mappings
+	for (var i = 0; i < speciesLeaves.length; i ++){
+		var species_leaf = speciesLeaves[i];
+		species_leaf.branchToGeneNodeMap[g] = {};
+		species_leaf.nodeToGeneBranchMap[g] = {};
+	}
+	for (var j = 0; j < geneLeaves.length; j ++) {
+		var gene_leaf = geneLeaves[j];
+		gene_leaf.speciesNodeMap = null;
+	}
+
 
 
 	// For each mapping strategy
@@ -95,7 +108,6 @@ function mapGeneTreeToSpeciesTree(g, treename, geneLeaves, speciesLeaves){
 				// Try to map this gene taxon to a species taxon
 				for (var i = 0; i < speciesLeaves.length; i ++){
 					var species_leaf = speciesLeaves[i];
-
 
 					var mappingAttempt = strategy(species_leaf.label, gene_leaf.label, strategyParameter);
 					if (mappingAttempt == null) {
@@ -176,12 +188,11 @@ function mapGeneTreeToSpeciesTree(g, treename, geneLeaves, speciesLeaves){
 
 
 	if (mappedSuccessfully) {
-		return true;
+		return "";
 
 	}else{
-		$("#geneTreeUploadMsg").append("<b>Unable to automatically map " + treename + ` to the species tree.</b>  Please ensure that the gene tree leaf labels contain the
-			species leaf labels they are mapped to (perhaps delimited by '_', '-', or '.'), and ensure that each gene taxon maps to only one species taxon.`);
-		return false;
+		return `<b>Unable to automatically map tree to the species tree.</b>  Please ensure that the species labels substrings of the gene labels, (perhaps also delimited by '_', '-', or '.'), and ensure that each gene taxon maps to only one species taxon.`;
+		
 	}
 
 

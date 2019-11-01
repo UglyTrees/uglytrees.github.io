@@ -211,6 +211,7 @@ function setVisualParams(){
 	
 	
 	for (var g = 0; g < GENE_TREES_ALL.length; g ++){
+		if (GENE_TREES_ALL[g] == null) continue;
 		GENE_TREE_DISPLAYS[g] = $("#selectGeneTree" + g).is(":checked");
 	}
 	
@@ -252,7 +253,7 @@ function renderParameterValues(){
 // Generate gene tree colouring html
 function renderGeneTreeColourSettings(){
 	
-	
+
 	var headerHTML = `
 		<tr class="sideNavSetting">
 			<td style="text-align:right">
@@ -274,7 +275,7 @@ function renderGeneTreeColourSettings(){
 
 	
 	for (var i = 0; i < GENE_TREES_ALL.length; i ++){
-	
+		if (GENE_TREES_ALL[i] == null) continue;
 		var html = `
 		<tr id="visualSettingsRow` + i + `" class="sideNavSetting">
 			<td>

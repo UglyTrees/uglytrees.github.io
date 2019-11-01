@@ -24,6 +24,264 @@
 
 */
 
+
+
+function initUtil(){
+
+
+	
+	SPECIES_UPLOADED_FILE = null;
+	GENE_UPLOADED_FILES = [];
+	NUMBER_OF_GENE_TREES = 0;
+
+
+	var speciesTreeDropzone = new Dropzone("div#species_tree_upload", { url: "/file/post"});
+	speciesTreeDropzone.on("addedfile", function(file) {
+		
+
+		removeFile(-1);
+		var util_file = {id: -1, filename: file.name, message: "", uploadedAs: "species"};
+		SPECIES_UPLOADED_FILE = util_file;
+		$("#speciesTreeUploadTable").append(getFileUploadTemplate(util_file.id, util_file.filename));
+
+		//addLoader("#species_tree_upload", "treeLoader");
+		var reader = new FileReader();
+
+		// Closure to capture the file information.
+		reader.onload = (function(theFile) {
+			return function(e) {
+
+				if (e == null || e.target.result == "") return;
+				try {
+					SPECIES_TREES_ALL = getTreesFromString(e.target.result);
+					var speciesLeaves = getLeaves(SPECIES_TREES_ALL[0]);
+					for (var i = 0; i < speciesLeaves.length; i ++){
+						var species_leaf = speciesLeaves[i];
+						species_leaf.branchToGeneNodeMap = [];
+						species_leaf.nodeToGeneBranchMap = [];
+					}
+					SPECIES_TREES_ALL[0].successfullyMapped = true;
+
+					// Attempts to map to any pre-existing gene trees
+					if (GENE_TREES_ALL.length > 0) {		
+						var geneTrees = [];
+						for (var i = 0; i < GENE_TREES_ALL.length; i ++){
+							if (GENE_TREES_ALL[i] != null) geneTrees.push(GENE_TREES_ALL[i][0]);
+						}
+						SPECIES_TREES_ALL[0].successfullyMapped = mapAllGeneTreesToSpeciesTree(speciesLeaves, geneTrees)
+					}
+
+				} 
+				catch(err){
+					$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
+					$("#fileUpload_" + util_file.id + " .loader").remove();
+					return;
+				}
+				
+				NTREES = SPECIES_TREES_ALL.length;
+				TREE_NUM = Math.floor(NTREES * BURNIN);
+				console.log(theFile);
+				$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
+				if (SPECIES_TREES_ALL.length > 0 && SPECIES_TREES_ALL[0].successfullyMapped) $("#renderTreesBtn").removeClass("disabled");
+				$("#fileUpload_" + util_file.id + " .loader").remove();
+
+
+
+
+			};
+
+		})(file);
+
+		reader.readAsText(file);
+
+	});
+
+
+
+
+	var geneTreeDropzone = new Dropzone("div#gene_tree_upload", { url: "/file/post"});
+	geneTreeDropzone.on("addedfile", function(file) {
+		
+		var util_file = {id: GENE_UPLOADED_FILES.length, filename: file.name, message: "", uploadedAs: "gene"};
+		var g = util_file.id;
+		GENE_UPLOADED_FILES[g] = util_file;
+		getFileUploadTemplate(g, util_file.filename);
+
+
+		$("#geneTreeUploadTable").append(getFileUploadTemplate(g, util_file.filename));
+		var reader = new FileReader();
+
+		// Closure to capture the file information.
+		reader.onload = (function(theFile) {
+			return function(e) {
+
+				if (e == null || e.target.result == "") return;
+
+				try{
+					var trees = getTreesFromString(e.target.result);
+					trees.name = theFile.name;
+					
+					GENE_TREES_ALL[g] = trees;
+					
+
+					// Mapping
+					if (SPECIES_TREES_ALL != null && SPECIES_TREES_ALL.length > 0) {
+						var speciesLeaves = getLeaves(SPECIES_TREES_ALL[0]);
+						var mappingErrorMessage = mapGeneTreeToSpeciesTree(g, getLeaves(trees[0]), speciesLeaves);
+						if (mappingErrorMessage != ""){
+							$("#renderTreesBtn").addClass("disabled");
+							$("#fileUpload_" + g + " .userMsg").html("<b>Error:</b> " + mappingErrorMessage);
+							$("#fileUpload_" + g + " .userMsg").addClass("noMapError");
+							$("#fileUpload_" + g + " .loader").remove();
+							return;
+						}
+					}
+					
+
+					
+				} 
+				catch(err){
+					$("#fileUpload_" + g + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
+					$("#fileUpload_" + g + " .loader").remove();
+					return;
+				}
+				
+
+				NUMBER_OF_GENE_TREES++;
+				$("#fileUpload_" + g + " .userMsg").html("File successfully parsed");
+				$("#fileUpload_" + g + " .loader").remove();
+				
+				renderGeneTreeColourSettings();
+				
+
+			};
+
+		})(file);
+
+		reader.readAsText(file);
+
+	});
+
+
+
+
+
+
+}
+
+
+// Attempts to map all gene trees to the species tree, and if it fails reverts to the file upload menu and notifies the user
+function mapAllGeneTreesToSpeciesTree(speciesLeaves, geneTrees){
+
+	
+	var successful = true;
+	for (var g = 0; g < geneTrees.length; g ++){
+			
+		var geneTree = geneTrees[g];
+		if (geneTree == null) continue;
+		var leaves = getLeaves(geneTree);
+
+		// Map the leaves to species leaves
+		var mappingErrorMessage = mapGeneTreeToSpeciesTree(g, leaves, speciesLeaves);
+		if (mappingErrorMessage != "") {
+			$("#fileUpload_" + g + " .userMsg").html("<b>Error:</b> " + mappingErrorMessage);
+			$("#fileUpload_" + g + " .userMsg").addClass("noMapError");
+			successful = false;
+			$("#renderTreesBtn").addClass("disabled");
+		}else{
+			$("#fileUpload_" + g + " .noMapError").html("File successfully parsed");
+			$("#fileUpload_" + g + " .noMapError").removeClass("noMapError");
+		}
+
+	}
+
+
+	if (successful) $("#renderTreesBtn").removeClass("disabled");
+	else uploadNewFiles();
+
+	return successful;
+
+}
+
+
+
+
+// Removes a species or gene tree and its associated file
+function removeFile(g){
+
+	if (g == -1){
+		SPECIES_UPLOADED_FILE = null;
+		$("#speciesTreeUploadTable").html("");
+		SPECIES_TREES_ALL = [];
+		SPECIES_TREES = null;
+		$("#renderTreesBtn").addClass("disabled");
+
+		console.log("Removing", $(".noMapError"). html());
+		$(".noMapError").html("File successfully parsed");
+		$(".noMapError").removeClass("noMapError");
+
+	}
+	else if (g >= 0){
+		
+		// Delete the gene tree
+		GENE_TREES_ALL[g] = null;
+		NUMBER_OF_GENE_TREES--;
+	
+		// Delete the gene tree file
+		GENE_UPLOADED_FILES[g] = null;
+
+		// Update html
+		$("#fileUpload_" + g).remove();
+		renderGeneTreeColourSettings();
+	
+	}
+
+	if (NUMBER_OF_GENE_TREES == 0 && SPECIES_TREES_ALL.length > 0) {
+		$("#renderTreesBtn").removeClass("disabled");
+	}
+
+
+}
+
+
+
+// Gets an HTML template for file uploading
+function getFileUploadTemplate(fileID, fileName){
+
+	//console.log("Uploading", fileID, fileName);
+	return ` <tr style="height:2em" id="fileUpload_` + fileID + `">
+			<td style="min-width:20px"> <div title="Loading file..." class="loader" style="margin:auto"></div> </td>
+			<td style="width:40%; text-align:right"><i>` + fileName + `</i>:</td>
+			<td style="min-width:20px;"></td>
+			<td class="userMsg" style="width:60%; text-align:justified"">Uploading</td>
+			<td style="cursor:pointer; min-width:20px; font-size:200%;" title="Remove file" onclick="removeFile(` + fileID + `)">&times;</td>
+		 </tr>`;
+
+}
+
+
+
+function addLoader(eleAddTo, id = "loader"){
+	$(eleAddTo).append(`<div  id="` + id + `" title="Loading file..." class="loader" style="margin:auto"></div>`);
+}
+
+
+
+
+// Get the leaves of the tree
+function getLeaves(tree) {
+	var leaves = [];
+	for (var i = 0; i < tree.nodeList.length; i ++) {
+		var node = tree.nodeList[i];
+		if (node.children.length == 0) {
+			leaves.push(node);
+		}
+	}
+	return leaves;
+}
+
+
+
 function openDownloadDialog(){
 	
 
@@ -61,8 +319,8 @@ function uploadNewFiles(){
 	
 	READY_TO_DRAW = false;
 	
-	$("#fileUploading").show(300);
-	$(".showAfterTreeUpload").hide(300);
+	$("#fileUploading").show(0);
+	//$(".showAfterTreeUpload").hide(300);
 				
 	var svg = $("#tree");
 	svg.html("");

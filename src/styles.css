@@ -9,11 +9,11 @@
 
 
 .loader {
-	border: 16px solid white; 
-	border-top: 16px solid #DB5079; 
+	border: 0.3em solid white; 
+	border-top: 0.3em solid #DB5079; 
 	border-radius: 50%;
-	width: 20px;
-	height: 20px;
+	width: 0.2em;
+	height: 0.2em;
 	animation: spin 2s linear infinite;
 
 }
@@ -394,18 +394,15 @@ input[type=number] {
 
 
 
-#fileUploading td{
-	width:50%;
-}
-
 
 .uploader {
-	height:100%;
+	height:25em;
 	border-style:dashed;
 	border-radius: 20px;
 	text-align:center;
 	vertical-align:middle;
 	margin: 20px;
+	overflow-y:auto;
 }
 
 
@@ -415,7 +412,7 @@ input[type=number] {
 
 .uploader  div {
 	font-size:200%;
-	margin-top: 150px;
+	margin-top: 3em;
 	color:#DB5079;
 	padding: 10;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
@@ -425,6 +422,19 @@ input[type=number] {
 .uploader.dz-drag-hover div, .uploader:hover div {
 	color:white;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+
+.uploader table{
+	%border-style:solid;
+	%border-width:0.5px;
+	width:80%;
+	margin-left:10%;
+}
+
+
+.uploader.dz-drag-hover table, .uploader:hover table {
+	color:white;
 }
 
 @import "compass/css3";

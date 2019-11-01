@@ -112,9 +112,6 @@
 				$(".speciesAnnotationNumerical").hide(0);
 				
 				
-				
-				$("#speciesTreeUploadMsg").hide(0);
-				$("#geneTreeUploadMsg").hide(0);
 
 
 				// Operator
@@ -124,110 +121,8 @@
 				$("#windowInput").val(ALPHA_WINDOW);
 				revALPHA = 1;
 
+				initUtil();
 
-				var speciesTreeDropzone = new Dropzone("div#species_tree_upload", { url: "/file/post"});
-				speciesTreeDropzone.on("addedfile", function(file) {
-					
-					addLoader("#species_tree_upload", "treeLoader");
-					var reader = new FileReader();
-
-					// Closure to capture the file information.
-					reader.onload = (function(theFile) {
-						return function(e) {
-
-							if (e == null || e.target.result == "") return;
-							try {
-								SPECIES_TREES_ALL = getTreesFromString(e.target.result);
-							} 
-							catch(err){
-								$("#speciesTreeUploadMsg").html("<b>Error parsing " + theFile.name + ":</b>  " + err.message);
-								$("#speciesTreeUploadMsg").show(300);
-								$("#treeLoader").remove();
-								return;
-							}
-							
-							NTREES = SPECIES_TREES_ALL.length;
-							TREE_NUM = Math.floor(NTREES * BURNIN);
-							console.log(theFile);
-							$("#speciesTreeUploadMsg").html(theFile.name + " successfully parsed<br>");
-							$("#speciesTreeUploadMsg").show(300);
-							if (SPECIES_TREES_ALL.length > 0) $("#renderTreesBtn").removeClass("disabled");
-							$("#treeLoader").remove();
-
-						};
-
-					})(file);
-
-					reader.readAsText(file);
-
-				});
-
-
-
-
-				var geneTreeDropzone = new Dropzone("div#gene_tree_upload", { url: "/file/post"});
-				geneTreeDropzone.on("addedfile", function(file) {
-					
-					addLoader("#gene_tree_upload", "treeLoader");
-
-					var reader = new FileReader();
-
-					// Closure to capture the file information.
-					reader.onload = (function(theFile) {
-						return function(e) {
-
-							if (e == null || e.target.result == "") return;
-
-							try{
-								var tree = getTreesFromString(e.target.result);
-								tree.name = theFile.name;
-								GENE_TREES_ALL.push(tree);
-							} 
-							catch(err){
-								$("#geneTreeUploadMsg").append("<b>Error parsing " + theFile.name + ":</b>  " + err.message);
-								$("#geneTreeUploadMsg").show(300);
-								$("#treeLoader").remove();
-								return;
-							}
-							
-
-
-
-							$("#geneTreeUploadMsg").append(theFile.name + " successfully parsed<br>");
-							$("#geneTreeUploadMsg").show(300);
-							//if (SPECIES_TREES_ALL.length > 0 && GENE_TREES_ALL.length > 0) $("#renderTreesBtn").removeClass("disabled");
-							$("#treeLoader").remove();
-							
-							renderGeneTreeColourSettings();
-							
-
-						};
-
-					})(file);
-
-					reader.readAsText(file);
-
-				});
-
-			
-
-				/*
-
-				loadFileAsString("trees/starbeast3_UCLN.species.trees", function(str1) { loadFileAsString("trees/starbeast3_UCLN.gene26.trees", function(str2) { loadFileAsString("trees/starbeast3_UCLN.gene29.trees", function(str3) {
-
-					SPECIES_TREES_ALL = getTreesFromString(str1);
-
-					GENE_TREES_ALL = [];
-					GENE_TREES_ALL.push(getTreesFromString(str2));
-					GENE_TREES_ALL.push(getTreesFromString(str3));
-
-					NTREES = GENE_TREES_ALL[0].length;
-					TREE_NUM = Math.floor(NTREES * BURNIN) + 1;
-					renderTrees();
-
-				}); }); });
-
-				*/
 
 			}
 
@@ -329,9 +224,6 @@
 			}
 
 
-			function addLoader(eleAddTo, id = "loader"){
-				$(eleAddTo).append(`<div  id="` + id + `" title="Loading file..." class="loader" style="margin:auto"></div>`);
-			}
 			
 			
 	
@@ -367,43 +259,17 @@
 				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW) return;
 			
 			
-				$("#fileUploading").hide(0);
-				$(".showAfterTreeUpload").show(0);
-				
-				SPECIES_TREE_X = null;
-				unhover();
-				$(".dialog").remove();
-
-				
+			
+				// Get the gene trees
 				GENE_TREES = [];
 				for (var g = 0;  g < GENE_TREES_ALL.length; g ++){
-					GENE_TREES.push(GENE_TREES_ALL[g][TREE_NUM]);
+					if (GENE_TREES_ALL[g] == null) GENE_TREES.push(null);
+					else GENE_TREES.push(GENE_TREES_ALL[g][TREE_NUM]);
 				}
 
 
+				// Get the species tree and its leaves
 				SPECIES_TREE = SPECIES_TREES_ALL[TREE_NUM];
-				SPECIES_TREE.geneNodeMap = {};
-				console.log("speciesTree", SPECIES_TREE);
-				var newSpeciesTreeAnnotations = getTreeAnnotations(SPECIES_TREE);
-				renderAnnotations(newSpeciesTreeAnnotations);
-				SPECIES_TREE.linewidth_fn = planLineWidths(SPECIES_TREE, SPECIES_BRANCH_MULTIPLIER, SPECIES_BRANCH_WIDTH);
-				SPECIES_TREE.bgcolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BGCOL_ANNOTATION, SPECIES_TREE_BG_COL);
-				SPECIES_TREE.bordercolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BORDER_ANNOTATION, SPECIES_TREE_BORDER_COL);
-				
-
-
-
-				$("#treeNum").val(TREE_NUM);
-				resizeInput($("#treeNum"));
-
-
-				// Get max tree height 
-				MAX_TREE_HEIGHT = SPECIES_TREE.root.height;
-				for (var g = 0;  g < GENE_TREES.length; g ++){
-					MAX_TREE_HEIGHT = Math.max(MAX_TREE_HEIGHT, GENE_TREES[g].root.height);
-				}
-
-
 				var totalNAtLeaves = 0;
 				SPECIES_LEAVES = [];
 				for (var i = 0; i < SPECIES_TREE.nodeList.length; i ++) {
@@ -425,12 +291,56 @@
 
 					//console.log(i, SPECIES_TREE.nodeList[i].populationsize);
 					
+					//if (node.children.length == 0) {
 					if (node.label != null) {	
-						node.height = 0;
 						totalNAtLeaves += node.populationsize;
 						SPECIES_LEAVES.push(node);
 					}
 				}
+
+
+
+				SPECIES_TREE.successfullyMapped = mapAllGeneTreesToSpeciesTree(SPECIES_LEAVES, GENE_TREES);
+				if (!SPECIES_TREE.successfullyMapped){
+					return;
+				}
+
+
+				$("#fileUploading").hide(0);
+				$(".showAfterTreeUpload").show(0);
+				
+				
+				unhover();
+				$(".dialog").remove();
+
+
+
+
+				
+				SPECIES_TREE.geneNodeMap = {};
+				console.log("speciesTree", SPECIES_TREE);
+				var newSpeciesTreeAnnotations = getTreeAnnotations(SPECIES_TREE);
+				renderAnnotations(newSpeciesTreeAnnotations);
+				SPECIES_TREE.linewidth_fn = planLineWidths(SPECIES_TREE, SPECIES_BRANCH_MULTIPLIER, SPECIES_BRANCH_WIDTH);
+				SPECIES_TREE.bgcolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BGCOL_ANNOTATION, SPECIES_TREE_BG_COL);
+				SPECIES_TREE.bordercolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BORDER_ANNOTATION, SPECIES_TREE_BORDER_COL);
+				
+
+
+
+				$("#treeNum").val(TREE_NUM);
+				resizeInput($("#treeNum"));
+
+
+				// Get max tree height 
+				MAX_TREE_HEIGHT = SPECIES_TREE.root.height;
+				for (var g = 0;  g < GENE_TREES.length; g ++){
+					if (GENE_TREES[g] == null) continue;
+					MAX_TREE_HEIGHT = Math.max(MAX_TREE_HEIGHT, GENE_TREES[g].root.height);
+				}
+				if (MAX_TREE_HEIGHT == SPECIES_TREE.root.height) MAX_TREE_HEIGHT *= 1.05;
+
+				
 				
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
@@ -444,6 +354,7 @@
 				// Count number of displayed gene trees
 				var numToDisplay = 0;
 				for (var g = 0; g < GENE_TREES.length; g++){
+					if (GENE_TREES[g] == null) continue;
 					if (GENE_TREE_DISPLAYS[g] == null || GENE_TREE_DISPLAYS[g] == true) numToDisplay++;
 				}
 			
@@ -451,6 +362,7 @@
 				// Add gene tree offsets so that nodes don't overlap
 				var numVisibleTreesCumulative = 0;
 				for (var g = 0;  g < GENE_TREES.length; g ++){
+					if (GENE_TREES[g] == null) continue;
 					if (GENE_TREE_DISPLAYS[g] == null || GENE_TREE_DISPLAYS[g] == true) {
 						GENE_TREES[g].offsetIndex = numVisibleTreesCumulative;
 						numVisibleTreesCumulative++;
@@ -465,39 +377,19 @@
 				for (var g = 0; g < GENE_TREES.length; g++){
 
 					var gene_tree = GENE_TREES[g];
-					//gene_tree.speciesNodeMap = {};
-					
+					if (gene_tree == null) continue;
 					
 					// Do not render if unchecked
 					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) continue;
 					
-					
-					
-					//getTreeAnnotations(gene_tree);
-					
-					// gene_tree.linewidth_fn = planLineWidths(SPECIES_TREE, GENE_BRANCH_MULTIPLIER, GENE_BRANCH_WIDTH);
-					
 		
-					// Get the leaves
-					var leaves = [];
+					// Reset nodes
 					for (var i = 0; i < gene_tree.nodeList.length; i ++) {
 						var geneNode = gene_tree.nodeList[i];
-						geneNode.speciesNodeMap = null;
 						geneNode.coords = { cx: -1, cy: -1, x: [], y: [], strokeWidths: [] };
 						geneNode.coordsStored = JSON.parse(JSON.stringify(geneNode.coords));
-						
-						
-						if (geneNode.children.length == 0) {
-							leaves.push(geneNode);
-							geneNode.height = 0;
-						}
 					}
 					
-					
-					// Map the leaves to species leaves
-					var successfullyMapped = mapGeneTreeToSpeciesTree(g, gene_tree.name, leaves, SPECIES_LEAVES);
-					if (!successfullyMapped) continue;
-
 
 					buildGeneTreeSpeciesTreeMap(g, gene_tree.root);
 					planGeneTree(g, gene_tree.root, gene_tree, GROUP_GENES_BY_TAXA);
@@ -512,7 +404,7 @@
 			function renderTrees(options = null, animate = false) {
 
 
-				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW) return;
+				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW || !SPECIES_TREE.successfullyMapped) return;
 				
 
 
@@ -560,6 +452,7 @@
 				for (var g = 0; g < GENE_TREES.length; g++){
 
 					var gene_tree = GENE_TREES[g];
+					if (gene_tree == null) continue;
 					//gene_tree.speciesNodeMap = {};
 					
 					
@@ -1530,18 +1423,20 @@
 
 				<table id="fileUploading" cellspacing=10>
 					<tr>
-						<td>
+						<td style="width:50%">
 							<div id="species_tree_upload" class="uploader">
 								<div>Upload a species tree file</div>
-								<span id="speciesTreeUploadMsg"></span>
+								<table id="speciesTreeUploadTable"">
+								</table>
 								
 							</div>
 						</td>
 
-						<td>
+						<td style="width:50%">
 							<div id="gene_tree_upload" class="uploader">
 								<div>Upload one or more gene tree files</div>
-								<span id="geneTreeUploadMsg"></span>
+								<table id="geneTreeUploadTable">
+								</table>
 							</div>
 						</td>
 					</tr>

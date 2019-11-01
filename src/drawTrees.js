@@ -588,6 +588,9 @@ function buildGeneTreeSpeciesTreeMap(geneTreeNum, node) {
 	}
 
 
+	
+
+
 	// Get initial coordinates of children
 	var left = node.children[0];
 	var right = node.children[1];
@@ -613,6 +616,7 @@ function buildGeneTreeSpeciesTreeMap(geneTreeNum, node) {
 		
 		
 		speciesNodeMappedTo = speciesNodeMappedTo.parent;
+		//console.log(geneTreeNum, "speciesNodeMappedTo", speciesNodeMappedTo);
 		if (true || left.speciesNodeMap.id != node.speciesNodeMap.id) speciesNodeMappedTo.nodeToGeneBranchMap[geneTreeNum][left.id] = left;
 	}
 	
