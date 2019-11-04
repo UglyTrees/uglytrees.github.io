@@ -819,6 +819,19 @@
 						break;
 					}
 				}
+				if (node == null) return;
+
+
+				// Flip subtree if node has children
+				$("#flipSubtreeBtn").unbind("click");
+				if (node.children.length == 2) {
+					$("#flipSubtreeBtn").show(0);
+ 					$("#flipSubtreeBtn").click(function() { 
+						$('#hoverAnnotationDiv').hide(0);
+						flipSubtree(node); 
+					});
+				} 
+				else $("#flipSubtreeBtn").hide(0);
 
 
 				// Annotations
@@ -1186,11 +1199,11 @@
 					<tr id="hoverAnnotationTitle">
 						<td><b>Node information</b></td>
 					</tr>
-					
 
-					<tr  class="rowbutton" title="Swap the two children of this node" onclick="$('#hoverAnnotationDiv').hide(0);">
+					<tr id="flipSubtreeBtn" class="rowbutton" title="Swap the two children of this node">
 						<td>Flip subtree</td>
 					</tr>
+
 					<tr  class="rowbutton" title="Close annotation box" onclick="$('#hoverAnnotationDiv').hide(0);">
 						<td>Close</td>
 					</tr>

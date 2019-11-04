@@ -727,6 +727,19 @@ function setAnnotationDataType(){
 
 
 
+// Swaps the children in a subtree
+function flipSubtree(node){
+	
+
+	var temp = node.children[0];
+	node.children[0] = node.children[1];
+	node.children[1] = temp;
+	//console.log("Flipped", node);
+	planTrees();
+	renderTrees(null, true);
+
+}
+
 
 
 
