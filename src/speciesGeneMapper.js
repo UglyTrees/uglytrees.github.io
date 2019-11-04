@@ -204,7 +204,7 @@ function mapGeneTreeToSpeciesTree(g, geneLeaves, speciesLeaves){
 
 // Find all of the node annotations, and determine whether they have missing values,
 // and if they are nominal or numerical
-function getTreeAnnotations(tree){
+function getTreeAnnotations(tree, speciesTree = true){
 	
 	
 	var annotation_names = ["Label"];
@@ -229,7 +229,7 @@ function getTreeAnnotations(tree){
 	for (var j = 0; j < annotation_names.length; j ++){
 		
 		var ann_name = annotation_names[j];
-		var annotation = {name: ann_name, complete: true, format: "numerical", mustBeNumerical: false, mustBeNominal: false, gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}};
+		var annotation = {name: ann_name, complete: true, format: "numerical", mustBeNumerical: false, mustBeNominal: false, gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}, speciesTree: speciesTree};
 		var isComplete = true;
 		var isNumerical = true;
 		var allInteger = true;

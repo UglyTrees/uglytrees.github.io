@@ -39,13 +39,16 @@ function initVisualSettings(){
 	START_PLAYING = false;
 	
 	
-	SPECIES_TREE_ANNOTATIONS = [];
+	TREE_ANNOTATIONS = [];
 	CURRENTLY_SELECTED_SPECIES_ANNOTATION = {};
 	SPECIES_BRANCH_BGCOL_ANNOTATION = "_none";
 	SPECIES_BRANCH_BORDER_ANNOTATION = "_none";
 	SPECIES_BRANCH_MULTIPLIER = "_none";
 	SPECIES_WIDTH_ANNOTATION = "_none";
 	GENE_BRANCH_MULTIPLIER = "_none";
+	GENE_NODE_MULTIPLIER = "_none";
+	GENE_BRANCH_BGCOL_ANNOTATION = "_none";
+
 
 	SPECIES_TREE_BG_COL = "transparent";
 	SPECIES_TREE_BORDER_COL = "#000000";
@@ -77,6 +80,8 @@ function initVisualSettings(){
 	$("#GROUP_GENES_BY_TAXA").prop("checked", GROUP_GENES_BY_TAXA);
 	$("#SPECIES_BRANCH_MULTIPLIER").val(SPECIES_BRANCH_MULTIPLIER);
 	$("#GENE_BRANCH_MULTIPLIER").val(GENE_BRANCH_MULTIPLIER);
+	$("#GENE_BRANCH_BGCOL_ANNOTATION").val(GENE_BRANCH_BGCOL_ANNOTATION);
+	$("#GENE_NODE_MULTIPLIER").val(GENE_NODE_MULTIPLIER);
 	$("#SPECIES_WIDTH_ANNOTATION").val(SPECIES_WIDTH_ANNOTATION);
 	$("#SPECIES_BRANCH_BGCOL_ANNOTATION").val(SPECIES_BRANCH_BGCOL_ANNOTATION);
 	$("#SPECIES_BRANCH_BORDER_ANNOTATION").val(SPECIES_BRANCH_BORDER_ANNOTATION);
@@ -86,6 +91,9 @@ function initVisualSettings(){
 	$("#SHOW_Y_AXIS").prop("checked", SHOW_Y_AXIS);
 	
 	
+
+	FIRST_ANNOTATION_PASS = true;
+
 	
 	renderParameterValues();
 	
@@ -206,11 +214,13 @@ function setVisualParams(){
 	GROUP_GENES_BY_TAXA = $("#GROUP_GENES_BY_TAXA").is(":checked");
 	SPECIES_BRANCH_MULTIPLIER = $("#SPECIES_BRANCH_MULTIPLIER").val();
 	GENE_BRANCH_MULTIPLIER = $("#GENE_BRANCH_MULTIPLIER").val();
+	GENE_BRANCH_BGCOL_ANNOTATION = $("#GENE_BRANCH_BGCOL_ANNOTATION").val();
+	GENE_NODE_MULTIPLIER = $("#GENE_NODE_MULTIPLIER").val();
 	SPECIES_BRANCH_BGCOL_ANNOTATION = $("#SPECIES_BRANCH_BGCOL_ANNOTATION").val();
 	SPECIES_BRANCH_BORDER_ANNOTATION = $("#SPECIES_BRANCH_BORDER_ANNOTATION").val();
 	
 	var newSpeciesWidthAnnotation = $("#SPECIES_WIDTH_ANNOTATION").val();
-	if (SPECIES_WIDTH_ANNOTATION != newSpeciesWidthAnnotation) {
+	if (false && SPECIES_WIDTH_ANNOTATION != newSpeciesWidthAnnotation) {
 		if (newSpeciesWidthAnnotation != "_none") SHOW_X_AXIS = true;
 		$("#SHOW_X_AXIS").prop("checked", SHOW_X_AXIS);
 		
@@ -517,34 +527,40 @@ function renderAnnotations(newAnnotations = []) {
 		
 		var nameNew = newAnnotations[i].name;
 		var isNew = true;
-		for (var j = 0; j < SPECIES_TREE_ANNOTATIONS.length; j ++){
-			var nameOld = SPECIES_TREE_ANNOTATIONS[j].name;
+		for (var j = 0; j < TREE_ANNOTATIONS.length; j ++){
+			var nameOld = TREE_ANNOTATIONS[j].name;
 			if (nameNew == nameOld){
 				isNew = false;
 				break;
 			}
 		}
 		
-		if (isNew) SPECIES_TREE_ANNOTATIONS.push(newAnnotations[i]);
-		
+		if (isNew) TREE_ANNOTATIONS.push(newAnnotations[i]);
+
 	}
+
+
 	
 	
-	
-	var dropdown_elements = $(".speciesAnnotationsDropdown");
-	for (var i = 0; i < SPECIES_TREE_ANNOTATIONS.length; i ++){
+	var gene_dropdown_elements = $(".geneAnnotationsDropdown");
+	var all_dropdown_elements = $(".geneAnnotationsDropdown,.speciesAnnotationsDropdown");
+	for (var i = 0; i < TREE_ANNOTATIONS.length; i ++){
 		
-		var annotation = SPECIES_TREE_ANNOTATIONS[i];
+		var annotation = TREE_ANNOTATIONS[i];
 		var name = annotation.name;
+
+		// Gene annotations for gene tree nodes only, while species annotations can be displayed on either tree
+		var elements = annotation.speciesTree ? all_dropdown_elements : gene_dropdown_elements;
 		
-		for (var j = 0; j < dropdown_elements.length; j ++){
 			
-			var ele = $(dropdown_elements[j]);
+		for (var j = 0; j < elements.length; j ++){
+			
+			var ele = $(elements[j]);
 			var compatible = !ele.hasClass("numericalOnly")	|| annotation.format == "numerical";
 
 
 			if (compatible && ele.children(`[value="` + name + `"]`).length == 0) { 
-				ele.append(`<option value="` + name + `">` + name + `</option>`);
+				if (name != "Label") ele.append(`<option value="` + name + `">` + name + `</option>`);
 			}else if (!compatible && ele.children(`[value="` + name + `"]`).length == 1){
 				ele.children(`[value="` + name + `"]`).remove();
 			}
@@ -552,6 +568,31 @@ function renderAnnotations(newAnnotations = []) {
 		}
 
 	}
+
+
+
+	if (FIRST_ANNOTATION_PASS){
+		FIRST_ANNOTATION_PASS = false;
+
+		// Attempt to set species branch width to population size
+		var patterns = ["pop", "dmv"];
+		for (var i = 0; i < TREE_ANNOTATIONS.length; i ++){
+
+			for (var j = 0; j < patterns.length; j ++){
+				if (TREE_ANNOTATIONS[i].name.includes(patterns[j])) {
+					SPECIES_WIDTH_ANNOTATION = TREE_ANNOTATIONS[i].name;
+					$("#SPECIES_WIDTH_ANNOTATION").val(SPECIES_WIDTH_ANNOTATION);
+					break;
+				}
+
+
+			}
+
+		}
+		
+	}
+
+
 	
 	
 }
@@ -587,8 +628,8 @@ function updateSpeciesAnnotationPalette(){
 function getAnnotation(name){
 	
 	if (name == "_none") return {};
-	for (var i = 0; i < SPECIES_TREE_ANNOTATIONS.length; i ++){
-		var annotation = SPECIES_TREE_ANNOTATIONS[i];
+	for (var i = 0; i < TREE_ANNOTATIONS.length; i ++){
+		var annotation = TREE_ANNOTATIONS[i];
 		if (annotation.name == name) {
 			return annotation;
 		}

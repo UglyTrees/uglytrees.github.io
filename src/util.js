@@ -85,7 +85,7 @@ function initUtil(){
 				$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
 				if (SPECIES_TREES_ALL.length > 0 && SPECIES_TREES_ALL[0].successfullyMapped) $("#renderTreesBtn").removeClass("disabled");
 				$("#fileUpload_" + util_file.id + " .loader").remove();
-
+				FIRST_ANNOTATION_PASS = true;
 
 
 

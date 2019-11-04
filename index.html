@@ -261,6 +261,7 @@
 			$(window).resize(function() {
 				stop();
 				$("#tree").html("");
+				$("#hoverAnnotationDiv").hide(0);
 				closeDialogs();
 				clearTimeout(resizeId);
 				resizeId = setTimeout(doneResizing, 100);
@@ -298,6 +299,20 @@
 
 				// Get the species tree and its leaves
 				SPECIES_TREE = SPECIES_TREES_ALL[TREE_NUM];
+
+
+
+	
+				SPECIES_TREE.geneNodeMap = {};
+				console.log("speciesTree", SPECIES_TREE);
+				var newSpeciesTreeAnnotations = getTreeAnnotations(SPECIES_TREE, true);
+				renderAnnotations(newSpeciesTreeAnnotations);
+				SPECIES_TREE.linewidth_fn = planLineWidths(SPECIES_TREE, SPECIES_BRANCH_MULTIPLIER, SPECIES_BRANCH_WIDTH);
+				SPECIES_TREE.bgcolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BGCOL_ANNOTATION, SPECIES_TREE_BG_COL);
+				SPECIES_TREE.bordercolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BORDER_ANNOTATION, SPECIES_TREE_BORDER_COL);
+				
+				
+
 
 				var totalNAtLeaves = 0;
 				SPECIES_LEAVES = [];
@@ -345,17 +360,7 @@
 
 
 
-				
-				SPECIES_TREE.geneNodeMap = {};
-				console.log("speciesTree", SPECIES_TREE);
-				var newSpeciesTreeAnnotations = getTreeAnnotations(SPECIES_TREE);
-				renderAnnotations(newSpeciesTreeAnnotations);
-				SPECIES_TREE.linewidth_fn = planLineWidths(SPECIES_TREE, SPECIES_BRANCH_MULTIPLIER, SPECIES_BRANCH_WIDTH);
-				SPECIES_TREE.bgcolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BGCOL_ANNOTATION, SPECIES_TREE_BG_COL);
-				SPECIES_TREE.bordercolour_fn = planColour(SPECIES_TREE, SPECIES_BRANCH_BORDER_ANNOTATION, SPECIES_TREE_BORDER_COL);
-				
-
-
+			
 
 				$("#treeNum").val(TREE_NUM);
 				resizeInput($("#treeNum"));
@@ -367,14 +372,14 @@
 					if (GENE_TREES[g] == null) continue;
 					MAX_TREE_HEIGHT = Math.max(MAX_TREE_HEIGHT, GENE_TREES[g].root.height);
 				}
-				if (MAX_TREE_HEIGHT == SPECIES_TREE.root.height) MAX_TREE_HEIGHT *= 1.1;
-
+				//if (MAX_TREE_HEIGHT == SPECIES_TREE.root.height) MAX_TREE_HEIGHT *= 1.1;
+				var effectiveMaxHeight = MAX_TREE_HEIGHT == SPECIES_TREE.root.height ? MAX_TREE_HEIGHT * 1.1 : MAX_TREE_HEIGHT;
 				
 				
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
-				planSpeciesTree(SPECIES_TREE.root);
-				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	
+				planSpeciesTree(SPECIES_TREE.root, effectiveMaxHeight);
+				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, effectiveMaxHeight);	
 				else Y_AXIS = null;
 				
 				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, SPECIES_TREE.root.coords.xrange.right);	
@@ -423,10 +428,21 @@
 						geneNode.coordsStored = JSON.parse(JSON.stringify(geneNode.coords));
 
 					}
-					
+
 
 					buildGeneTreeSpeciesTreeMap(g, gene_tree.root);
 					planGeneTree(g, gene_tree.root, gene_tree, GROUP_GENES_BY_TAXA);
+
+
+					var newGeneTreeAnnotations = getTreeAnnotations(gene_tree, false);
+					renderAnnotations(newGeneTreeAnnotations);
+					gene_tree.linewidth_fn = planLineWidths(gene_tree, GENE_BRANCH_MULTIPLIER, GENE_BRANCH_WIDTH, true, false);
+					gene_tree.noderadius_fn = planLineWidths(gene_tree, GENE_NODE_MULTIPLIER, GENE_NODE_SIZE, true, true);
+					gene_tree.bgcolour_fn = planColour(gene_tree, GENE_BRANCH_BGCOL_ANNOTATION, getGeneTreeColour(g), true);
+			
+
+					console.log("newGeneTreeAnnotations", newGeneTreeAnnotations);
+					
 
 				}
 
@@ -486,8 +502,7 @@
 				if (!animate) drawAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN);
 				else animateAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN, CURRENT_ANIMATION_TIME);
 
-
-// Draw the species tree
+				// Draw the species tree
 				if (!animate) drawASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root);
 				else animateASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME);
 
@@ -506,8 +521,8 @@
 						continue;
 					}
 					
-					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(svg, "gene" + g, gene_tree.root, SPECIES_TREE, g, {col: getGeneTreeColour(g), strokeWidthMultiplier: GENE_BRANCH_WIDTH, nodeSize: GENE_NODE_SIZE});
-					else animateAGeneTree(svg, "gene" + g, gene_tree.root, SPECIES_TREE, g, {col: getGeneTreeColour(g), strokeWidthMultiplier: GENE_BRANCH_WIDTH, nodeSize: GENE_NODE_SIZE}, CURRENT_ANIMATION_TIME);
+					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(svg, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g);
+					else animateAGeneTree(svg, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME);
 
 					
 				}
@@ -822,9 +837,9 @@
 				if (node == null) return;
 
 
-				// Flip subtree if node has children
+				// Can flip subtree if node has children (and if it is a species tree)
 				$("#flipSubtreeBtn").unbind("click");
-				if (node.children.length == 2) {
+				if (node.children.length == 2 && treeName == "speciestree") {
 					$("#flipSubtreeBtn").show(0);
  					$("#flipSubtreeBtn").click(function() { 
 						$('#hoverAnnotationDiv').hide(0);
@@ -837,10 +852,28 @@
 				// Annotations
 				$(".annotationRow").remove();
 				for (var a in node.annotation){
-					var val = roundToSF(node.annotation[a]);
+					var val = node.annotation[a];
+					var roundedVal = roundToSF(val, 3);
+					if (!isNaN(roundedVal)) val = roundedVal;
 					$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>` + a + `: ` + val + `</td></tr>`);
 				}
+
+
+
+				// Branch length, time, label
+				var branchLength = 0;
+				if (node.parent != null) branchLength = roundToSF(node.parent.height - node.height, 3);
+				else if (node.parent == null && treeName == "speciestree" && MAX_TREE_HEIGHT > node.height) branchLength = roundToSF(MAX_TREE_HEIGHT - node.height, 3);
+				
+				$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Branch length: ` + branchLength + `</td></tr>`);
+				$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Time: ` + roundToSF(node.height, 3) + `</td></tr>`);
 				if (node.label != null) $("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Label: ` + node.label + `</td></tr>`);
+
+
+				// Tree name
+				var filename = treeName == "speciestree" ? SPECIES_UPLOADED_FILE.filename : GENE_UPLOADED_FILES[parseFloat(treeName.split("gene")[1])].filename;
+				$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td><i>` + filename + `</i></td></tr>`);
+				
 
 
 				var x = event.pageX;
@@ -849,7 +882,19 @@
 				
 				
 				// If mouse on bottom half of tree, add the .top class and set bottom to mouse
-				$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, $("#hoverAnnotationDiv").is(":hidden") ? 0 : 200);
+				var topPointer = y < parseFloat($("#innerBody").height()) / 2;
+				if (topPointer) {
+					$("#hoverAnnotationDiv").addClass("topPointer");
+					$("#hoverAnnotationDiv").removeClass("bottomPointer");
+					$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, $("#hoverAnnotationDiv").is(":hidden") ? 0 : 200);
+				}else{
+					$("#hoverAnnotationDiv").removeClass("topPointer");
+					$("#hoverAnnotationDiv").addClass("bottomPointer");
+					var topY = y - parseFloat($("#hoverAnnotationDiv").height());
+					$("#hoverAnnotationDiv").animate({top: topY + "px", left: x + "px"}, $("#hoverAnnotationDiv").is(":hidden") ? 0 : 200);
+					//console.log(x, y, topY, parseFloat($("#hoverAnnotationDiv").height()));
+				}
+				
 				$("#hoverAnnotationDiv").show(0);
 
 
@@ -1239,20 +1284,11 @@
 			
 			<hr>
 
-		</div>
 
-		<div id="modelSideNav" class="sidenav" style="width:0px;">
 
-			<div class="sideNavHeader">
-				Annotations 
-				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
-			</div>
-			
-			<hr>
-			
 			<div class="sideNavSetting" title="Specify annotation properties">
-				<b>Species tree annotations</b><br><br>
-				<select class="dropdown speciesAnnotationsDropdown" id="MODEL_ANNOTATIONS_SPECIES" onchange="selectSpeciesAnnotationSettings();" title="Species tree annotation settings">
+				Node annotations<br><br>
+				<select class="dropdown speciesAnnotationsDropdown geneAnnotationsDropdown" id="MODEL_ANNOTATIONS_SPECIES" onchange="selectSpeciesAnnotationSettings();" title="Species tree annotation settings">
 						<option value="_none">Select annotation...</option>
 						<option value="Label">Label</option>
 				</select>
@@ -1333,7 +1369,7 @@
 			
 
 		</div>
-	
+
 	
 			
 		<div id="speciesTreeSideNav" class="sidenav" style="width:0px;">
@@ -1482,9 +1518,22 @@
 			
 			
 			<hr>
+
+
+			<div class="sideNavSetting" title="Gene tree line widths">
+				Node radius multiplier
+				<select class="dropdown geneAnnotationsDropdown numericalOnly" id="GENE_NODE_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe gene node radius by">
+						<option value="_none">None</option>
+						<option value="Label">Label</option>
+						
+				</select>
+
+			</div>
+
+
 			<div class="sideNavSetting">
 				<input id="GENE_NODE_SIZE" class="slider" onchange="setVisualParams();" type="range" min="0" max="10" value="0" step="0.05">
-				Gene node radius (<span></span> px)
+				Node radius baseline (<span></span> px)
 			</div>
 			<hr>
 			
@@ -1493,8 +1542,9 @@
 
 			<div class="sideNavSetting" title="Gene tree line widths">
 				Line width multiplier
-				<select class="dropdown speciesAnnotationsDropdown numericalOnly" id="GENE_BRANCH_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe branch line width by">
+				<select class="dropdown geneAnnotationsDropdown numericalOnly" id="GENE_BRANCH_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe branch line width by">
 						<option value="_none">None</option>
+						<option value="Label">Label</option>
 						
 				</select>
 
@@ -1506,10 +1556,20 @@
 			</div>
 			<hr>
 
+
+			<div class="sideNavSetting" title="Species tree line width">
+				Colour branches by
+				<select class="dropdown geneAnnotationsDropdown" id="GENE_BRANCH_BGCOL_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branches by">
+						<option value="_none">None</option>
+				</select>
+
+			</div>
 			
 			<table id="geneTreeColours"  class="colourSetting">
 			
 			</table>
+
+
 			<hr>
 			
 		</div>
@@ -1532,7 +1592,6 @@
 								<div class="textbutton left showAfterTreeUpload" onclick="uploadNewFiles()" title="Upload additional files">Open</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openDownloadDialog()" title="Download">Save As</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('viewNav')" title="Configure general visual settings">View</div>
-								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('modelSideNav')" title="Configure annotation settings">Annotations</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('speciesTreeSideNav')" title="Configure species trees settings">Species tree</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('geneTreeSideNav')" title="Configure gene trees settings">Gene trees</div>
 							</div>
@@ -1556,19 +1615,12 @@
 			</div>
 
 
-			<!--
-			<div class="sideTab" style="top:300px">&#9776; Species tree</div>
-			
-			<div class="sideTab" style="top:450px">&#9776; Gene trees</div>
-			-->
-
-			
 
 			<div id="main">
 
 				<table id="fileUploading" cellspacing=10>
 					<tr>
-						<td style="width:50%">
+						<td style="width:45%">
 							<div id="species_tree_upload" class="uploader">
 								<div>Upload a species tree file</div>
 								<table id="speciesTreeUploadTable"">
@@ -1577,7 +1629,12 @@
 							</div>
 						</td>
 
-						<td style="width:50%">
+						<td style="text-align:center" colspan=2>
+							<br><br><br><br>
+							<span id="renderTreesBtn" onclick="userSaysDraw();" class="button large disabled">Draw trees</span>
+						</td>
+
+						<td style="width:45%">
 							<div id="gene_tree_upload" class="uploader">
 								<div>Upload one or more gene tree files</div>
 								<table id="geneTreeUploadTable">
@@ -1586,79 +1643,12 @@
 						</td>
 					</tr>
 					
-					<tr>
-						<td style="text-align:center" colspan=2>
-							<br><br><br><br>
-							<span id="renderTreesBtn" onclick="userSaysDraw();" class="button large disabled">Draw trees</span>
-						</td>
-					</tr>
 					
 				</table>		
 
 				<svg id="tree" height = 0 width = 0></svg>
 			</div>
 
-			<!--
-			<div style="width:70%;  min-width:900px; margin-left:15%; margin-top:50px; text-align:center; background-color:white; border-color:#696969">
-
-				<table style="vertical-align:top; text-align:center; width:100%; padding: 20" cellpadding=0 cellspacing=0>
-					<tr>
-
-
-						<td  style="width:50px"></td>
-
-						<td  style="vertical-align:top; width:700px">
-							<svg id="tree" style=" border-style:solid; border-radius:5px; border-width:0.5px;" height = 0 width = 0></svg>
-						</td>
-
-
-						<td style="vertical-align:bottom; width:200px">
-
-							
-
-							<div id="operatorPanel"></div> <br><br><br>
-
-
-							<span class="button" onclick="operate()">Apply operator</span> <br><br>
-
-
-							<div style="text-align:left; margin-left: 10px">
-								<span title="Window size" style="padding:5"> $w$ = <input onchange="updateAlphaWindow()" type="number" min=0 step=0.0005 id="windowInput" value=0.01 style="width: 80px; padding:5; margin-bottom:5px"></span>  <br>
-								<span title="Sampled alpha" style="padding:5"> $\alpha$ = <span id="sampledAlpha" style="padding:5; margin-right:20px"></span></span> <br> 
-							</div> <br>
-			
-							
-							
-							
-							<div style="color:white; word-break: break-all; border-radius:5px; text-align:left; font-size:120%; padding: 20; border-style:solid; background-color:#DB5079">
-								<div style="text-align:center">
-									<b>Selected node</b><br>
-									<i class="currentNodeInfo" id="currentNodeName"></i><br>
-								</div> 
-
-								<span title="Time / height"> $t$ = <span class="currentNodeInfo" id="currentNodeTime" style="padding:5; margin-right:20px"></span></span> <br> 
-								<span title="Rate of above branch"> $r$ = <span class="currentNodeInfo"  id="currentNodeRate" style="padding:5; margin-right:20px"></span></span> <br>
-								<span title="Genetic distance of above branch"> $d$ = <span class="currentNodeInfo"  id="currentNodeDistance" style="padding:5; margin-right:20px"></span></span> <br>
-								<span title="Effective population size of above branch"> $N$ = <span class="currentNodeInfo"  id="currentNodeSize" style="padding:5; margin-right:20px"></span></span> <br>
-							</div>
-
-
-						</td>
-
-						<td  style="width:50px"></td>
-
-					</tr>
-				</table>
-
-				<br><br><br>
-
-
-
-
-			</div>
-			-->
-
-			
 
 
 			<div id="footer" >

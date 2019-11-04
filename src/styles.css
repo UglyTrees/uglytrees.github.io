@@ -107,6 +107,7 @@ line {
 	/* Rules below not implemented in browsers yet */
 	-o-user-select: none;
 	user-select: none;
+	white-space: nowrap;
 }
 
 .button.large{
@@ -847,28 +848,33 @@ input {
 	position:absolute;
 	color:white; 
 	word-break: break-all; 
-	border-radius:8px; 
-	border-top-left-radius: 0px;
+	border-radius:10px; 
 	text-align:left; 
 	font-size:120%; 
 	padding: 3; 
 	border-style:solid; 
 	background-color:#BEBEBE;
 	border-color:#BEBEBE;;
-	
+	%border-left-color:#A9A9A9;
 }
 
 
-#hoverAnnotationDiv.top {
-	border-top-left-radius: 8px;
+#hoverAnnotationDiv.topPointer {
+	border-top-left-radius: 0px;
+	%box-shadow: 0 -10px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+#hoverAnnotationDiv.bottomPointer {
 	border-bottom-left-radius: 0px;
+	%box-shadow: 0 10px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
 
 #hoverAnnotationDiv > div{
 	border-style:solid; 
 	border-color:white;
 	border-width:1px;
-	%border-radius:8px; 
 }
 
 #hoverAnnotationDiv table{
