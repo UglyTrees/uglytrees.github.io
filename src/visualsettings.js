@@ -55,6 +55,7 @@ function initVisualSettings(){
 	$("#colourboxspeciesBG").css("background-color", SPECIES_TREE_BG_COL);
 	$("#colourboxspeciesBorder").css("background-color", SPECIES_TREE_BORDER_COL);
 	
+	SPECIES_LABEL_FONT_SIZE = 17;
 	SUBTREE_SPACER = 0.2
 	GENE_NODE_SIZE = 4;
 	GENE_BRANCH_WIDTH = 1;
@@ -85,6 +86,7 @@ function initVisualSettings(){
 	$("#SPECIES_WIDTH_ANNOTATION").val(SPECIES_WIDTH_ANNOTATION);
 	$("#SPECIES_BRANCH_BGCOL_ANNOTATION").val(SPECIES_BRANCH_BGCOL_ANNOTATION);
 	$("#SPECIES_BRANCH_BORDER_ANNOTATION").val(SPECIES_BRANCH_BORDER_ANNOTATION);
+	$("#SPECIES_LABEL_FONT_SIZE").val(SPECIES_LABEL_FONT_SIZE);
 	
 	
 	$("#SHOW_X_AXIS").prop("checked", SHOW_X_AXIS);
@@ -210,8 +212,11 @@ function setVisualParams(){
 	SPECIES_BRANCH_WIDTH = Math.max(SPECIES_BRANCH_WIDTH, 0);	
 	
 	SPECIES_TREE_OPACITY = parseFloat($("#SPECIES_TREE_OPACITY").val());
-	SPECIES_TREE_OPACITY = Math.min(Math.max(SPECIES_TREE_OPACITY, 0), 100);	
-	
+	SPECIES_TREE_OPACITY = Math.min(Math.max(SPECIES_TREE_OPACITY, 0), 100);
+
+	SPECIES_LABEL_FONT_SIZE = $("#SPECIES_LABEL_FONT_SIZE").val();	
+	SPECIES_LABEL_FONT_SIZE = Math.max(SPECIES_LABEL_FONT_SIZE, 0);
+
 	
 	GROUP_GENES_BY_TAXA = $("#GROUP_GENES_BY_TAXA").is(":checked");
 	SPECIES_BRANCH_MULTIPLIER = $("#SPECIES_BRANCH_MULTIPLIER").val();
@@ -220,6 +225,8 @@ function setVisualParams(){
 	GENE_NODE_MULTIPLIER = $("#GENE_NODE_MULTIPLIER").val();
 	SPECIES_BRANCH_BGCOL_ANNOTATION = $("#SPECIES_BRANCH_BGCOL_ANNOTATION").val();
 	SPECIES_BRANCH_BORDER_ANNOTATION = $("#SPECIES_BRANCH_BORDER_ANNOTATION").val();
+	
+
 	
 	var newSpeciesWidthAnnotation = $("#SPECIES_WIDTH_ANNOTATION").val();
 	if (false && SPECIES_WIDTH_ANNOTATION != newSpeciesWidthAnnotation) {
@@ -790,7 +797,11 @@ function flipSubtree(node){
 
 
 
-
+// Handler of svg zooming
+function svgZoomed(transform){
+	$("#hoverAnnotationDiv").hide(0);
+	$(".labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / transform.scale);
+}
 
 
 

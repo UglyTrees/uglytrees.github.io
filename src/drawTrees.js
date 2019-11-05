@@ -308,6 +308,38 @@ function planColour(tree, annotation_name, backgroundCol, isGeneTree = false){
 
 
 
+// Iterates through a tree and gets the maximum size of a label, given the font 
+function getMaximumLabelTextSizeOfTree(node, fontSize){
+
+	
+	if (node.children.length == 0){
+		return getSizeOfText(node.label, fontSize);
+	}
+
+	var maxTextSize = getSizeOfText(node.label, fontSize);
+	maxTextSize = Math.max(maxTextSize,  getMaximumLabelTextSizeOfTree(node.children[0], fontSize));
+	maxTextSize = Math.max(maxTextSize,  getMaximumLabelTextSizeOfTree(node.children[1], fontSize));
+	return maxTextSize;
+
+
+
+}
+
+
+function getSizeOfText(text, fontSize){
+
+	if (text == "" || text == null) return 0;
+
+	$("#measureText").html(text);
+	$("#measureText").css("font-size", fontSize);
+	var width = parseFloat($("#measureText").width());
+	//console.log(text, width);
+	return width;
+
+}
+
+
+
 
 // Generates the initial coordinated, later to be linearly transformed onto the svg
 function planSpeciesTree(node, maxTreeHeight) {
@@ -383,7 +415,7 @@ function planSpeciesTree(node, maxTreeHeight) {
 
 
 // Draws a pre-scaled species tree onto the svg
-function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {col: SPECIES_TREE_BORDER_COL, fill: SPECIES_TREE_BG_COL, lineWidthMultiplier: SPECIES_BRANCH_WIDTH,  opacity: SPECIES_TREE_OPACITY}) {
+function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {fontSize: SPECIES_LABEL_FONT_SIZE,  opacity: SPECIES_TREE_OPACITY}) {
 
 	
 	var strokeWidth = tree.linewidth_fn(node); //styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
@@ -400,8 +432,6 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {col: S
 
 	if (node.label != null) {
 
-		var fontSize = 16;
-
 
 		// Label
 		var labelX = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
@@ -410,7 +440,7 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {col: S
 					x: labelX, 
 					y: labelY, 
 					transform: "rotate(90, " + labelX + ", " + labelY + ")",
-					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + fontSize}, node.label);
+					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, node.label);
 
 	}
 	
@@ -470,7 +500,7 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {col: S
 
 
 // Animates a pre-rendered species tree
-function animateASpeciesTree(speciesGroup, textGroup, tree, treename, node, animation_time = 1000, styles = {col: SPECIES_TREE_BORDER_COL,fill: SPECIES_TREE_BG_COL, lineWidthMultiplier: SPECIES_BRANCH_WIDTH, opacity: SPECIES_TREE_OPACITY}) {
+function animateASpeciesTree(speciesGroup, textGroup, tree, treename, node, animation_time = 1000, styles = {fontSize: SPECIES_LABEL_FONT_SIZE,  opacity: SPECIES_TREE_OPACITY}) {
 
 
 	var id = treename + "_" + node.id;
@@ -544,6 +574,7 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, durat
 		//ele.attr("transform", "rotate(90, " + labelX + ", " + labelY + ")");
 
 		ele.velocity( {x: labelX, y: labelY, transform:  "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
+		ele.css("font-size", styles.fontSize);
 
 		
 	}

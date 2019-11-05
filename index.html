@@ -70,7 +70,7 @@
 
 				
 				SVG_TOP_MARGIN = 20;
-				SVG_BOTTOM_MARGIN = 50;
+				SVG_BOTTOM_MARGIN = 10;
 				SVG_UNDER_BOTTOM_MARGIN = 25;
 				SVG_LEFT_MARGIN = 20;
 	
@@ -84,6 +84,7 @@
 				SPECIES_TREES_ALL = [];
 				GENE_TREES_ALL = [];
 				READY_TO_DRAW = false;
+				MAX_TEXT_SIZE = 0;
 
 				SVG_HEIGHT = 0;
 				SVG_WIDTH = 0;
@@ -384,7 +385,12 @@
 				
 				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, SPECIES_TREE.root.coords.xrange.right);	
 				else X_AXIS = null;
-				
+
+
+				// Get the maximum pixel length of a species label
+				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE);
+				console.log("maxTextSize", MAX_TEXT_SIZE);
+
 				storeTree(SPECIES_TREE.root);
 				console.log("SPECIES_TREE", SPECIES_TREE);
 			
@@ -451,8 +457,16 @@
 			
 
 			
-			function getEmptySvg(){
-				return `<g id="axisGroup"></g>
+			function getEmptySvg(css = false){
+	
+
+				return (!css ? "" : `
+					<defs>
+						<style type="text/css">
+						   @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+						</style>
+					</defs>`) + `
+					<g id="axisGroup"></g>
 					<g id="speciesGroup"></g>
 					<g id="geneGroup"></g>
 					<g id="textGroup"></g>`;
@@ -491,7 +505,7 @@
 				
 				}else{
 					svg = $(options.svgSelector);
-					svg.html(getEmptySvg());
+					svg.html(getEmptySvg(true));
 					svg.height(options.height);
 					svg.width(options.width);
 				}
@@ -499,7 +513,7 @@
 
 	
 	
-				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN + AXIS_MARGIN , svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE-AXIS_MARGIN, svg.width()-SVG_RIGHT_MARGIN-AXIS_MARGIN , SVG_TOP_MARGIN+AXIS_MARGIN );
+				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN + AXIS_MARGIN , svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE-AXIS_MARGIN-MAX_TEXT_SIZE, svg.width()-SVG_RIGHT_MARGIN-AXIS_MARGIN , SVG_TOP_MARGIN+AXIS_MARGIN );
 				
 			
 				
@@ -1240,6 +1254,8 @@
 
 
 
+		<div id="measureText"></div>
+
 		
 		<div id="hoverAnnotationDiv" style="display:none">
 
@@ -1395,6 +1411,15 @@
 			<hr>
 
 
+			<div class="sideNavSetting">
+				<input id="SPECIES_LABEL_FONT_SIZE" class="slider" onchange="setVisualParams();" type="range" min="0" max="60" value="0" step="0.5">
+				Label font size (<span></span> px)
+			</div>
+
+			<hr>
+			
+
+
 
 
 
@@ -1493,12 +1518,11 @@
 			<hr>
 
 
-
-
-
 		</div>
 		
 		
+
+
 		<div id="geneTreeSideNav" class="sidenav" style="width:0px;">	
 		
 			<div class="sideNavHeader">
@@ -1650,7 +1674,7 @@
 					
 				</table>		
 
-				<svg id="tree" height=0 width=0 easypz='{"applyTransformTo": "svg > *", "options": { "minScale": 1, "maxScale": 50, "bounds": { "top": 0, "right": 0, "bottom": 0, "left": 0 }} }'  ></svg>
+				<svg id="tree" height=0 width=0 easypz='{"applyTransformTo": "svg > *",  "onTransformed": "svgZoomed",  "modes": ["SIMPLE_PAN", "WHEEL_ZOOM_MOMENTUM", "PINCH_ZOOM_MOMENTUM"], "options": { "minScale": 1, "maxScale": 50, "bounds": { "top": 0, "right": 0, "bottom": 0, "left": 0 }} }'  ></svg>
 			</div>
 
 <!--easypz='{"applyTransformTo": "svg > *", "options": { "minScale": 0.8, "maxScale": 10, "bounds": { "top": -50, "right": 50, "bottom": 50, "left": -50 }} }' width="400" height="400">-->
