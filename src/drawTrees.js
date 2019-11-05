@@ -383,7 +383,7 @@ function planSpeciesTree(node, maxTreeHeight) {
 
 
 // Draws a pre-scaled species tree onto the svg
-function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE_BORDER_COL, fill: SPECIES_TREE_BG_COL, lineWidthMultiplier: SPECIES_BRANCH_WIDTH,  opacity: SPECIES_TREE_OPACITY}) {
+function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {col: SPECIES_TREE_BORDER_COL, fill: SPECIES_TREE_BG_COL, lineWidthMultiplier: SPECIES_BRANCH_WIDTH,  opacity: SPECIES_TREE_OPACITY}) {
 
 	
 	var strokeWidth = tree.linewidth_fn(node); //styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
@@ -394,6 +394,27 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 	
 	
 	//console.log("node", node);
+
+
+
+
+	if (node.label != null) {
+
+		var fontSize = 16;
+
+
+		// Label
+		var labelX = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
+		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + 5;
+		drawSVGobj(textGroup, "text", {class: "labelText", id: id + "_L", 
+					x: labelX, 
+					y: labelY, 
+					transform: "rotate(90, " + labelX + ", " + labelY + ")",
+					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + fontSize}, node.label);
+
+	}
+	
+	// text-anchor:end; 
 
 	// Leaf node. Draw branch and return x,y values of parent node
 	if (node.children.length == 0){
@@ -412,7 +433,7 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth + "px"}, "", true);		
 		
 
-					
+		
 		return;
 
 	}
@@ -421,8 +442,8 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 
 
 	// Internal/root node. Draw children first
-	drawASpeciesTree(svg, tree, treename, node.children[0], styles);
-	drawASpeciesTree(svg, tree, treename, node.children[1], styles);
+	drawASpeciesTree(svg, textGroup, tree, treename, node.children[0], styles);
+	drawASpeciesTree(svg, textGroup, tree, treename, node.children[1], styles);
 	
 
 
@@ -438,8 +459,9 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 									points: points.join(" "), 
 									fill: fill,
 									style: "opacity: " + styles.opacity / 100 + "; stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth}, "", true);		
-	
-	
+
+
+
 
 }
 
@@ -448,24 +470,21 @@ function drawASpeciesTree(svg, tree, treename, node, styles = {col: SPECIES_TREE
 
 
 // Animates a pre-rendered species tree
-function animateASpeciesTree(svg, tree, treename, node, animation_time = 1000, styles = {col: SPECIES_TREE_BORDER_COL, 
-																						fill: SPECIES_TREE_BG_COL, 
-																						lineWidthMultiplier: SPECIES_BRANCH_WIDTH,
-																						opacity: SPECIES_TREE_OPACITY}) {
+function animateASpeciesTree(speciesGroup, textGroup, tree, treename, node, animation_time = 1000, styles = {col: SPECIES_TREE_BORDER_COL,fill: SPECIES_TREE_BG_COL, lineWidthMultiplier: SPECIES_BRANCH_WIDTH, opacity: SPECIES_TREE_OPACITY}) {
 
 
 	var id = treename + "_" + node.id;
 	node.htmlID = id;
 
-	animateSpeciesBranch(tree, node, "P", styles, animation_time);
-
+	animateSpeciesBranch(speciesGroup, tree, node, "P", styles, animation_time);
+	animateSpeciesBranch(textGroup, tree, node, "L", styles, animation_time);
 	
 
 	
 	
 	// Animate children
 	for (var c = 0; c < node.children.length; c++){
-		animateASpeciesTree(svg, tree, treename, node.children[c], animation_time, styles);
+		animateASpeciesTree(speciesGroup, textGroup, tree, treename, node.children[c], animation_time, styles);
 	}
 
 	
@@ -473,41 +492,61 @@ function animateASpeciesTree(svg, tree, treename, node, animation_time = 1000, s
 
 
 
-
-function animateSpeciesBranch(tree, node, branchLetter = "B", styles, duration = 1000) {
-
-
+// Animate a pre-rendered species tree branch
+function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, duration = 1000) {
 
 
-	var ele = $("#" + node.htmlID + "_" + branchLetter);
+
+	var ele = svg.find("#" + node.htmlID + "_" + branchLetter);
 	
 	if (ele.length == 0) return;
 	
-	//var strokeWidth = styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
-	var strokeWidth = tree.linewidth_fn(node);
-	var fill = tree.bgcolour_fn(node);
-	var stroke = tree.bordercolour_fn(node);
-	//console.log(node.htmlID, node.rate, strokeWidth);
-	
-	var points = [	tree.scaleX_fn(node.coords.bottomLeft.x), tree.scaleY_fn(node.coords.bottomLeft.y),
-					tree.scaleX_fn(node.coords.bottomRight.x), tree.scaleY_fn(node.coords.bottomLeft.y),
-					tree.scaleX_fn(node.coords.topRight.x), tree.scaleY_fn(node.coords.topRight.y),
-					tree.scaleX_fn(node.coords.topLeft.x), tree.scaleY_fn(node.coords.topRight.y)];
-	
-	
-	//console.log("fill", fill, node, node.annotation.pop);
-	
-	
-	ele.velocity("finish");
-	
-	if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {points: points.join(" ")}, duration );
-	else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, duration );
-	
-	//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
-	//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
-	ele.css("stroke", stroke);
-	ele.css("fill", fill);
-	ele.css("opacity", styles.opacity / 100);
+
+	// Move branch parallelogram
+	if (branchLetter == "P"){
+
+		//var strokeWidth = styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
+		var strokeWidth = tree.linewidth_fn(node);
+		var fill = tree.bgcolour_fn(node);
+		var stroke = tree.bordercolour_fn(node);
+		//console.log(node.htmlID, node.rate, strokeWidth);
+		
+		var points = [			tree.scaleX_fn(node.coords.bottomLeft.x), tree.scaleY_fn(node.coords.bottomLeft.y),
+						tree.scaleX_fn(node.coords.bottomRight.x), tree.scaleY_fn(node.coords.bottomLeft.y),
+						tree.scaleX_fn(node.coords.topRight.x), tree.scaleY_fn(node.coords.topRight.y),
+						tree.scaleX_fn(node.coords.topLeft.x), tree.scaleY_fn(node.coords.topRight.y)];
+		
+		
+		//console.log("fill", fill, node, node.annotation.pop);
+		
+		
+		ele.velocity("finish");
+		
+		if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {points: points.join(" ")}, duration );
+		else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, duration );
+		
+		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
+		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
+		ele.css("stroke", stroke);
+		ele.css("fill", fill);
+		ele.css("opacity", styles.opacity / 100);
+
+
+	}
+
+	// Move label
+	else if(branchLetter == "L"){
+		
+
+		var labelX = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
+		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + 5;
+
+		//ele.attr("transform", "rotate(90, " + labelX + ", " + labelY + ")");
+
+		ele.velocity( {x: labelX, y: labelY, transform:  "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
+
+		
+	}
 	
 
 
@@ -911,11 +950,11 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 	
 	// If there are any further branch lines for this node then delete them
 	var branchNumToDelete = node.coords.x.length-1;
-	var branchToDelete = $("#" + node.htmlID + "_B" + branchNumToDelete);
+	var branchToDelete = svg.find("#" + node.htmlID + "_B" + branchNumToDelete);
 	while (branchToDelete.length > 0){
 		branchToDelete.remove();
 		branchNumToDelete++;
-		branchToDelete = $("#" + node.htmlID + "_B" + branchNumToDelete);
+		branchToDelete = svg.find("#" + node.htmlID + "_B" + branchNumToDelete);
 	}
 	
 	
@@ -944,7 +983,7 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 	// Move the node
 	if (branchNumber == -1){
 		
-		var ele = $("#" + node.htmlID);
+		var ele = svg.find("#" + node.htmlID);
 		
 
 		var cx = speciestree.scaleX_fn(node.coords.cx);
@@ -985,7 +1024,7 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 	else {
 	
 		
-		var ele = $("#" + node.htmlID + "_B" + branchNumber)
+		var ele = svg.find("#" + node.htmlID + "_B" + branchNumber)
 		var x1 = speciestree.scaleX_fn(node.coords.x[branchNumber]);
 		var x2 = speciestree.scaleX_fn(node.coords.x[branchNumber + 1]);
 		var y1 = speciestree.scaleY_fn(node.coords.y[branchNumber]);
@@ -1121,11 +1160,11 @@ function planAxis(label, min, max, minAtZero = min == 0, zeroLabel = true, niceB
 
 
 // Draw an axis. Sides: 1, 2, 3, 4 correspond to top, right, bottom, left
-function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSize = 5){
+function drawAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSize = 5){
 
 
 
-	$(".axis_" + side).remove();
+	axisGroup.find(".axis_" + side).remove();
 	
 	
 	if (axis == null) return;
@@ -1155,7 +1194,7 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 		} 
 
 		
-		drawSVGobj(svg, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
+		drawSVGobj(axisGroup, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
 				x1: tx1, 
 				y1: ty1, 
 				x2: tx2,
@@ -1164,7 +1203,7 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 				style: "stroke:" + stroke + "; stroke-width:0.3px;" });
 
 
-		drawSVGobj(svg, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
+		drawSVGobj(axisGroup, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
 				x: tx1, 
 				y: ty1, 
 				axis_val: val,
@@ -1182,11 +1221,11 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 
 
 // Animates an axis
-function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, duration = 100){
+function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, duration = 100){
 	
 	
 	if (axis == null) {
-		$(".axis_" + side).remove();
+		axisGroup.find(".axis_" + side).remove();
 		return;
 	}
 	
@@ -1196,14 +1235,14 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 	var tx1, tx2, ty1, ty2;
 
 	// Mark the objects as old
-	svg.find(".axis_" + side).attr("old", "1");
+	axisGroup.find(".axis_" + side).attr("old", "1");
 	
 
 	for (var i = 0; i < axis.vals.length; i++){
 		
 
 		var val = axis.vals[i];
-		var ele = svg.find('line.axis_' + side + '[axis_val="' + val + '"]');
+		var ele = axisGroup.find('line.axis_' + side + '[axis_val="' + val + '"]');
 
 		if (side == 1 || side == 3){
 			ty2 = side == 1 ? svg.height() - axisMargin : axisMargin;
@@ -1223,7 +1262,7 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 
 		if (ele.length == 0) {
 			
-			drawSVGobj(svg, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
+			drawSVGobj(axisGroup, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
 				x1: tx1, 
 				y1: ty1, 
 				x2: tx2,
@@ -1232,7 +1271,7 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 				style: "stroke:" + stroke + "; stroke-width:0.5px;" });
 				
 				
-			drawSVGobj(svg, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
+			drawSVGobj(axisGroup, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
 				x: tx1, 
 				y: ty1, 
 				axis_val: val,
@@ -1243,11 +1282,11 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 		else {
 			
 			//ele.velocity("finish");
-			console.log(ele.attr("id"));
+			//console.log(ele.attr("id"));
 			ele.velocity({x1: tx1, x2: tx2, y1: ty1, y2: ty2}, duration);
 			ele.attr("old", "0");
 			
-			var textEle = svg.find('text.axis_' + side + '[axis_val="' + val + '"]');
+			var textEle = axisGroup.find('text.axis_' + side + '[axis_val="' + val + '"]');
 			textEle.velocity({x: tx1, y: ty1}, duration);
 			textEle.html(val);
 			textEle.attr("old", "0");
@@ -1262,7 +1301,7 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 
 
 	// If there are leftover ticks delete them
-	svg.find('.axis_' + side + '[old="1"]').remove();
+	axisGroup.find('.axis_' + side + '[old="1"]').remove();
 
 	
 	

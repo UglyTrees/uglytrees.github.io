@@ -70,7 +70,7 @@
 
 				
 				SVG_TOP_MARGIN = 20;
-				SVG_BOTTOM_MARGIN = 5;
+				SVG_BOTTOM_MARGIN = 50;
 				SVG_UNDER_BOTTOM_MARGIN = 25;
 				SVG_LEFT_MARGIN = 20;
 	
@@ -451,6 +451,15 @@
 			
 
 			
+			function getEmptySvg(){
+				return `<g id="axisGroup"></g>
+					<g id="speciesGroup"></g>
+					<g id="geneGroup"></g>
+					<g id="textGroup"></g>`;
+
+			}
+
+
 			function renderTrees(options = null, animate = false) {
 
 
@@ -465,7 +474,7 @@
 					
 					
 					if (!animate) {
-						svg.html("");
+						svg.html(getEmptySvg());
 						svg.height(0);
 						svg.width(0);
 
@@ -482,7 +491,7 @@
 				
 				}else{
 					svg = $(options.svgSelector);
-					svg.html("");
+					svg.html(getEmptySvg());
 					svg.height(options.height);
 					svg.width(options.width);
 				}
@@ -495,16 +504,23 @@
 			
 				
 
+				var axisGroup = svg.find("#axisGroup");
+				var speciesGroup = svg.find("#speciesGroup");
+				var geneGroup = svg.find("#geneGroup");
+				var textGroup = svg.find("#textGroup");
 
-				if (!animate) drawAxis(svg, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN);
-				else animateAxis(svg, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN, CURRENT_ANIMATION_TIME);
+
+
+
+				if (!animate) drawAxis(svg, axisGroup, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN);
+				else animateAxis(svg, axisGroup, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN, CURRENT_ANIMATION_TIME);
 				
-				if (!animate) drawAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN);
-				else animateAxis(svg, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN, CURRENT_ANIMATION_TIME);
+				if (!animate) drawAxis(svg, axisGroup, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN);
+				else animateAxis(svg, axisGroup, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN, CURRENT_ANIMATION_TIME);
 
 				// Draw the species tree
-				if (!animate) drawASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root);
-				else animateASpeciesTree(svg, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME);
+				if (!animate) drawASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root);
+				else animateASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME);
 
 				
 				// Draw the gene tree
@@ -521,8 +537,8 @@
 						continue;
 					}
 					
-					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(svg, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g);
-					else animateAGeneTree(svg, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME);
+					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g);
+					else animateAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME);
 
 					
 				}
@@ -770,20 +786,6 @@
 					$("#" + attr.id).click(function(e) { hoverNode(attr.id, e) });
 				}
 				
-				
-				// Add a background box behind the label
-				if (addBackground && attr.id != null) {
-					
-					var boundingBox = document.getElementById(attr.id).getBBox();						
-					var bg = drawSVGobj(svg, "rect", {class: "barLabelBg", 	x: boundingBox.x - textLabelPadding,
-																y: boundingBox.y - textLabelPadding,
-																width: boundingBox.width + 2*textLabelPadding,
-																height: boundingBox.height + 2*textLabelPadding,
-																style: "fill:#d3d3d3"});
-				
-					$(bg).prev().insertAfter($(bg));
-
-				}
 
 				
 				return newObj;
@@ -1659,11 +1661,11 @@
 				
  				
 
-				<span title="Go to first tree (ctrl + &larr;)" class="arrow" onclick="prevTree(true)">&#xab;</span> 
+				<span title="Skip backwards (ctrl + &larr;)" class="arrow" onclick="prevTree(true)">&#xab;</span> 
 				<span title="Go to previous tree (&larr;)" class="arrow" onclick="prevTree()">&#x2039;</span> 
 				<span id="treeNumContainer">Tree number: <input class="numberinput cranberry" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span>
 				<span title="Go to next tree (&rarr;)" class="arrow" onclick="nextTree()">&#x203A;</span>
-				<span title="Go to last tree (ctrl + &rarr;)" class="arrow" onclick="nextTree(true)">&#xbb;</span> 
+				<span title="Skip forward (ctrl + &rarr;)" class="arrow" onclick="nextTree(true)">&#xbb;</span> 
 
 				<span title="Play" id="playBtn" class="arrow" style="font-size:150%" onclick="play()">&#9654;</span> 
 				<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; display:none" onclick="stop()">&#9632;</span> 
