@@ -160,6 +160,11 @@ line {
 	border-width:3px;
 }
 
+.colourbox.dashed{
+	border-style:dotted;
+}
+
+
 .dialog{
 
 	z-index:1000;
@@ -687,6 +692,8 @@ input {
 	border-width:1px;
 }
 
+
+
 .slider:hover {
 	%opacity: 1;
 }
@@ -897,6 +904,22 @@ input {
 	color:#BEBEBE;
 	background-color:white;
 }
+
+
+.nodeSelected{
+	opacity:1 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

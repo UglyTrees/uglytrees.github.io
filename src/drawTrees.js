@@ -193,6 +193,8 @@ function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false
 
 		linewidth_fn = function(node, speciesNodeMappedTo = null) {
 
+			if (baseLineWidth == 0) return 0 + "px";
+
 			var val = !annotationBelongsToSpeciesNode ? parseFloat(node.annotation[annotation_name]) : parseFloat(speciesNodeMappedTo.annotation[annotation_name]);
 
 			//if (isGeneTree) console.log(annotationBelongsToSpeciesNode, node, speciesNodeMappedTo, val, max, min, baseLineWidth);
@@ -1129,65 +1131,9 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 	if (axis == null) return;
 
 	var stroke = "black";
-	var strokeWidth = 1 + "px";
 	
 	
-	/*
-	var x1 = 0;
-	var x2 = 0;
-	var y1 = 0;
-	var y2 = 0;
-
-
-
-	// Draw the axis line
-	if (side == 1){
-		x1 = scaleFn_x(axis.min);
-		x2 = scaleFn_x(axis.max);
-		y1 = axisMargin;
-		y2 = axisMargin;
-
-	}
-
-
-	else if (side == 2){
-		x1 = svg.width() - axisMargin;
-		x2 = svg.width() - axisMargin;
-		y1 = scaleFn_y(axis.min);
-		y2 = scaleFn_y(axis.max);
-
-	}
-
-	else if (side == 3){
-		x1 = scaleFn_x(axis.min);
-		x2 = scaleFn_x(axis.max);
-		y1 = svg.height() - axisMargin;
-		y2 = svg.height() - axisMargin;
-
-	}
-
-
-	else {
-		x1 = axisMargin;
-		x2 = axisMargin;
-		y1 = scaleFn_y(axis.min);
-		y2 = scaleFn_y(axis.max);
-
-	}
-
-	drawSVGobj(svg, "line", {class: "axis axis_" + side ,id: "axis_" + side, 
-				x1: x1, 
-				y1: y1, 
-				x2: x2,
-				y2: y2, 
-				style: "stroke:" + stroke + "; stroke-width:" + strokeWidth });
-	*/
-
-
-
-
 	// Draw the ticks
-	var strokeWidth = "0.1px";
 	var tx1, tx2, ty1, ty2;
 
 	for (var i = 0; i < axis.vals.length; i++){
@@ -1214,12 +1160,14 @@ function drawAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSi
 				y1: ty1, 
 				x2: tx2,
 				y2: ty2, 
-				style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+				axis_val: val,
+				style: "stroke:" + stroke + "; stroke-width:0.3px;" });
 
 
 		drawSVGobj(svg, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
 				x: tx1, 
 				y: ty1, 
+				axis_val: val,
 				style: ""}, val);
 
 
@@ -1247,11 +1195,15 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 	var strokeWidth = "0.1px";
 	var tx1, tx2, ty1, ty2;
 
+	// Mark the objects as old
+	svg.find(".axis_" + side).attr("old", "1");
+	
+
 	for (var i = 0; i < axis.vals.length; i++){
 		
-		var ele = $("#axis_" + side + "_" + i);
 
 		var val = axis.vals[i];
+		var ele = svg.find('line.axis_' + side + '[axis_val="' + val + '"]');
 
 		if (side == 1 || side == 3){
 			ty2 = side == 1 ? svg.height() - axisMargin : axisMargin;
@@ -1276,12 +1228,14 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 				y1: ty1, 
 				x2: tx2,
 				y2: ty2, 
+				axis_val: val,
 				style: "stroke:" + stroke + "; stroke-width:0.5px;" });
 				
 				
 			drawSVGobj(svg, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
 				x: tx1, 
 				y: ty1, 
+				axis_val: val,
 				style: ""}, val);
 			
 		}
@@ -1289,11 +1243,14 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 		else {
 			
 			//ele.velocity("finish");
+			console.log(ele.attr("id"));
 			ele.velocity({x1: tx1, x2: tx2, y1: ty1, y2: ty2}, duration);
+			ele.attr("old", "0");
 			
-			var textEle = $("#axisText_" + side + "_" + i);
+			var textEle = svg.find('text.axis_' + side + '[axis_val="' + val + '"]');
 			textEle.velocity({x: tx1, y: ty1}, duration);
 			textEle.html(val);
+			textEle.attr("old", "0");
 			
 			
 		}
@@ -1302,19 +1259,12 @@ function animateAxis(svg, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, dur
 
 
 	}
-	
-	
+
+
 	// If there are leftover ticks delete them
-	var i = axis.vals.length;
-	var ele = $("#axis_" + side + "_" + i);
-	while (ele.length != 0){
-		ele.remove();
-		$("#axisText_" + side + "_" + i).remove();
-		i++;
-		ele = $("#axis_" + side + "_" + i);
-	}
+	svg.find('.axis_' + side + '[old="1"]').remove();
 
-
+	
 	
 	
 }

@@ -46,7 +46,7 @@
 	    }
 	  });
 	</script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 		<script language='JavaScript' type='text/JavaScript' src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/icytree-master/js/tree.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/icytree-master/js/treeparsing.js"></script>
@@ -56,9 +56,9 @@
 		<script language='JavaScript' type='text/JavaScript' src="src/util.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="src/speciesGeneMapper.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/velocity.min.js"></script>
-		<script language='JavaScript' type='text/JavaScript' src='lib/d3.v5.min.js'></script> 
 		<script language='JavaScript' type='text/JavaScript' src="lib/dropzone.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/chroma.js-master/chroma.js"></script>
+		<script language='JavaScript' type='text/JavaScript' src="lib/easypz.latest.js"></script>
 		<script>
 
 
@@ -821,7 +821,7 @@
 
 			function hoverNode(id, event){
 
-			
+
 				var treeName = id.split("_")[0];
 				var tree = treeName == "speciestree" ? SPECIES_TREE : GENE_TREES[parseFloat(treeName.split("gene")[1])];
 				var nodeID = parseFloat(id.split("_")[1]);
@@ -898,9 +898,9 @@
 				$("#hoverAnnotationDiv").show(0);
 
 
-				return;
 				
 				
+				/*
 				unhover();
 
 				
@@ -923,11 +923,13 @@
 
 
 
+
+
 				if (treeName != "speciestree") {
 					//$(`[branchfornode="` + id + `"].genebranch`).css("stroke", "#DB5079");
 					//$(`[branchfornode="` + id + `"].genebranch`).css("stroke-width", "3px");
 					$(`[branchfornode="` + id + `"].genebranch`).addClass("selected");
-					$("#" + id).addClass("selected");
+					
 					
 				}else {
 					$("#" + id).attr("opacity", "0.5");
@@ -983,7 +985,7 @@
 				}
 
 
-
+			*/
 
 			}
 
@@ -1646,10 +1648,10 @@
 					
 				</table>		
 
-				<svg id="tree" height = 0 width = 0></svg>
+				<svg id="tree" height=0 width=0 easypz='{"applyTransformTo": "svg > *", "options": { "minScale": 1, "maxScale": 50, "bounds": { "top": 0, "right": 0, "bottom": 0, "left": 0 }} }'  ></svg>
 			</div>
 
-
+<!--easypz='{"applyTransformTo": "svg > *", "options": { "minScale": 0.8, "maxScale": 10, "bounds": { "top": -50, "right": 50, "bottom": 50, "left": -50 }} }' width="400" height="400">-->
 
 			<div id="footer" >
 

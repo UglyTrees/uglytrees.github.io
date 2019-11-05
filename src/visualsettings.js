@@ -50,7 +50,7 @@ function initVisualSettings(){
 	GENE_BRANCH_BGCOL_ANNOTATION = "_none";
 
 
-	SPECIES_TREE_BG_COL = "transparent";
+	SPECIES_TREE_BG_COL = "#FFFFFF";
 	SPECIES_TREE_BORDER_COL = "#000000";
 	$("#colourboxspeciesBG").css("background-color", SPECIES_TREE_BG_COL);
 	$("#colourboxspeciesBorder").css("background-color", SPECIES_TREE_BORDER_COL);
@@ -133,7 +133,7 @@ function openNav(id) {
 // Close a side navigation menu, or close all side navigation menus if is is not specified
 function closeNav(id = null) {
 	
-
+	$('#hoverAnnotationDiv').hide(0);
 	if (id == null) {
 		$(".sidenav").width(0);
 		$(".sidenav").attr("opened", "no");
@@ -180,7 +180,9 @@ function openSettings(id){
 	closeAllNavsExcept(id);
 	if (!alreadyOpen) {
 		$("#tree").html("");
+		$('#hoverAnnotationDiv').hide(0);
 		stop();
+		$('#hoverAnnotationDiv').hide(0);
 		setTimeout(function(){
 			planTrees();
 			renderTrees();
@@ -238,7 +240,7 @@ function setVisualParams(){
 
 	
 	
-	//if (SPECIES_TREE_BG_COL.toLowerCase() == "transparent") $("#speciesOpacityDiv").hide(300);
+	//if (SPECIES_TREE_BG_COL.toLowerCase() == "TRANSPARENT") $("#speciesOpacityDiv").hide(300);
 	//else $("#speciesOpacityDiv").show(300);
 
 	renderParameterValues();
@@ -361,8 +363,10 @@ function openColourPicker(geneTreeNum){
 				
 	
 	var colMatch = false;
-	for (var colNum = 0; colNum < DEFAULT_COLOURS.length; colNum++){
-		var col = DEFAULT_COLOURS[colNum].toUpperCase();
+	for (var colNum = 0; colNum <= DEFAULT_COLOURS.length; colNum++){
+		var col;
+		if (colNum == DEFAULT_COLOURS.length) col = "TRANSPARENT";
+		else col = DEFAULT_COLOURS[colNum].toUpperCase();
 		//console.log("col", col, currentCol);
 		
 		var addClass = "";
@@ -371,6 +375,7 @@ function openColourPicker(geneTreeNum){
 			colMatch = true;
 		}
 		
+		if (col == "TRANSPARENT") addClass += " dashed";
 		colourPickHtml += `
 				<li class="flex-item">
 					<span class="colourbox ` + addClass + `" title="` + col + `" onclick="selectColour(this, '` + geneTreeNum + `');" style="background-color:` + col + `"></span>
@@ -410,7 +415,7 @@ function selectColour(col_ele, geneTreeNum){
 	
 	var col;
 	if ($(col_ele).hasClass("colourbox")){
-		col = $(col_ele).css("background-color");
+		col = $(col_ele).attr("title");
 	}else{
 		col = $(col_ele).val();
 	}
@@ -503,7 +508,7 @@ function componentToHex(c) {
 
 function rgbToHex(rgb) {
 	
-	
+
 	if (rgb.substring(0, 3) != "rgb") return rgb;
 	
 	
@@ -513,6 +518,8 @@ function rgbToHex(rgb) {
 	var b = parseFloat(bits[2]);
 	
 	console.log(rgb, r, g, b);
+
+	if (r == 0 && g == 0 && b == 0) return "TRANSPARENT";
 	
 	return ("#" + componentToHex(r) + componentToHex(g) + componentToHex(b)).toUpperCase();
 }
