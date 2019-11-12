@@ -1252,7 +1252,7 @@ function drawAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargin =
 
 
 // Animates an axis
-function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, duration = 100){
+function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, oldScaleFn_x, oldScaleFn_y, axisMargin = 10, duration = 100){
 	
 	
 	if (axis == null) {
@@ -1293,20 +1293,70 @@ function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargi
 
 		if (ele.length == 0) {
 			
-			drawSVGobj(axisGroup, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
-				x1: tx1, 
-				y1: ty1, 
-				x2: tx2,
-				y2: ty2, 
-				axis_val: val,
-				style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+			// Draw the axis line where it would have been and then animate it to where it should be now
+			if (oldScaleFn_x != null && oldScaleFn_y != null){
 				
 				
-			drawSVGobj(axisGroup, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
-				x: tx1, 
-				y: ty1, 
-				axis_val: val,
-				style: ""}, val);
+				var x1, x2, y1, y2;
+				if (side == 1 || side == 3){
+					y1 = ty1;
+					y2 = ty2;
+					x1 = oldScaleFn_x(val);
+					x2 = x1;
+
+				}else{
+					x1 = tx1;
+					x2 = tx2;
+					y1 = oldScaleFn_y(val);
+					y2 = y1;
+				}
+
+
+
+				drawSVGobj(axisGroup, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
+					x1: x1, 
+					y1: y1, 
+					x2: x2,
+					y2: y2, 
+					axis_val: val,
+					style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+
+
+				drawSVGobj(axisGroup, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
+					x: x1, 
+					y: y1, 
+					axis_val: val,
+					style: ""}, val);
+
+
+				var newEle = axisGroup.find('line.axis_' + side + '[axis_val="' + val + '"]');
+				newEle.velocity({x1: tx1, x2: tx2, y1: ty1, y2: ty2}, duration);
+
+				var textEle = axisGroup.find('text.axis_' + side + '[axis_val="' + val + '"]');
+				textEle.velocity({x: tx1, y: ty1}, duration);
+				textEle.html(val);
+				textEle.attr("old", "0");
+
+			}
+
+			else {
+			
+				drawSVGobj(axisGroup, "line", {class: "axis axis_" + side ,id: "axis_" + side + "_" + i, 
+					x1: tx1, 
+					y1: ty1, 
+					x2: tx2,
+					y2: ty2, 
+					axis_val: val,
+					style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+						
+				drawSVGobj(axisGroup, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
+					x: tx1, 
+					y: ty1, 
+					axis_val: val,
+					style: ""}, val);
+
+			}
+
 			
 		}
 		
@@ -1316,7 +1366,8 @@ function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargi
 			//console.log(ele.attr("id"));
 			ele.velocity({x1: tx1, x2: tx2, y1: ty1, y2: ty2}, duration);
 			ele.attr("old", "0");
-			
+
+
 			var textEle = axisGroup.find('text.axis_' + side + '[axis_val="' + val + '"]');
 			textEle.velocity({x: tx1, y: ty1}, duration);
 			textEle.html(val);
