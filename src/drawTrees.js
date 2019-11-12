@@ -1360,6 +1360,8 @@ function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, oldScaleF
 // Draw a draggable legend on the svg
 function drawLegend(svg, legendGroup, annotation, scaleX_fn, scaleY_fn, svgWidth, svgHeight){
 
+	console.log("Drawing legend", annotation.name);
+
 
 	var svgWidth = svg.width();
 	var svgHeight = svg.height();
@@ -1436,13 +1438,13 @@ function drawLegend(svg, legendGroup, annotation, scaleX_fn, scaleY_fn, svgWidth
 	drawSVGobj(group, "text", {class: "legend", annotation: annotation.name, 
 		x: x, 
 		y: y0 + (colours.length)*h,
-		style: "text-anchor:end; dominant-baseline:text-bottom; font-family:Source Sans Pro;font-size:14px"}, roundToSF(annotation.minVal));
+		style: "text-anchor:end; dominant-baseline:central; font-family:Source Sans Pro;font-size:14px"}, roundToSF(annotation.minVal));
 
 
 	drawSVGobj(group, "text", {class: "legend", annotation: annotation.name, 
 		x: x, 
 		y: y0, 
-		style: "text-anchor:end; dominant-baseline:text-bottom; font-family:Source Sans Pro;;font-size:14p"}, roundToSF(annotation.maxVal));
+		style: "text-anchor:end; dominant-baseline:auto; font-family:Source Sans Pro;font-size:14px"}, roundToSF(annotation.maxVal));
 
 
 	// Annotation name

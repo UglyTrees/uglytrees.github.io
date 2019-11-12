@@ -404,7 +404,7 @@ function downloadTree(){
 	$("body").append(`<svg id="downloadSVG" style="display:none"></svg>`);
 	//planTrees({svgSelector: "#downloadSVG", width: width, height: height});
 	renderTrees({svgSelector: "#downloadSVG", width: width, height: height});
-	
+	$(".draggableLegend").css("opacity", 1);
 	switch (format){
 		
 		case "svg":

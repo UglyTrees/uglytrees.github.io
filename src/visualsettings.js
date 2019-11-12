@@ -92,6 +92,7 @@ function initVisualSettings(){
 	$("#SPECIES_LABEL_FONT_SIZE").val(SPECIES_LABEL_FONT_SIZE);
 	
 	
+	
 	$("#SHOW_X_AXIS").prop("checked", SHOW_X_AXIS);
 	$("#SHOW_Y_AXIS").prop("checked", SHOW_Y_AXIS);
 	
@@ -284,7 +285,7 @@ function renderParameterValues(){
 	for (var i = 0; i < settingEles.length; i ++){
 		var ele = $(settingEles[i]);
 		var child = ele.children("input");
-		console.log(child.val());
+		//console.log(child.val());
 		//ele.attr("title", roundToSF(parseFloat(child.val())));
 		child.next("span").html(roundToSF(parseFloat(child.val())));
 		
@@ -743,7 +744,7 @@ function selectSpeciesAnnotationSettings() {
 		else if (annotation.mustBeNumerical) $("#speciesAnnotationDiscreteSpan").addClass("disabled");
 		else $("#speciesAnnotationDiscreteSpan").removeClass("disabled");
 
-		$("#showLegendBtn").prop("checked", annotation.showLegend);
+		$("#showLegendBtn").prop("checked", annotation.legend.showLegend);
 
 
 		$("#colourboxSpeciesMin").css("background-color", annotation.gradientMin);
