@@ -50,6 +50,15 @@ body {
 	min-height:100%;
 	margin:0;
 	padding:0;
+
+	@media screen and (orientation:portrait) {
+		text-size-adjust: 160%;
+	}
+	@media screen and (orientation:landscape) {
+		text-size-adjust: 100%;
+	}
+
+	
 }
 
 
@@ -307,6 +316,13 @@ input[type=number] {
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 	vertical-align:bottom;
 
+	@media screen and (orientation:portrait) {
+		text-size-adjust: 250%;
+	}
+	@media screen and (orientation:landscape) {
+		text-size-adjust: 130%;
+	}
+
 
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+ */
@@ -402,7 +418,8 @@ input[type=number] {
 	width:100%;
 	min-height:300px;
 	height:400px;
-	margin-top:100px;
+	margin-top:1em;
+
 }
 
 
@@ -416,6 +433,7 @@ input[type=number] {
 	vertical-align:middle;
 	margin: 20px;
 	overflow-y:auto;
+	overflow-x:auto;
 }
 
 
@@ -429,6 +447,21 @@ input[type=number] {
 	color:#DB5079;
 	padding: 10;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+
+	
+}
+
+
+@media screen and (orientation:portrait) {
+
+	.uploader  div {
+		text-size-adjust:200%;
+	}
+}
+@media screen and (orientation:landscape) {
+	.uploader  div {
+		text-size-adjust:80%;
+	}
 }
 
 
@@ -449,6 +482,31 @@ input[type=number] {
 .uploader.dz-drag-hover table, .uploader:hover table {
 	color:white;
 }
+
+.uploaderTd{
+	width:45%;
+}
+
+@media only screen and (max-width: 1200px) {
+	@media screen and (orientation:portrait) {
+
+	.uploaderTd{
+		width:20em;
+	}
+}
+@media screen and (orientation:landscape) {
+	.uploaderTd{
+		width:15em;
+	}
+}
+
+
+}
+
+
+
+
+
 
 @import "compass/css3";
 
@@ -592,6 +650,7 @@ input[type=number] {
 	text-decoration:none;
 	color:white;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	text-size-adjust:250%;
 }
 
 
