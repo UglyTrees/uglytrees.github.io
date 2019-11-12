@@ -229,7 +229,7 @@ function getTreeAnnotations(tree, speciesTree = true){
 	for (var j = 0; j < annotation_names.length; j ++){
 		
 		var ann_name = annotation_names[j];
-		var annotation = {name: ann_name, complete: true, format: "numerical", mustBeNumerical: false, mustBeNominal: false, gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}, speciesTree: speciesTree};
+		var annotation = {name: ann_name, complete: true, format: "numerical", mustBeNumerical: false, mustBeNominal: false, gradientMin: "#ffff1a", gradientMax: "#7950DB", ncols: 20, discreteCols: {}, speciesTree: speciesTree, minVal: 0, maxVal: 0, legend: {showLegend: false, width: 20, height: 100, x: 0.95, y: 0.05}};
 		var isComplete = true;
 		var isNumerical = true;
 		var allInteger = true;

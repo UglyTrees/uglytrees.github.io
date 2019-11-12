@@ -173,24 +173,7 @@ function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false
 		var annotation = getAnnotation(annotation_name);
 		var annotationBelongsToSpeciesNode = isGeneTree && annotation.speciesTree;
 
-		// Get min and max value
 		// Normalise values into range [1, 4]
-		var min = Infinity;
-		var max = -Infinity;
-		for (var i = 0; i < tree.nodeList.length; i ++){
-			
-			var value = !annotationBelongsToSpeciesNode ? parseFloat(tree.nodeList[i].annotation[annotation_name]) : parseFloat(tree.nodeList[i].speciesNodeMap.annotation[annotation_name]);
-
-			// Missing data
-			if (isNaN(value) || value == null) continue;
-			min = Math.min(min, value);
-			max = Math.max(max, value);
-			
-		}
-		
-
-		
-
 		linewidth_fn = function(node, speciesNodeMappedTo = null) {
 
 			if (baseLineWidth == 0) return 0 + "px";
@@ -204,7 +187,7 @@ function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false
 			// Missing value
 			if (isNaN(val) || val == null) return baseLineWidth + "px";
 			
-			val = 1 + (isRadius ? 1.5 : 3) * (val - min)/(max - min) ;
+			val = 1 + (isRadius ? 1.5 : 3) * (val - annotation.minVal)/(annotation.maxVal - annotation.minVal) ;
 			return val * baseLineWidth + "px";
 		};
 		
@@ -256,24 +239,7 @@ function planColour(tree, annotation_name, backgroundCol, isGeneTree = false){
 
 			if (isGeneTree) console.log("annotation", annotation, tree);
 					
-			// Get min and max value
-			var min = Infinity;
-			var max = -Infinity;
-			for (var i = 0; i < tree.nodeList.length; i ++){
-				
-				var value = !annotationBelongsToSpeciesNode ? parseFloat(tree.nodeList[i].annotation[annotation_name]) : parseFloat(tree.nodeList[i].speciesNodeMap.annotation[annotation_name]);
 
-
-				// Missing data
-				if (isNaN(value) || value == null) continue;
-
-				min = Math.min(min, value);
-				max = Math.max(max, value);
-				
-			}
-			
-			
-			
 			
 			// Get colour list
 			var ncols = annotation.ncols;
@@ -287,7 +253,7 @@ function planColour(tree, annotation_name, backgroundCol, isGeneTree = false){
 				// Missing data
 				if (isNaN(val) || val == null) return rgbToHex(backgroundCol); 
 				
-				val = (val - min)/(max - min);
+				val = (val - annotation.minVal)/(annotation.maxVal - annotation.minVal);
 				var col_index = Math.floor(val * (ncols-1));
 				//console.log(val, col_index, ncols, colours[col_index]);
 				return colours[col_index];
@@ -1391,8 +1357,106 @@ function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, oldScaleF
 }
 
 
+// Draw a draggable legend on the svg
+function drawLegend(svg, legendGroup, annotation, scaleX_fn, scaleY_fn, svgWidth, svgHeight){
 
 
+	var svgWidth = svg.width();
+	var svgHeight = svg.height();
+	var legend = annotation.legend;
+	var x = svgWidth * legend.x;
+	var y0 = svgHeight * legend.y;
+
+
+	// Bounding box for dragging
+
+
+	// Create the draggable group which contains all the legend elements
+	drawSVGobj(legendGroup, "g", {class:"draggableLegend", annotation: annotation.name, origX: x, origY: y0});
+	var group = legendGroup.find(`[annotation="` + annotation.name + `"]`);
+	group.draggable({
+		//containment : [svgWidth,0,-svgWidth,svgHeight], 
+		start: function(event, ui){
+			event.stopPropagation();
+		},
+		drag: function(event, ui){
+			event.stopPropagation();
+		},
+        	stop: function(event, ui){
+          		//console.log("stop", event);
+			
+			var origX = parseFloat(group.attr("origX"));
+			var origY = parseFloat(group.attr("origY"));
+			var dx = parseFloat(group.css("left"));
+			var dy = parseFloat(group.css("top"));
+			var scaleX = (origX + dx) / svgWidth;
+			var scaleY = (origY + dy) / svgHeight;
+
+			if (scaleX < 0.01) scaleX = 0.01;
+			if (scaleY < 0.05) scaleY = 0.05;
+			if (scaleX > 0.99) scaleX = 0.99;
+			if (scaleY > 0.99) scaleY = 0.99;
+
+			group.css("left", svgWidth*scaleX - origX);
+			group.css("top", svgHeight*scaleY - origY);
+
+			legend.x = scaleX;
+			legend.y = scaleY;
+
+     		}
+	});
+
+
+	// Use the chroma.js library to create a colour palette
+	var colours = chroma.scale([annotation.gradientMin, annotation.gradientMax]).mode('lch').colors(annotation.ncols);
+	var w = legend.width;
+	var h = legend.height / colours.length;
+
+
+	// Draw the colour ladder
+	for (var i = 0; i < colours.length; i ++) {
+
+	
+		// Create the first rectangle
+		var col = colours[i];
+		var y = y0 + (colours.length - i - 1)*h;
+		drawSVGobj(group, "rect", {class: "legend", annotation: annotation.name, 
+			x: x, 
+			y: y, 
+			width: w,
+			height: h, 
+			style: "stroke:black;stroke-width:0;fill:" + col });
+
+
+	}
+
+		
+	
+	// Min and max
+	drawSVGobj(group, "text", {class: "legend", annotation: annotation.name, 
+		x: x, 
+		y: y0 + (colours.length)*h,
+		style: "text-anchor:end; dominant-baseline:text-bottom; font-family:Source Sans Pro;font-size:14px"}, roundToSF(annotation.minVal));
+
+
+	drawSVGobj(group, "text", {class: "legend", annotation: annotation.name, 
+		x: x, 
+		y: y0, 
+		style: "text-anchor:end; dominant-baseline:text-bottom; font-family:Source Sans Pro;;font-size:14p"}, roundToSF(annotation.maxVal));
+
+
+	// Annotation name
+	drawSVGobj(group, "text", {class: "legend", annotation: annotation.name, 
+		x: x + w + 10, 
+		y: y0 + (colours.length)*h,
+		transform: "rotate(270, " + (x + w + 10) + ", " + (y0 + (colours.length)*h) + ")",
+		style: "text-anchor:start; dominant-baseline:central; font-family:Source Sans Pro;font-size:14px"}, annotation.name);
+
+
+
+
+
+}
 
 
 

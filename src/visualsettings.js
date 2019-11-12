@@ -73,7 +73,7 @@ function initVisualSettings(){
 	CURRENT_ANIMATION_TIME = ANIMATION_TIME;
 	SHOW_X_AXIS = false;
 	SHOW_Y_AXIS = true;
-	
+
 
 	
 	$("#SPECIES_TREE_OPACITY").val(SPECIES_TREE_OPACITY);
@@ -743,6 +743,8 @@ function selectSpeciesAnnotationSettings() {
 		else if (annotation.mustBeNumerical) $("#speciesAnnotationDiscreteSpan").addClass("disabled");
 		else $("#speciesAnnotationDiscreteSpan").removeClass("disabled");
 
+		$("#showLegendBtn").prop("checked", annotation.showLegend);
+
 
 		$("#colourboxSpeciesMin").css("background-color", annotation.gradientMin);
 		$("#colourboxSpeciesMax").css("background-color", annotation.gradientMax);
@@ -859,19 +861,66 @@ function initialiseZoom(){
 
 }
 
-/*
-// Handler of svg zooming
-function svgZoomed(transform){
-	console.log(EASYPZ);
-	//transform.scale = 1;
-	//transform.translateX = 0;
-	//transform.translateY = 0;
-	EASYPZ_TRANSFORM = transform;
-	$("#hoverAnnotationDiv").hide(0);
-	ZOOM_SCALE = transform.scale;
-	$(".labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
+
+
+
+// Hide or show the legend for the currently selected numerical annotation
+function toggleLegend(){
+	CURRENTLY_SELECTED_SPECIES_ANNOTATION.legend.showLegend = !CURRENTLY_SELECTED_SPECIES_ANNOTATION.legend.showLegend;
+	setVisualParams();
 }
-*/
+
+
+
+
+// Calculates and stores the current min and max for all numerical annotations, with respect to the currently displayed trees
+function getAnnotationMinAndMax(trees){
+
+
+	for (var treeAnnotNum = 0; treeAnnotNum < TREE_ANNOTATIONS.length; treeAnnotNum ++){
+
+		var annotation = TREE_ANNOTATIONS[treeAnnotNum];
+		if (!annotation.format == "numerical") continue;
+
+
+
+		// Get min and max value
+		var min = Infinity;
+		var max = -Infinity;
+
+		for (var t = 0; t < trees.length; t++){
+
+			var tree = trees[t];
+			for (var i = 0; i < tree.nodeList.length; i ++){
+				
+				var value = tree.nodeList[i].annotation[annotation.name];
+
+				// Missing data
+				if (isNaN(value) || value == null) continue;
+				min = Math.min(min, value);
+				max = Math.max(max, value);
+				
+			}
+
+		}
+
+
+		annotation.minVal = min;
+		annotation.maxVal = max;
+
+
+	}
+		
+
+}
+
+
+
+
+
+
+
+
 
 
 

@@ -59,6 +59,7 @@
 		<script language='JavaScript' type='text/JavaScript' src="lib/dropzone.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/chroma.js-master/chroma.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/easypz.latest.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"> </script>
 		<script>
 
 
@@ -317,6 +318,18 @@
 				SPECIES_TREE = SPECIES_TREES_ALL[TREE_NUM];
 
 
+				// Get min and maxes of all annotations
+
+
+				var allTreesToRender = [SPECIES_TREE];
+				for (var g = 0; g < GENE_TREES.length; g++){
+					if (gene_tree == null) continue;
+					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) continue;
+					allTreesToRender.push(GENE_TREES[g]);
+				}
+				getAnnotationMinAndMax(allTreesToRender);
+
+
 
 	
 				SPECIES_TREE.geneNodeMap = {};
@@ -335,7 +348,7 @@
 				for (var i = 0; i < SPECIES_TREE.nodeList.length; i ++) {
 				
 					var node = SPECIES_TREE.nodeList[i];
-					node.rate = node.annotation["branchRates.Species"] = null ? 1 : parseFloat(node.annotation["branchRates.Species"]);
+					//node.rate = node.annotation["branchRates.Species"] = null ? 1 : parseFloat(node.annotation["branchRates.Species"]);
 					node.populationsize = node.annotation[SPECIES_WIDTH_ANNOTATION] == null ? 1 : parseFloat(node.annotation[SPECIES_WIDTH_ANNOTATION]);
 					node.coords = { bottomLeft: {x: -1, y: -1}, bottomRight: {x: -1, y: -1}, topLeft: {x: -1, y: -1}, topRight: {x: -1, y: -1}, dashed: {left: -1, right: -1}, xrange: {left: -1, right: -1} };
 
@@ -372,8 +385,6 @@
 				
 				unhover();
 				$(".dialog").remove();
-
-
 
 
 			
@@ -484,7 +495,8 @@
 					<g id="axisGroup" class="svgG"></g>
 					<g id="speciesGroup" class="svgG"></g>
 					<g id="geneGroup" class="svgG"></g>
-					<g id="textGroup" class="svgG"></g>`;
+					<g id="textGroup" class="svgG"></g>
+					<g id="legendGroup" class="svgG"></g>`;
 
 			}
 
@@ -538,8 +550,21 @@
 				var speciesGroup = svg.find("#speciesGroup");
 				var geneGroup = svg.find("#geneGroup");
 				var textGroup = svg.find("#textGroup");
+				var legendGroup = svg.find("#legendGroup");
+
+				
 
 
+				// Legends
+				for (var treeAnnotNum = 0; treeAnnotNum < TREE_ANNOTATIONS.length; treeAnnotNum ++){
+					var annotation = TREE_ANNOTATIONS[treeAnnotNum];
+					legendGroup.find(`[annotation="` + annotation.name + `"]`).remove();
+
+					if (annotation.legend.showLegend) {
+						drawLegend(svg, legendGroup, annotation, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn);
+					}
+
+				}
 
 
 				if (!animate) drawAxis(svg, axisGroup, X_AXIS, 1, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_TOP_MARGIN);
@@ -1347,7 +1372,20 @@
 					</label> 
 				<span style="font-size:100%; vertical-align:middle">Discrete</span>	
 			</div>
-			
+
+
+			<div class="sideNavSetting speciesAnnotationNumerical"  style="font-size:60%">
+				<label class="checkbox-container">
+					<input type="checkbox" id="showLegendBtn" onclick="toggleLegend();" name="radio" onchange="setVisualParams();">
+					<span class="checkmark"></span> Show legend
+				</label>
+
+				<div style="font-size:120%">
+					Drag the legend to move it.
+				</div>
+			</div>
+
+
 
 	
 			<div class="sideNavSetting speciesAnnotationNumerical">

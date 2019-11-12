@@ -927,7 +927,10 @@ input {
     white-space: nowrap;
 }
 
+.draggableLegend{
+	cursor:move;
 
+}
 
 
 
