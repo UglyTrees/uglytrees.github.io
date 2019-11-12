@@ -184,8 +184,10 @@
 
 				
 				
+				
+				var animate = resetZoom();
 				planTrees();
-				renderTrees(null, true);
+				renderTrees(null, animate);
 				setTimeout(function() { play_recursive(); }, CURRENT_ANIMATION_TIME);
 				
 
@@ -210,8 +212,9 @@
 					TREE_NUM++;
 				}
 				
+				var animate = resetZoom();
 				planTrees();
-				renderTrees(null, true);
+				renderTrees(null, animate);
 
 			}
 
@@ -233,8 +236,9 @@
 					TREE_NUM--;
 				}
 				
+				var animate = resetZoom();
 				planTrees();
-				renderTrees(null, true);
+				renderTrees(null, animate);
 
 			}
 
@@ -248,8 +252,11 @@
 				TREE_NUM = newVal;
 				if (TREE_NUM < 0) TREE_NUM = 0;
 				if (TREE_NUM >= NTREES) TREE_NUM = NTREES-1;
+
+				var animate = resetZoom();
 				planTrees();
-				renderTrees(null, true);
+				renderTrees(null, animate);
+
 			}
 
 
@@ -388,7 +395,7 @@
 
 
 				// Get the maximum pixel length of a species label
-				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE);
+				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
 				console.log("maxTextSize", MAX_TEXT_SIZE);
 
 				storeTree(SPECIES_TREE.root);
@@ -466,10 +473,10 @@
 						   @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 						</style>
 					</defs>`) + `
-					<g id="axisGroup"></g>
-					<g id="speciesGroup"></g>
-					<g id="geneGroup"></g>
-					<g id="textGroup"></g>`;
+					<g id="axisGroup" class="svgG"></g>
+					<g id="speciesGroup" class="svgG"></g>
+					<g id="geneGroup" class="svgG"></g>
+					<g id="textGroup" class="svgG"></g>`;
 
 			}
 
@@ -478,6 +485,7 @@
 
 
 				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW || !SPECIES_TREE.successfullyMapped) return;
+
 				
 
 				unhover();
@@ -508,14 +516,16 @@
 					svg.html(getEmptySvg(true));
 					svg.height(options.height);
 					svg.width(options.width);
+
 				}
 
 
 	
-	
+				
 				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN + AXIS_MARGIN , svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE-AXIS_MARGIN-MAX_TEXT_SIZE, svg.width()-SVG_RIGHT_MARGIN-AXIS_MARGIN , SVG_TOP_MARGIN+AXIS_MARGIN );
 				
 			
+				
 				
 
 				var axisGroup = svg.find("#axisGroup");
@@ -836,6 +846,8 @@
 
 
 			function hoverNode(id, event){
+
+				if (DONT_HOVER) return;
 
 
 				var treeName = id.split("_")[0];
@@ -1674,7 +1686,7 @@
 					
 				</table>		
 
-				<svg id="tree" height=0 width=0 easypz='{"applyTransformTo": "svg > *",  "onTransformed": "svgZoomed",  "modes": ["SIMPLE_PAN", "WHEEL_ZOOM_MOMENTUM", "PINCH_ZOOM_MOMENTUM"], "options": { "minScale": 1, "maxScale": 50, "bounds": { "top": 0, "right": 0, "bottom": 0, "left": 0 }} }'  ></svg>
+				<svg id="tree" height=0 width=0 ></svg>
 			</div>
 
 <!--easypz='{"applyTransformTo": "svg > *", "options": { "minScale": 0.8, "maxScale": 10, "bounds": { "top": -50, "right": 50, "bottom": 50, "left": -50 }} }' width="400" height="400">-->

@@ -573,7 +573,7 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, durat
 
 		//ele.attr("transform", "rotate(90, " + labelX + ", " + labelY + ")");
 
-		ele.velocity( {x: labelX, y: labelY, transform:  "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
+		ele.velocity( {x: labelX, y: labelY, transform: "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
 		ele.css("font-size", styles.fontSize);
 
 		

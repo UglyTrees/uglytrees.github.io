@@ -38,7 +38,7 @@ function initVisualSettings(){
 	GENE_TREE_DISPLAYS = {};
 	START_PLAYING = false;
 	
-	
+	DONT_HOVER = false;
 	TREE_ANNOTATIONS = [];
 	CURRENTLY_SELECTED_SPECIES_ANNOTATION = {};
 	SPECIES_BRANCH_BGCOL_ANNOTATION = "_none";
@@ -55,6 +55,9 @@ function initVisualSettings(){
 	$("#colourboxspeciesBG").css("background-color", SPECIES_TREE_BG_COL);
 	$("#colourboxspeciesBorder").css("background-color", SPECIES_TREE_BORDER_COL);
 	
+	EASYPZ = null;
+
+	ZOOM_SCALE = 1;
 	SPECIES_LABEL_FONT_SIZE = 17;
 	SUBTREE_SPACER = 0.2
 	GENE_NODE_SIZE = 4;
@@ -98,8 +101,15 @@ function initVisualSettings(){
 
 	
 	renderParameterValues();
+
+
+	initialiseZoom();
+	
 	
 }
+
+
+
 
 
 function setInitialGeneTreeColours(){
@@ -145,6 +155,8 @@ function closeNav(id = null) {
 		$("#tree").html("");
 		stop();
 		setTimeout(function(){
+
+			resetZoom();
 			planTrees();
 			renderTrees();
 		}, 500);
@@ -186,6 +198,7 @@ function openSettings(id){
 		stop();
 		$('#hoverAnnotationDiv').hide(0);
 		setTimeout(function(){
+			resetZoom();
 			planTrees();
 			renderTrees();
 		}, 500);
@@ -251,8 +264,9 @@ function setVisualParams(){
 	//else $("#speciesOpacityDiv").show(300);
 
 	renderParameterValues();
+	var animate = resetZoom();
 	planTrees();
-	renderTrees(null, true);
+	renderTrees(null, animate);
 	
 	
 	console.log("CURRENTLY_SELECTED_SPECIES_ANNOTATION", CURRENTLY_SELECTED_SPECIES_ANNOTATION);
@@ -790,19 +804,74 @@ function flipSubtree(node){
 	node.children[0] = node.children[1];
 	node.children[1] = temp;
 	//console.log("Flipped", node);
+	var animate = resetZoom();
 	planTrees();
-	renderTrees(null, true);
+	renderTrees(null, animate);
+
+}
+
+
+function resetZoom(){
+	if (ZOOM_SCALE != 1){
+		ZOOM_SCALE = 1;
+		EASYPZ.reset();
+		return false;
+	}
+	return true;		
 
 }
 
 
 
+function initialiseZoom(){
+
+	var svg = $("#tree");
+	svg.find("g").attr("transform", "scale(1,1)");
+	EASYPZ = new EasyPZ(document.getElementById("tree"), function(transform) {
+
+		if (START_PLAYING) {
+			EASYPZ.reset();
+			return;
+		}
+
+		//console.log(transform);	
+
+		
+		$("#hoverAnnotationDiv").hide(0);
+		ZOOM_SCALE = transform.scale;
+		$(".labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
+
+
+
+		// Hack: avoid svg blurring by clicking on an svg element 
+		setTimeout(function() {
+			DONT_HOVER = true;
+			$(svg.find("polygon")[0]).click();
+			DONT_HOVER = false;
+		}, 50);
+
+
+	}, { "minScale": 1, "maxScale": 50, "bounds": { "top": 0, "right": 0, "bottom": 0, "left": 0 }},
+		["SIMPLE_PAN", "HOLD_ZOOM_IN", "CLICK_HOLD_ZOOM_OUT", "WHEEL_ZOOM", "PINCH_ZOOM"],
+		function() {}, function() {}, function() {}, function() {}, ".svgG");
+
+
+
+}
+
+/*
 // Handler of svg zooming
 function svgZoomed(transform){
+	console.log(EASYPZ);
+	//transform.scale = 1;
+	//transform.translateX = 0;
+	//transform.translateY = 0;
+	EASYPZ_TRANSFORM = transform;
 	$("#hoverAnnotationDiv").hide(0);
-	$(".labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / transform.scale);
+	ZOOM_SCALE = transform.scale;
+	$(".labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
 }
-
+*/
 
 
 
