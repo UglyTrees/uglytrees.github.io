@@ -51,46 +51,7 @@ function initUtil(){
 		// Closure to capture the file information.
 		reader.onload = (function(theFile) {
 			return function(e) {
-
-				if (e == null || e.target.result == "") return;
-				try {
-					SPECIES_TREES_ALL = getTreesFromString(e.target.result);
-					var speciesLeaves = getLeaves(SPECIES_TREES_ALL[0]);
-					for (var i = 0; i < speciesLeaves.length; i ++){
-						var species_leaf = speciesLeaves[i];
-						species_leaf.branchToGeneNodeMap = [];
-						species_leaf.nodeToGeneBranchMap = [];
-					}
-					SPECIES_TREES_ALL[0].successfullyMapped = true;
-
-					// Attempts to map to any pre-existing gene trees
-					if (NUMBER_OF_GENE_TREES > 0) {		
-						var geneTrees = [];
-						for (var i = 0; i < GENE_TREES_ALL.length; i ++){
-							if (GENE_TREES_ALL[i] == null) geneTrees.push(null);
-							else geneTrees.push(GENE_TREES_ALL[i][0]);
-						}
-						SPECIES_TREES_ALL[0].successfullyMapped = mapAllGeneTreesToSpeciesTree(speciesLeaves, geneTrees)
-					}
-
-				} 
-				catch(err){
-					$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
-					$("#fileUpload_" + util_file.id + " .loader").remove();
-					return;
-				}
-				
-				NTREES = SPECIES_TREES_ALL.length;
-				TREE_NUM = TREE_NUM == null ? 0 : TREE_NUM;
-				console.log(theFile);
-				$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
-				if (SPECIES_TREES_ALL.length > 0 && SPECIES_TREES_ALL[0].successfullyMapped) $("#renderTreesBtn").removeClass("disabled");
-				$("#fileUpload_" + util_file.id + " .loader").remove();
-				FIRST_ANNOTATION_PASS = true;
-				TREE_ANNOTATIONS = [];
-
-
-
+				parseSpeciesTree(e, util_file);
 			};
 
 		})(file);
@@ -117,46 +78,7 @@ function initUtil(){
 		// Closure to capture the file information.
 		reader.onload = (function(theFile) {
 			return function(e) {
-
-				if (e == null || e.target.result == "") return;
-
-				try{
-					var trees = getTreesFromString(e.target.result);
-					trees.name = theFile.name;
-					
-					GENE_TREES_ALL[g] = trees;
-					
-
-					// Mapping
-					if (SPECIES_TREES_ALL != null && SPECIES_TREES_ALL.length > 0) {
-						var speciesLeaves = getLeaves(SPECIES_TREES_ALL[0]);
-						var mappingErrorMessage = mapGeneTreeToSpeciesTree(g, getLeaves(trees[0]), speciesLeaves);
-						if (mappingErrorMessage != ""){
-							$("#renderTreesBtn").addClass("disabled");
-							$("#fileUpload_" + g + " .userMsg").html("<b>Error:</b> " + mappingErrorMessage);
-							$("#fileUpload_" + g + " .userMsg").addClass("noMapError");
-							$("#fileUpload_" + g + " .loader").remove();
-							return;
-						}
-					}
-					
-
-					
-				} 
-				catch(err){
-					$("#fileUpload_" + g + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
-					$("#fileUpload_" + g + " .loader").remove();
-					return;
-				}
-				
-
-				NUMBER_OF_GENE_TREES++;
-				$("#fileUpload_" + g + " .userMsg").html("File successfully parsed");
-				$("#fileUpload_" + g + " .loader").remove();
-				
-				renderGeneTreeColourSettings();
-				
-
+				parseGeneTree(e, util_file);
 			};
 
 		})(file);
@@ -171,32 +93,16 @@ function initUtil(){
 	templateDropzone.on("addedfile", function(file) {
 
 		var util_file = {id: -2, filename: file.name, message: "", uploadedAs: "template"};
-		
 		removeFile(util_file.id);
-
 		$("#sessionUploadTable").append(getFileUploadTemplate(util_file.id, util_file.filename));
+
 		var reader = new FileReader();
 
 
 		// Closure to capture the file information.
 		reader.onload = (function(theFile) {
 			return function(e) {
-
-				if (e == null || e.target.result == "") return;
-
-				try{
-					loadSessionFromString(e.target.result);
-				} 
-				catch(err){
-					$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
-					$("#fileUpload_" + util_file.id + " .loader").remove();
-					return;
-				}
-				
-				$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
-				$("#fileUpload_" + util_file.id + " .loader").remove();
-				
-
+				parseTemplateFile(e, util_file);
 			};
 
 		})(file);
@@ -214,18 +120,119 @@ function initUtil(){
 
 
 
+// Parse a species tree from string and update DOM
+function parseSpeciesTree(e, util_file){
 
-function parseSpeciesTree(str){
+	try {
+
+		if (e == null || e.target.result == "") throw {message: "File contents cannot be located"};
+		SPECIES_TREES_ALL = getTreesFromString(e.target.result);
+		var speciesLeaves = getLeaves(SPECIES_TREES_ALL[0]);
+		for (var i = 0; i < speciesLeaves.length; i ++){
+			var species_leaf = speciesLeaves[i];
+			species_leaf.branchToGeneNodeMap = [];
+			species_leaf.nodeToGeneBranchMap = [];
+		}
+		SPECIES_TREES_ALL[0].successfullyMapped = true;
+
+		// Attempts to map to any pre-existing gene trees
+		if (NUMBER_OF_GENE_TREES > 0) {		
+			var geneTrees = [];
+			for (var i = 0; i < GENE_TREES_ALL.length; i ++){
+				if (GENE_TREES_ALL[i] == null) geneTrees.push(null);
+				else geneTrees.push(GENE_TREES_ALL[i][0]);
+			}
+			SPECIES_TREES_ALL[0].successfullyMapped = mapAllGeneTreesToSpeciesTree(speciesLeaves, geneTrees)
+		}
+
+	} 
+	catch(err){
+		$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
+		$("#fileUpload_" + util_file.id + " .loader").remove();
+		return;
+	}
+	
+	NTREES = SPECIES_TREES_ALL.length;
+	TREE_NUM = TREE_NUM == null ? 0 : TREE_NUM;
+	$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
+	if (SPECIES_TREES_ALL.length > 0 && SPECIES_TREES_ALL[0].successfullyMapped) $("#renderTreesBtn").removeClass("disabled");
+	$("#fileUpload_" + util_file.id + " .loader").remove();
+	FIRST_ANNOTATION_PASS = true;
+	TREE_ANNOTATIONS = [];
+
+}
 
 
 
+// Parse a gene tree from string and update DOM
+function parseGeneTree(e, util_file){
 
+
+	var g = util_file.id;
+
+	try{
+		if (e == null || e.target.result == "") throw {message: "File contents cannot be located"};
+		var trees = getTreesFromString(e.target.result);
+		trees.name = util_file.filename;
+		
+		GENE_TREES_ALL[g] = trees;
+		
+
+		// Mapping
+		if (SPECIES_TREES_ALL != null && SPECIES_TREES_ALL.length > 0) {
+			var speciesLeaves = getLeaves(SPECIES_TREES_ALL[0]);
+			var mappingErrorMessage = mapGeneTreeToSpeciesTree(g, getLeaves(trees[0]), speciesLeaves);
+			if (mappingErrorMessage != ""){
+				$("#renderTreesBtn").addClass("disabled");
+				$("#fileUpload_" + g + " .userMsg").html("<b>Error:</b> " + mappingErrorMessage);
+				$("#fileUpload_" + g + " .userMsg").addClass("noMapError");
+				$("#fileUpload_" + g + " .loader").remove();
+				return;
+			}
+		}
+		
+
+		
+	} 
+	catch(err){
+		$("#fileUpload_" + g + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
+		$("#fileUpload_" + g + " .loader").remove();
+		return;
+	}
+	
+
+	NUMBER_OF_GENE_TREES++;
+	$("#fileUpload_" + g + " .userMsg").html("File successfully parsed");
+	$("#fileUpload_" + g + " .loader").remove();
+	
+	renderGeneTreeColourSettings();
+	
 
 
 }
 
 
 
+
+// Parse a template file from string and update DOM
+function parseTemplateFile(e, util_file){
+
+
+	try{
+		if (e == null || e.target.result == "") throw {message: "File contents cannot be located"};
+		loadSessionFromString(e.target.result);
+	} 
+	catch(err){
+		$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
+		$("#fileUpload_" + util_file.id + " .loader").remove();
+		return;
+	}
+	
+	$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
+	$("#fileUpload_" + util_file.id + " .loader").remove();
+		
+
+}
 
 
 // Attempts to map all gene trees to the species tree, and if it fails reverts to the file upload menu and notifies the user
@@ -453,16 +460,17 @@ function closeDialogs(){
 	
 
 
-function getdialogTemplate(title, desc){
+function getdialogTemplate(title, desc, disclaimer = ""){
 	return `
 			<div id="operatorDialog" class="dialog">
 				<div class="dialog_inner">
 				<h2 class="">` + title + `</h2>
 
-					<div id="dialogDesc">` + desc + `</div><br>
+					<div class="dialogDesc">` + desc + `</div><br>
 					
 					
-					<span class="button" style="float:right" onclick="closeDialogs()">Close</span>
+					<span class="button" style="float:right" onclick="closeDialogs()">Close</span><br>
+					<span class="disclaimerDesc">` + disclaimer + `</span>
 				</div>
 			</div>
 

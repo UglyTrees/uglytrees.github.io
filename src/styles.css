@@ -545,7 +545,12 @@ input[type=number] {
 
 
 .dialogDesc{
-	 font-size:120%;
+	 font-size:100%;
+}
+
+.disclaimerDesc{
+	font-size:60%;
+	float:left;
 }
 
 

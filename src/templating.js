@@ -45,34 +45,9 @@ function initTemplates(){
 			var tem = getFileUploadTemplate(util_file.id, "<b>GitHub content:</b> " + JSONurl.xml);
 			$("#sessionUploadTable").append(tem);
 			
-
-
-			var scriptUrl = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec";
-			var url = scriptUrl + "?xml=" + JSONurl.xml + "&callback=?";
-
-
-
-			//console.log("Requesting", url);
+			
 			var callback = function(returnValue){
-
-				
-
-				try{
-					GITHUB_URL = JSONurl.xml;
-					console.log("Received", returnValue);
-					loadSessionFromString(returnValue.xml);
-				} 
-				catch(err){
-					$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
-					$("#fileUpload_" + util_file.id + " .loader").remove();
-					return;
-				}
-				
-				$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
-				$("#fileUpload_" + util_file.id + " .loader").remove();
-
-				
-
+				parseTemplateFile({target: {result: returnValue.content}}, util_file)
 			}
 		
 			var errorFn = function( errorMsg ){
@@ -84,24 +59,8 @@ function initTemplates(){
 				//removeOverlayLoader();
 			}
 
-
-			
+			requestFromGitHub(JSONurl.xml, callback, errorFn);
 		
-			//$.getJSON( url, function( returnValue ){
-				//console.log("Received", returnValue);
-			//});
-			$.ajax({
-				url: url,
-				dataType: 'json',
-				success: callback,
-				error:errorFn
-			});
-
-
-
-
-
-
 		}
 		
 
@@ -111,7 +70,24 @@ function initTemplates(){
 
 
 
+// Accesses a file on GitHub and returns it in the callback
+// Parse the GitHub url in the format: owner/repo/path/to/file.txt
+// Returns a JSON containing the 'url' of the page and the 'contant' 
+function requestFromGitHub(githubURL, callback = function(response) {}, errorFn = function(errorMsg) {} ){
 
+
+	var scriptUrl = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec";
+	var url = scriptUrl + "?url=" + githubURL + "&callback=?";
+	console.log("Requesting", url);
+
+	$.ajax({
+		url: url,
+		dataType: 'json',
+		success: callback,
+		error:errorFn
+	});
+
+}
 
 
 
@@ -448,11 +424,36 @@ function loadSessionFromString(text, resolve = function() { }) {
 			if (display) {
 				closeDialogs();
 				$("#innerBody").css("opacity", 0.5);
-				$("body").append(getdialogTemplate(main, body));
+				$("body").append(getdialogTemplate(main, body, "The views expressed in the above message are not affiliated with and are not endorsed by UglyTrees."));
 				openDialog();
 			}
 
 		}
+
+
+		// Trees
+		var treesXML = uglytrees.getElementsByTagName("trees");
+		if (treesXML.length > 0) {
+			treesXML = treesXML[0];
+
+
+			var species = treesXML.getElementsByTagName("species");
+			
+
+			treeIsHttp = false;
+			var genes = treesXML.getElementsByTagName("gene");
+			for (var g = 0; g < genes.length; g ++){
+
+				//var filename = getVal(genes[g].getAttribute("filename"), null)
+
+			}
+
+			// Parse trees if a) the tree is a http, or b) the session was loaded though the backend
+			var tryToUploadTrees = GITHUB_URL != null || treeIsHttp;
+
+
+		}
+
 		
 
 		setInterfaceFromVisualParams();
