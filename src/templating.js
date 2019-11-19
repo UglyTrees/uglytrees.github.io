@@ -42,7 +42,7 @@ function initTemplates(){
 			
 			var util_file = {id: -2, filename: JSONurl.xml, message: "", uploadedAs: "template"};
 			removeFile(util_file.id);
-			var tem = getFileUploadTemplate(util_file.id, "GitHub url: " + JSONurl.xml);
+			var tem = getFileUploadTemplate(util_file.id, "<b>GitHub content:</b> " + JSONurl.xml);
 			$("#sessionUploadTable").append(tem);
 			
 
@@ -79,7 +79,7 @@ function initTemplates(){
 				console.log("Unable to access scripts", errorMsg);
 				closeDialogs();
 				$("#innerBody").css("opacity", 0.5);
-				$("body").append(getdialogTemplate("Error: cannot access template", errorMsg.statusText));
+				$("body").append(getdialogTemplate("Error: cannot access template", ""));
 				openDialog();
 				//removeOverlayLoader();
 			}
