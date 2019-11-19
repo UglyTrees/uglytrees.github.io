@@ -269,7 +269,7 @@ function getTreeAnnotations(tree, speciesTree = true){
 		
 
 		if (isNumerical && !allInteger) annotation.mustBeNumerical = true;
-		if (isNumerical && allInteger) isNumerical = false;
+		if (isNumerical && allInteger) isNumerical = true;
 		if (!isNumerical && !allInteger) annotation.mustBeNominal = true;
 
 		annotation.complete = isComplete;

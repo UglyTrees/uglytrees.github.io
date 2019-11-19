@@ -81,6 +81,21 @@ function initVisualSettings(){
 	SHOW_Y_AXIS = true;
 
 
+	FIRST_ANNOTATION_PASS = true;
+
+	setInterfaceFromVisualParams();
+	
+
+
+	initialiseZoom();
+	
+	
+}
+
+
+function setInterfaceFromVisualParams(){
+
+
 	
 	$("#SPECIES_TREE_OPACITY").val(SPECIES_TREE_OPACITY);
 	$("#SUBTREE_SPACER").val(SUBTREE_SPACER);
@@ -102,17 +117,10 @@ function initVisualSettings(){
 	$("#SHOW_X_AXIS").prop("checked", SHOW_X_AXIS);
 	$("#SHOW_Y_AXIS").prop("checked", SHOW_Y_AXIS);
 	
-	
 
-	FIRST_ANNOTATION_PASS = true;
-
-	
 	renderParameterValues();
 
 
-	initialiseZoom();
-	
-	
 }
 
 
@@ -343,6 +351,8 @@ function renderGeneTreeColourSettings(){
 			</td>
 		</tr>`;
 		$("#geneTreeColours").append(html);
+
+		$("#selectGeneTree" + i).prop("checked", GENE_TREE_DISPLAYS[i]);
 		
 		
 	
@@ -391,7 +401,7 @@ function openColourPicker(geneTreeNum){
 				
 	
 	var colMatch = false;
-	for (var colNum = 0; colNum <= DEFAULT_COLOURS.length; colNum++){
+	for (var colNum = 0; colNum < DEFAULT_COLOURS.length; colNum++){
 		var col;
 		if (colNum == DEFAULT_COLOURS.length) col = "TRANSPARENT";
 		else col = DEFAULT_COLOURS[colNum].toUpperCase();
@@ -492,7 +502,7 @@ function getGeneTreeColour(geneTreeNumber){
 
 
 // Set the colour a gene tree
-function setGeneTreeColours(geneTreeNumber, colour){
+function setGeneTreeColours(geneTreeNumber, colour, updateAfter = true){
 	
 	
 	if (geneTreeNumber == parseFloat(geneTreeNumber)) {
@@ -520,11 +530,9 @@ function setGeneTreeColours(geneTreeNumber, colour){
 		}
 	}
 	
-	 
-	
-	
 	$("#colourbox" + geneTreeNumber).css("background-color", colour);
-	setVisualParams();
+	if (updateAfter) setVisualParams();
+
 }
 
 // Functions for converting rgb to hex
@@ -557,20 +565,41 @@ function rgbToHex(rgb) {
 // Populate the annotation lists (but do not replace if the elements already exist)
 function renderAnnotations(newAnnotations = []) {
 	
-	
+	var newVals = false
+	var oldAnnotation = null;
 	for (var i = 0; i < newAnnotations.length; i ++){
-		
-		var nameNew = newAnnotations[i].name;
+		var newAnnotation = newAnnotations[i];
 		var isNew = true;
 		for (var j = 0; j < TREE_ANNOTATIONS.length; j ++){
-			var nameOld = TREE_ANNOTATIONS[j].name;
-			if (nameNew == nameOld){
+			oldAnnotation = TREE_ANNOTATIONS[j];
+			if (newAnnotation.name == oldAnnotation.name){
 				isNew = false;
+				oldAnnotation.complete = newAnnotation.complete;
+				oldAnnotation.format = newAnnotation.format;
+				oldAnnotation.mustBeNumerical = newAnnotation.mustBeNumerical;
+				oldAnnotation.mustBeNominal = newAnnotation.mustBeNominal;
+				for (var ele in newAnnotation.discreteCols){
+					if (oldAnnotation.discreteCols[ele] == null) {
+						newVals = true;
+						oldAnnotation.discreteCols[ele] = "black";
+					}
+				}
 				break;
 			}
 		}
 		
 		if (isNew) TREE_ANNOTATIONS.push(newAnnotations[i]);
+
+
+		// Update colours
+		if (newVals) {
+			var colNum = 0;
+			for (var value in newAnnotation.discreteCols){
+				var col = getDefaultColour(colNum);
+				oldAnnotation.discreteCols[value] = col;
+				colNum++;
+			}
+		}
 
 	}
 

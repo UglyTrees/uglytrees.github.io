@@ -7,6 +7,10 @@
 	100% { transform: rotate(360deg); }
 }
 
+a {
+	color:#DB5079;
+}
+
 
 svg {
   -webkit-backface-visibility: hidden;
@@ -199,6 +203,14 @@ line {
 }
 
 
+@media only screen and (max-width: 1200px) {
+	.dialog{
+		width:95%;
+		margin-left:2.5%;
+	}
+}
+
+
 .dialog.toTheSide{
 	position:relative;
 	margin-left:0;
@@ -210,7 +222,7 @@ line {
 
 .dialog_inner{
 	background-color: white; 
-	padding: 10 10; 
+	padding: 1em 1.5em; 
 	text-align:center; 
 	font-size:15; 
 	overflow-y:auto
@@ -436,6 +448,10 @@ input[type=number] {
 	overflow-x:auto;
 }
 
+.uploader.small{
+	height:15em;
+}
+
 
 .uploader.dz-drag-hover, .uploader:hover {
 	background-color:#DB5079;
@@ -449,6 +465,11 @@ input[type=number] {
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 
 	
+}
+
+
+.uploader.small div{
+	font-size:150%;
 }
 
 
@@ -484,7 +505,7 @@ input[type=number] {
 }
 
 .uploaderTd{
-	width:45%;
+	width:35%;
 }
 
 @media only screen and (max-width: 1200px) {
@@ -505,7 +526,9 @@ input[type=number] {
 
 
 
-
+.dialogDesc{
+	 font-size:120%;
+}
 
 
 @import "compass/css3";
@@ -573,6 +596,10 @@ input[type=number] {
 	%width: 33%;
 	%text-align:left;
 	%margin-left:0.5em;
+}
+
+.flex-container.center{
+	justify-content: space-around;
 }
 
 

@@ -54,11 +54,13 @@
 		<script language='JavaScript' type='text/JavaScript' src="src/drawTrees.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="src/visualsettings.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="src/util.js"></script>
+		<script language='JavaScript' type='text/JavaScript' src="src/templating.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="src/speciesGeneMapper.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/velocity.min.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/dropzone.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/chroma.js-master/chroma.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/easypz.latest.js"></script>
+		<script language='JavaScript' type='text/JavaScript' src="lib/XMLWriter/XMLWriter.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"> </script>
 		<script>
 
@@ -98,8 +100,7 @@
 
 				
 				yScaler = 1;
-				BURNIN = 0.1;
-				TREE_NUM = 0;
+				TREE_NUM = null;
 				NTREES = 0;
 
 
@@ -130,6 +131,7 @@
 				revALPHA = 1;
 
 				initUtil();
+				initTemplates();
 
 
 			}
@@ -301,6 +303,9 @@
 				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW) return;
 			
 			
+				if (TREE_NUM < 0) TREE_NUM = 0;
+				if (TREE_NUM >= SPECIES_TREES_ALL.length) TREE_NUM = SPECIES_TREES_ALL.length - 1;
+
 			
 				// Get the gene trees
 				GENE_TREES = [];
@@ -1714,7 +1719,14 @@
 						</td>
 
 						<td style="text-align:center" colspan=2>
-							<br><br><br><br>
+							
+							<div id="template_upload" class="uploader small">
+								<div>Upload a template (optional)</div>
+								<table id="sessionUploadTable"">
+								</table>
+							</div>
+
+							<br><br>
 							<span id="renderTreesBtn" onclick="userSaysDraw();" class="button large disabled">Draw trees</span>
 						</td>
 

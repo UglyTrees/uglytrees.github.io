@@ -31,10 +31,11 @@ function initUtil(){
 
 	
 	SPECIES_UPLOADED_FILE = null;
+	TEMPLATE_UPLOADED_FILE = null;
 	GENE_UPLOADED_FILES = [];
 	NUMBER_OF_GENE_TREES = 0;
 
-
+	// Species tree upload
 	var speciesTreeDropzone = new Dropzone("div#species_tree_upload", { url: "/file/post"});
 	speciesTreeDropzone.on("addedfile", function(file) {
 		
@@ -80,7 +81,7 @@ function initUtil(){
 				}
 				
 				NTREES = SPECIES_TREES_ALL.length;
-				TREE_NUM = Math.floor(NTREES * BURNIN);
+				TREE_NUM = TREE_NUM == null ? 0 : TREE_NUM;
 				console.log(theFile);
 				$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
 				if (SPECIES_TREES_ALL.length > 0 && SPECIES_TREES_ALL[0].successfullyMapped) $("#renderTreesBtn").removeClass("disabled");
@@ -100,7 +101,7 @@ function initUtil(){
 
 
 
-
+	// Gene tree upload
 	var geneTreeDropzone = new Dropzone("div#gene_tree_upload", { url: "/file/post"});
 	geneTreeDropzone.on("addedfile", function(file) {
 		
@@ -165,7 +166,45 @@ function initUtil(){
 	});
 
 
+	// Template upload
+	var templateDropzone = new Dropzone("div#template_upload", { url: "/file/post"});
+	templateDropzone.on("addedfile", function(file) {
 
+		var util_file = {id: -2, filename: file.name, message: "", uploadedAs: "template"};
+		
+		removeFile(util_file.id);
+
+		$("#sessionUploadTable").append(getFileUploadTemplate(util_file.id, util_file.filename));
+		var reader = new FileReader();
+
+
+		// Closure to capture the file information.
+		reader.onload = (function(theFile) {
+			return function(e) {
+
+				if (e == null || e.target.result == "") return;
+
+				try{
+					loadSessionFromString(e.target.result);
+				} 
+				catch(err){
+					$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
+					$("#fileUpload_" + util_file.id + " .loader").remove();
+					return;
+				}
+				
+				$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
+				$("#fileUpload_" + util_file.id + " .loader").remove();
+				
+
+			};
+
+		})(file);
+
+		reader.readAsText(file);
+
+
+	});
 
 
 
@@ -223,6 +262,9 @@ function removeFile(g){
 		$(".noMapError").removeClass("noMapError");
 
 	}
+	else if (g == -2){
+		$("#sessionUploadTable").html("");
+	}
 	else if (g >= 0){
 		
 		// Delete the gene tree
@@ -253,7 +295,7 @@ function getFileUploadTemplate(fileID, fileName){
 	//console.log("Uploading", fileID, fileName);
 	return ` <tr style="height:2em" id="fileUpload_` + fileID + `">
 			<td style="min-width:20px"> <div title="Loading file..." class="loader" style="margin:auto"></div> </td>
-			<td style="width:40%; text-align:right"><i>` + fileName + `</i>:</td>
+			<td style="width:30%; text-align:right"><i>` + fileName + `</i>:</td>
 			<td style="min-width:20px;"></td>
 			<td class="userMsg" style="width:60%; text-align:justified"">Uploading</td>
 			<td style="cursor:pointer; min-width:20px; font-size:200%;" title="Remove file" onclick="removeFile(` + fileID + `)">&times;</td>
@@ -286,11 +328,11 @@ function getLeaves(tree) {
 
 function openDownloadDialog(){
 	
-
+	
 	closeDialogs();
 	$("#innerBody").css("opacity", 0.5);
 	
-	var html = `<ul class="flex-container">
+	var html = `<ul class="flex-container center">
 	
 					<li style="text-align:left">
 						<b>Download tree</b> <br><br>
@@ -299,19 +341,26 @@ function openDownloadDialog(){
 						Format:
 						 <select class="dropdown" id="downloadFormat">
 							<option value="svg">.svg</option>
-							<option value="png">.png</option>
+							<!--<option value="png">.png</option>-->
 						</select> <br><br>
 						<span class="button" onclick="downloadTree(); closeDialogs()">Download</span> <br><br>
 					</li> 
 					
-					<li  style="float:right">
+					<li style="float:right">
 						<b>Download template</b> <br><br>
-						<span class="button" onclick="closeDialogs()">Download</span>
+
+						<div style="font-size:80%; width:20em; text-align:justify"> 
+						By downloading an UglyTrees template, the current visual settings can be restored by
+						uploading the xml template next time. UglyTree can also access the template from your GitHub
+						page, allowing for users to visualise your trees with just one click. <a href="">More info here</a> <br> 
+						</div><br><br>
+						
+						<span class="button" onclick="saveSession(); closeDialogs()">Download</span>
 					</li>
 	
 				</ul>`;
 	
-	$("body").append(getdialogTemplate("Download settings", html));
+	$("body").append(getdialogTemplate("Save As", html));
 	openDialog();
 }
 
@@ -336,6 +385,9 @@ function uploadNewFiles(){
 
 
 function openDialog(){
+
+
+
 
 	window.setTimeout(function(){
 		
@@ -381,10 +433,10 @@ function getdialogTemplate(title, desc){
 				<div class="dialog_inner">
 				<h2 class="">` + title + `</h2>
 
-					<div id="dialogDesc" style="font-size:120%">` + desc + `</div><br>
+					<div id="dialogDesc">` + desc + `</div><br>
 					
 					
-					
+					<span class="button" style="float:right" onclick="closeDialogs()">Close</span>
 				</div>
 			</div>
 
@@ -467,8 +519,37 @@ function isPageHidden(){
 
 
 
+// Download a file
+function download(filename, text) {
 
 
+	// Open in new window
+	if (filename == null || filename == ""){
+
+		var wnd = window.open("data:text/html," + encodeURIComponent(text),  "_blank", "width=800,height=500");
+		wnd.document.title = 'testing';
+		wnd.focus();
+
+	}
+
+	// Download file
+	else{
+
+		var pom = document.createElement('a');
+		pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+		pom.setAttribute('download', filename);
+
+
+		if (document.createEvent) {
+			var event = document.createEvent('MouseEvents');
+			event.initEvent('click', true, true);
+			pom.dispatchEvent(event);
+		}
+		else {
+			pom.click();
+		}
+	}
+}
 
 
 
