@@ -24,6 +24,7 @@
 
 */
 
+//var url = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec?method="pageLoad"&callback=?";
 
 
 function initTemplates(){
@@ -45,13 +46,13 @@ function initTemplates(){
 		cache: false,
 		dataType: "json",
 		contentType: "application/json; charset=UTF-8",
-		data: {method:"pageLoad"},
+		data: {method: "pageLoad"},
 		success: function(data, textStatus, xhr) {
 		    console.log(data);
 		    console.log(xhr.getResponseHeader("Content-Length"));
 		},
 		error: function (xhr, textStatus, errorThrown) {
-		    console.log(errorThrown);
+		    console.log("ERROR", textStatus, errorThrown);
 	}});
 
 
