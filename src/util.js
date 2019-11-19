@@ -211,6 +211,23 @@ function initUtil(){
 }
 
 
+
+
+
+
+function parseSpeciesTree(str){
+
+
+
+
+
+
+}
+
+
+
+
+
 // Attempts to map all gene trees to the species tree, and if it fails reverts to the file upload menu and notifies the user
 function mapAllGeneTreesToSpeciesTree(speciesLeaves, geneTrees){
 
@@ -306,10 +323,19 @@ function getFileUploadTemplate(fileID, fileName){
 
 
 function addLoader(eleAddTo, id = "loader"){
-	$(eleAddTo).append(`<div  id="` + id + `" title="Loading file..." class="loader" style="margin:auto"></div>`);
+	$(eleAddTo).append(`<div id="` + id + `" title="Loading file..." class="loader" style="margin:auto"></div>`);
 }
 
 
+function addOverlayLoader(){
+	$("#innerBody").css("opacity", 0.5);
+	$("body").append(`<div id="overlayLoader" class="overlay"><div title="Loading session..." class="loader"></div>Loading template from GitHub</div>`)
+}
+
+function removeOverlayLoader(){
+	$("#innerBody").css("opacity", 1);
+	$("#overlayLoader").remove();
+}
 
 
 // Get the leaves of the tree

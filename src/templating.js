@@ -24,37 +24,88 @@
 
 */
 
-//var url = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec?method="pageLoad"&callback=?";
-
-
 function initTemplates(){
 
-	var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec";
+
+	GITHUB_URL = null;
+
+
+	// Attempt to load in a script from GitHub
+	var urlParams = window.location.search.substr(1);
 	
-	/*
-    	$.getJSON(SCRIPT_URL+"?callback=?",
-	      	{method:"pageLoad", format:"jsonp"},
-		      function (data) { 
-			alert(JSON.stringify(data)); 
-		      });
-	*/
+	if (urlParams.length > 0){
 
-	$.ajax({
-		type: "get",
-		url: SCRIPT_URL,
-		crossDomain: true,
-		cache: false,
-		dataType: "json",
-		contentType: "application/json; charset=UTF-8",
-		data: {method: "pageLoad"},
-		success: function(data, textStatus, xhr) {
-		    console.log(data);
-		    console.log(xhr.getResponseHeader("Content-Length"));
-		},
-		error: function (xhr, textStatus, errorThrown) {
-		    console.log("ERROR", textStatus, errorThrown);
-	}});
+		var JSONurl = JSON.parse('{"' + decodeURI(urlParams).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+		if (JSONurl.xml != null) {
+			console.log("JSONurl", JSONurl);
 
+			
+			var util_file = {id: -2, filename: JSONurl.xml, message: "", uploadedAs: "template"};
+			removeFile(util_file.id);
+			var tem = getFileUploadTemplate(util_file.id, "GitHub url: " + JSONurl.xml);
+			$("#sessionUploadTable").append(tem);
+			
+
+
+			var scriptUrl = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec";
+			var url = scriptUrl + "?xml=" + JSONurl.xml + "&callback=?";
+
+
+
+			//console.log("Requesting", url);
+			var callback = function(returnValue){
+
+				
+
+				try{
+					GITHUB_URL = JSONurl.xml;
+					console.log("Received", returnValue);
+					loadSessionFromString(returnValue.xml);
+				} 
+				catch(err){
+					$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
+					$("#fileUpload_" + util_file.id + " .loader").remove();
+					return;
+				}
+				
+				$("#fileUpload_" + util_file.id + " .userMsg").html("File successfully parsed");
+				$("#fileUpload_" + util_file.id + " .loader").remove();
+
+				
+
+			}
+		
+			var errorFn = function( errorMsg ){
+				console.log("Unable to access scripts", errorMsg);
+				closeDialogs();
+				$("#innerBody").css("opacity", 0.5);
+				$("body").append(getdialogTemplate("Error: cannot access template", errorMsg.statusText));
+				openDialog();
+				//removeOverlayLoader();
+			}
+
+
+			
+		
+			//$.getJSON( url, function( returnValue ){
+				//console.log("Received", returnValue);
+			//});
+			$.ajax({
+				url: url,
+				dataType: 'json',
+				success: callback,
+				error:errorFn
+			});
+
+
+
+
+
+
+		}
+		
+
+	}
 
 }
 

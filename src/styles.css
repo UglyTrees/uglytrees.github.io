@@ -28,6 +28,24 @@ svg {
 
 }
 
+
+
+.overlay {
+	position:fixed;
+	top: 30vh;
+	left: 50vw;
+	font-size:120%;
+	text-align:center;
+}
+
+.overlay .loader{
+	width: 4em;
+	height: 4em;
+	border: 1.5em solid #696969; 
+	border-top: 1.5em solid #DB5079; 
+
+}
+
 line.selected {
 	stroke: #DB5079 !important;
 	stroke-width: 3px !important;
