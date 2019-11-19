@@ -29,13 +29,30 @@
 function initTemplates(){
 
 	var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec";
-	$(document).ready(function() {
-	    $.getJSON(SCRIPT_URL+"?callback=?",
-		      {method:"pageLoad"},
+	
+	/*
+    	$.getJSON(SCRIPT_URL+"?callback=?",
+	      	{method:"pageLoad", format:"jsonp"},
 		      function (data) { 
-		        alert(JSON.stringify(data)); 
+			alert(JSON.stringify(data)); 
 		      });
-	});
+	*/
+
+	$.ajax({
+		type: "get",
+		url: SCRIPT_URL,
+		crossDomain: true,
+		cache: false,
+		dataType: "json",
+		contentType: "application/json; charset=UTF-8",
+		data: {method:"pageLoad"},
+		success: function(data, textStatus, xhr) {
+		    console.log(data);
+		    console.log(xhr.getResponseHeader("Content-Length"));
+		},
+		error: function (xhr, textStatus, errorThrown) {
+		    console.log(errorThrown);
+	}});
 
 
 }
