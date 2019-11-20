@@ -36,9 +36,9 @@ function initVisualSettings(){
 	SIDENAV_WIDTH = 300;
 	
 	
-	DEFAULT_COLOURS = ["#50b2db",  "#50db79", "#db506d", "#7950DB", "#b2db50", "#db7950", 
-						"#4e8791", "#ff1919", "#228B22", "#91584e", "#584e91", "#009fe1", "#ffff1a", "#ff8d1a", "#DB5079",
-						"#000000", "#606060", "#707070", "#A0A0A0", "#BEBEBE", "#d3d3d3", "#E0E0E0", "#FFFFFF"];
+	DEFAULT_COLOURS = [	"#50b2db",  "#50db79", "#db506d", "#7950DB", "#b2db50", "#db7950", 
+				"#4e8791", "#ff1919", "#228B22", "#91584e", "#584e91", "#009fe1", "#ffff1a", "#ff8d1a", "#DB5079",
+				"#000000", "#606060", "#707070", "#A0A0A0", "#BEBEBE", "#d3d3d3", "#E0E0E0", "#FFFFFF"];
 	GENE_TREE_COLOURS = [];
 	setInitialGeneTreeColours();
 	GENE_TREE_DISPLAYS = {};

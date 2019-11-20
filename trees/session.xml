@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<uglytrees datetime="19Nov2019-10:45:22" TREE_NUM="0">
+<uglytrees datetime="21Nov2019-11:35:20" TREE_NUM="1">
 	<trees>
 		<!-- The file names below may be edited to point to a url. If the UglyTrees session is uploaded from GitHub, these files will
 		be read relative to the template directory on GitHub. Otherwise, the files will not be read at all. -->
-		<species filename="starbeast3_UCLN.species.trees" />
-		<gene filename="starbeast3_UCLN.gene26.trees" />
-		<gene filename="starbeast3_UCLN.gene29.trees" />
-		<gene filename="starbeast3_UCLN.gene47.trees" />
+		<species filename="species.trees" />
+		<gene filename="gene1.trees" />
+		<gene filename="gene2.trees" />
+		<gene filename="gene3.trees" />
+		<gene filename="gene4.trees" />
+		<gene filename="gene5.trees" />
 	</trees>
 	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
-	<intro display="true">
+	<intro display="false">
 		<main string="Welcome to UglyTrees" />
 		<body string="This text may be edited in the .xml template to customise messages presented to the user when the template is loaded. &lt;br>&lt;br>
 							This &lt;b style='color:#DB5079'>message&lt;/b> can be rendered using inline HTML stylings if escape characters are used in the .xml string &lt;h2>Heading 2 &lt;/h2> &lt;h3>Heading 3 &lt;/h3>" />
@@ -17,40 +19,76 @@
 	<view SHOW_X_AXIS="false" SHOW_Y_AXIS="true">
 		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
-			<class value="townsendii" col="black" />
-			<class value="talpoides" col="#50db79" />
-			<class value="idahoensis" col="#db506d" />
-			<class value="umbrinus" col="#7950DB" />
-			<class value="monticola" col="#b2db50" />
-			<class value="bottae" col="#db7950" />
-			<class value="heterodus" col="#4e8791" />
-			<class value="mazama" col="#ff1919" />
-			<class value="Orthogeomys_heterodus" col="#50b2db" />
-			<class value="Thomomys_bottae_albatus" col="#50db79" />
-			<class value="Thomomys_bottae_alpinus" col="#db506d" />
-			<class value="Thomomys_bottae_awahnee_a" col="#7950DB" />
-			<class value="Thomomys_bottae_awahnee_b" col="#b2db50" />
-			<class value="Thomomys_bottae_bottae" col="#db7950" />
-			<class value="Thomomys_bottae_cactophilus" col="#4e8791" />
-			<class value="Thomomys_bottae_laticeps" col="#ff1919" />
-			<class value="Thomomys_bottae_mewa" col="#228B22" />
-			<class value="Thomomys_bottae_riparius" col="#91584e" />
-			<class value="Thomomys_bottae_ruidosae" col="#584e91" />
-			<class value="Thomomys_bottae_saxatilis" col="#009fe1" />
-			<class value="Thomomys_bottae_xerophilus" col="#ffff1a" />
-			<class value="Thomomys_idahoensis_pygmaeus_a" col="#ff8d1a" />
-			<class value="Thomomys_idahoensis_pygmaeus_b" col="#DB5079" />
-			<class value="Thomomys_mazama_mazama" col="#000000" />
-			<class value="Thomomys_mazama_nasicus" col="#606060" />
-			<class value="Thomomys_monticola_a" col="#707070" />
-			<class value="Thomomys_monticola_b" col="#A0A0A0" />
-			<class value="Thomomys_talpoides_bridgeri" col="#BEBEBE" />
-			<class value="Thomomys_talpoides_ocius" col="#d3d3d3" />
-			<class value="Thomomys_talpoides_yakimensis" col="#E0E0E0" />
-			<class value="Thomomys_townsendii_relictus" col="#FFFFFF" />
-			<class value="Thomomys_townsendii_townsendii" col="#50b2db" />
-			<class value="Thomomys_umbrinus_atroavarius" col="#50db79" />
-			<class value="Thomomys_umbrinus_chihuahuae" col="#db506d" />
+			<class value="A" col="#50b2db" />
+			<class value="E" col="#50db79" />
+			<class value="N" col="#db506d" />
+			<class value="L" col="#7950DB" />
+			<class value="D" col="#b2db50" />
+			<class value="C" col="#db7950" />
+			<class value="Q" col="#4e8791" />
+			<class value="F" col="#ff1919" />
+			<class value="G" col="#228B22" />
+			<class value="H" col="#91584e" />
+			<class value="B" col="#584e91" />
+			<class value="R" col="#009fe1" />
+			<class value="I" col="#ffff1a" />
+			<class value="P" col="#ff8d1a" />
+			<class value="T" col="#DB5079" />
+			<class value="K" col="#000000" />
+			<class value="M" col="#606060" />
+			<class value="O" col="#707070" />
+			<class value="S" col="#A0A0A0" />
+			<class value="J" col="#BEBEBE" />
+			<class value="A_1" col="#50b2db" />
+			<class value="A_8" col="#50db79" />
+			<class value="A_9" col="#db506d" />
+			<class value="A_11" col="#7950DB" />
+			<class value="A_2" col="#b2db50" />
+			<class value="A_4" col="#db7950" />
+			<class value="A_10" col="#4e8791" />
+			<class value="A_3" col="#ff1919" />
+			<class value="A_5" col="#228B22" />
+			<class value="A_7" col="#91584e" />
+			<class value="A_6" col="#584e91" />
+			<class value="E_1" col="#009fe1" />
+			<class value="L_1" col="#ffff1a" />
+			<class value="L_3" col="#ff8d1a" />
+			<class value="L_6" col="#DB5079" />
+			<class value="L_2" col="#000000" />
+			<class value="L_4" col="#606060" />
+			<class value="L_8" col="#707070" />
+			<class value="L_9" col="#A0A0A0" />
+			<class value="L_5" col="#BEBEBE" />
+			<class value="L_10" col="#d3d3d3" />
+			<class value="L_7" col="#E0E0E0" />
+			<class value="N_1" col="#FFFFFF" />
+			<class value="D_1" col="#50b2db" />
+			<class value="C_1" col="#50db79" />
+			<class value="Q_1" col="#db506d" />
+			<class value="F_1" col="#7950DB" />
+			<class value="G_1" col="#b2db50" />
+			<class value="G_2" col="#db7950" />
+			<class value="H_1" col="#4e8791" />
+			<class value="B_1" col="#ff1919" />
+			<class value="R_1" col="#228B22" />
+			<class value="R_2" col="#91584e" />
+			<class value="R_4" col="#584e91" />
+			<class value="R_3" col="#009fe1" />
+			<class value="I_1" col="#ffff1a" />
+			<class value="I_2" col="#ff8d1a" />
+			<class value="I_4" col="#DB5079" />
+			<class value="I_3" col="#000000" />
+			<class value="P_1" col="#606060" />
+			<class value="T_1" col="#707070" />
+			<class value="K_1" col="#A0A0A0" />
+			<class value="M_1" col="#BEBEBE" />
+			<class value="O_1" col="#d3d3d3" />
+			<class value="O_2" col="#E0E0E0" />
+			<class value="O_3" col="#FFFFFF" />
+			<class value="S_1" col="#50b2db" />
+			<class value="J_1" col="#50db79" />
+			<class value="J_2" col="#db506d" />
+			<class value="J_3" col="#7950DB" />
 		</annotation>
 		<annotation name="pop" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
@@ -58,14 +96,13 @@
 		<annotation name="branchRates.Species" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 		</annotation>
-		<annotation name="rate" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
-			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
-		</annotation>
 	</view>
-	<speciestree SPECIES_TREE_OPACITY="100" SPECIES_LABEL_FONT_SIZE="22" SPECIES_WIDTH_ANNOTATION="pop" SUBTREE_SPACER="0.5" SPECIES_BRANCH_MULTIPLIER="_none" SPECIES_BRANCH_WIDTH="1" SPECIES_BRANCH_BORDER_ANNOTATION="_none" SPECIES_TREE_BORDER_COL="#000000" SPECIES_BRANCH_BGCOL_ANNOTATION="Label" SPECIES_TREE_BG_COL="#FFFFFF" />
+	<speciestree SPECIES_TREE_OPACITY="100" SPECIES_LABEL_FONT_SIZE="21.5" SPECIES_WIDTH_ANNOTATION="pop" SUBTREE_SPACER="0.2" SPECIES_BRANCH_MULTIPLIER="_none" SPECIES_BRANCH_WIDTH="1" SPECIES_BRANCH_BORDER_ANNOTATION="_none" SPECIES_TREE_BORDER_COL="#000000" SPECIES_BRANCH_BGCOL_ANNOTATION="_none" SPECIES_TREE_BG_COL="#FFFFFF" />
 	<genetrees GROUP_GENES_BY_TAXA="false" GENE_NODE_MULTIPLIER="_none" GENE_NODE_SIZE="4" GENE_BRANCH_MULTIPLIER="_none" GENE_BRANCH_WIDTH="1" GENE_BRANCH_BGCOL_ANNOTATION="_none">
 		<gene display="true" col="#50b2db" />
 		<gene display="true" col="#50db79" />
 		<gene display="true" col="#db506d" />
+		<gene display="true" col="#7950DB" />
+		<gene display="true" col="#b2db50" />
 	</genetrees>
 </uglytrees>

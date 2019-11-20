@@ -47,19 +47,31 @@ function initTemplates(){
 			
 			
 			var callback = function(returnValue){
-				parseTemplateFile({target: {result: returnValue.content}}, util_file)
+				console.log("returnValue", returnValue);
+				var session = returnValue["session"];
+				if (session.err != null) {
+					errorFn(session.err);
+				}
+				else {
+					var content = session.content.content;
+					GITHUB_URL = JSONurl.xml;
+					parseTemplateFile({target: {result: content}}, util_file);
+				}
 			}
 		
-			var errorFn = function( errorMsg ){
-				console.log("Unable to access scripts", errorMsg);
+			var errorFn = function(err){
+				removeFile(util_file.id);
+				console.log("Unable to access scripts", err);
 				closeDialogs();
 				$("#innerBody").css("opacity", 0.5);
-				$("body").append(getdialogTemplate("Error: cannot access template", ""));
+				$("body").append(getdialogTemplate("Error: cannot access template", err.message));
 				openDialog();
 				//removeOverlayLoader();
 			}
 
-			requestFromGitHub(JSONurl.xml, callback, errorFn);
+
+			var urls = [{name: "session", url: JSONurl.xml}];
+			requestFromGitHub(urls, callback, errorFn);
 		
 		}
 		
@@ -73,11 +85,11 @@ function initTemplates(){
 // Accesses a file on GitHub and returns it in the callback
 // Parse the GitHub url in the format: owner/repo/path/to/file.txt
 // Returns a JSON containing the 'url' of the page and the 'contant' 
-function requestFromGitHub(githubURL, callback = function(response) {}, errorFn = function(errorMsg) {} ){
+function requestFromGitHub(githubURLs, callback = function(response) {}, errorFn = function(errorMsg) {} ){
 
 
 	var scriptUrl = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec";
-	var url = scriptUrl + "?url=" + githubURL + "&callback=?";
+	var url = scriptUrl + "?urls=" + JSON.stringify(githubURLs) + "&callback=?";
 	console.log("Requesting", url);
 
 	$.ajax({
@@ -317,7 +329,10 @@ function loadSessionFromString(text, resolve = function() { }) {
 		console.log(xmlDoc);
 		var uglytrees = xmlDoc.getElementsByTagName("uglytrees")[0];
 		TREE_NUM = getValFloat(uglytrees.getAttribute("TREE_NUM"), TREE_NUM);
-		if (TREE_NUM != null) $("#treeNum").val(TREE_NUM);
+		if (TREE_NUM != null) {
+			$("#treeNum").val(TREE_NUM);
+			resizeInput($("#treeNum"));
+		}
 
 		
 		// View
@@ -440,16 +455,69 @@ function loadSessionFromString(text, resolve = function() { }) {
 			var species = treesXML.getElementsByTagName("species");
 			
 
-			treeIsHttp = false;
-			var genes = treesXML.getElementsByTagName("gene");
-			for (var g = 0; g < genes.length; g ++){
-
-				//var filename = getVal(genes[g].getAttribute("filename"), null)
-
+			// Get GitHub directory of the template session parsed in the url
+			// Example:
+			// 	uglytrees/uglytrees.github.io/trees/session.xml 
+			// will become
+			// 	uglytrees/uglytrees.github.io/trees/
+			var relativeDir = "";
+			if (GITHUB_URL != null){
+				var strsplit = GITHUB_URL.split("/");
+				for (var b = 0; b < strsplit.length - 1; b ++){
+					relativeDir += strsplit[b] + "/";
+				}
 			}
 
+
+
 			// Parse trees if a) the tree is a http, or b) the session was loaded though the backend
-			var tryToUploadTrees = GITHUB_URL != null || treeIsHttp;
+			var genes = treesXML.getElementsByTagName("gene");
+			for (var g = -1; g < genes.length; g ++){
+
+				
+				var isSpeciesTree = g == -1;
+				if (isSpeciesTree) {
+					if (species.length == 0) continue;
+					else filename = getVal(species[0].getAttribute("filename"), null);
+				}
+				else filename = getVal(genes[g].getAttribute("filename"), null);
+
+				if (filename != null) {
+
+
+
+					var requestName = isSpeciesTree ? "species" : "gene" + g;
+					var URLobj = {name: requestName, url: ""};
+
+					// Case 1: the tree has a url. Load the URL directly.
+					if (isUrl(filename)) {
+						URLobj.url = filename;
+
+					// Case 2: the tree is relative to the template xml and a template xml was parsed through the URL bar.
+					}else if (GITHUB_URL != null){
+						URLobj.url = relativeDir + filename;
+					}
+
+					// Case 3: the tree is a file path and the template was uploaded manually. Do not attempt to locate the file. 
+					else continue;
+
+
+
+					// Activate file upload GUI 
+					var util_file = {id: g, filename: URLobj.url, message: "", uploadedAs: g == -1 ? "species" : "gene"};
+					removeFile(util_file.id);
+					var tem = getFileUploadTemplate(util_file.id, "<b>GitHub content:</b> " + util_file.filename);
+					if (isSpeciesTree) $("#speciesTreeUploadTable").append(tem);
+					else $("#geneTreeUploadTable").append(tem);
+
+					// Download each tree one at a time
+					treeDownloadFromExternalSource(URLobj, util_file);
+
+
+					
+				}
+
+			}
 
 
 		}
@@ -465,9 +533,49 @@ function loadSessionFromString(text, resolve = function() { }) {
 		
 	}
 
+}
+
+
+
+// Access the backend to download a tree, and then parse its contents on the frontend
+function treeDownloadFromExternalSource(URLobj, util_file){
+
+	
+	var callback = function(returnValue){
+		
+
+		var reqName;
+		for (reqName in returnValue) {};
+
+		console.log(URLobj.name, "returnValue", returnValue);
+
+		var trees = returnValue[URLobj.name];
+		if (trees.err != null) {
+			errorFn(trees.err);
+		}
+		else {
+			var content = trees.content.content;
+			if (isSpeciesTree) parseSpeciesTree({target: {result: content}}, util_file);
+			else parseGeneTree({target: {result: content}}, util_file);
+		}
+	}
+
+	var errorFn = function(err){
+		removeFile(util_file.id);
+		console.log("Unable to access scripts", err);
+		closeDialogs();
+		$("#innerBody").css("opacity", 0.5);
+		$("body").append(getdialogTemplate("Error: cannot access template", err.message));
+		openDialog();
+	}
+
+
+	requestFromGitHub([URLobj], callback, errorFn);
 
 
 }
+
+
 
 
 function getVal(val, _default, throwError = false){
