@@ -511,7 +511,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 					else $("#geneTreeUploadTable").append(tem);
 
 					// Download each tree one at a time
-					treeDownloadFromExternalSource(URLobj, util_file);
+					treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree);
 
 
 					
@@ -538,14 +538,11 @@ function loadSessionFromString(text, resolve = function() { }) {
 
 
 // Access the backend to download a tree, and then parse its contents on the frontend
-function treeDownloadFromExternalSource(URLobj, util_file){
+function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 
 	
 	var callback = function(returnValue){
 		
-
-		var reqName;
-		for (reqName in returnValue) {};
 
 		console.log(URLobj.name, "returnValue", returnValue);
 
