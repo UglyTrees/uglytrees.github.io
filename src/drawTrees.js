@@ -33,72 +33,6 @@
 
 
 
-// Stores the coordinates (in case of rejection)
-function storeTree(node){
-	
-	if (node.children.length == 2){
-		storeTree(node.children[0]);
-		storeTree(node.children[1]);
-	}
-	
-	node.coordsStored = JSON.parse(JSON.stringify(node.coords));
-	node.heightStored = node.height;
-	node.rateStored = node.rate;
-	node.populationsizeStored = node.populationsize;
-	
-	
-}
-
-
-// Restores the coordinates (in case of rejection)
-function restoreTree(node){
-	
-	if (node.children.length == 2){
-		restoreTree(node.children[0]);
-		restoreTree(node.children[1]);
-	}
-	
-	node.coords = JSON.parse(JSON.stringify(node.coordsStored));
-	node.height = node.heightStored;
-	node.rate = node.rateStored;
-	node.populationsize = node.populationsizeStored;
-}
-
-
-// Stores the proposed coordinates (in case of user reverting animation)
-function storeProposedTree(node){
-	
-	if (node.children.length == 2){
-		storeProposedTree(node.children[0]);
-		storeProposedTree(node.children[1]);
-	}
-	
-	node.coordsProposed = JSON.parse(JSON.stringify(node.coords));
-	node.heightProposed = node.height;
-	node.rateProposed = node.rate;
-	node.populationsizeProposed = node.populationsize;		
-}
-
-
-
-// Restores the coordinates (in case of user reverting animation)
-function restoreProposedTree(node){
-	
-	if (node.children.length == 2){
-		restoreProposedTree(node.children[0]);
-		restoreProposedTree(node.children[1]);
-	}
-	
-	node.coords = JSON.parse(JSON.stringify(node.coordsProposed));
-	node.height = node.heightProposed;
-	node.rate = node.rateProposed;
-	node.populationsize = node.populationsizeProposed;
-	
-}
-
-
-
-
 // Move the whole tree by (dx,dy)
 function translateTree(node, dx, dy, anchorTop = false) {
 	
@@ -135,7 +69,7 @@ function translateTree(node, dx, dy, anchorTop = false) {
 function scaleTreeRanges(tree, t_minX, t_minY, t_maxX, t_maxY) {
 	
 	var node = tree.root;
-	storeTree(node)
+	//storeTree(node)
 	
 	var c_minX = node.coords.xrange.left;
 	var c_minY = 0;
@@ -308,7 +242,7 @@ function getSizeOfText(text, fontSize){
 
 
 // Generates the initial coordinated, later to be linearly transformed onto the svg
-function planSpeciesTree(node, maxTreeHeight) {
+function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 
 
 
@@ -317,11 +251,14 @@ function planSpeciesTree(node, maxTreeHeight) {
 
 		var cx = 0;
 		var cy = 0;
-		var N = node.populationsize;
+
+		var Ntop = node.populationsizeTop;
+		var Nbottom = node.populationsizeBottom;
+		var maxN = Math.max(Ntop, Nbottom);
 		var parentcy = node.parent.height;
 
-		node.coords = { bottomLeft: {x: cx - 0.5*N, y: cy}, bottomRight: {x: cx + 0.5*N, y: cy}, topLeft: {x: cx - 0.5*N, y: parentcy}, topRight: {x: cx + 0.5*N, y: parentcy},
-					    dashed: null, xrange: {left: cx - 0.5*N, right: cx + 0.5*N} };
+		node.coords = { bottomLeft: {x: cx - 0.5*Nbottom, y: cy}, bottomRight: {x: cx + 0.5*Nbottom, y: cy}, topLeft: {x: cx - 0.5*Ntop, y: parentcy}, topRight: {x: cx + 0.5*Ntop, y: parentcy},
+					    dashed: null, xrange: {left: cx - 0.5*maxN, right: cx + 0.5*maxN} };
 
 
 
@@ -333,22 +270,33 @@ function planSpeciesTree(node, maxTreeHeight) {
 	// Get initial coordinates of children
 	var left = node.children[0];
 	var right = node.children[1];
-	planSpeciesTree(left, maxTreeHeight);
-	planSpeciesTree(right, maxTreeHeight);
+	planSpeciesTree(left, maxTreeHeight, alignCX);
+	planSpeciesTree(right, maxTreeHeight, alignCX);
+
+
+	// Population sizes
+	var Ntop = node.populationsizeTop;
+	var Nbottom = node.populationsizeBottom;
+	var maxN = Math.max(Ntop, Nbottom);
 
 
 	// Position this node centered between the left child's right and the right child's left
 	var cy = node.height;
-	var cx = (left.coords.bottomRight.x + right.coords.bottomLeft.x) / 2;
+	var cx = (left.coords.topLeft.x + right.coords.topRight.x) / 2;
 	var parentcy = node.parent == null ? maxTreeHeight : node.parent.height;
-	var N = node.populationsize;
+
+	
+	//var N = node.populationsizeTop;
 	
 	
 	// Update the top x coordinates of children
 	left.coords.topRight.x = cx;
-	left.coords.topLeft.x = cx - left.populationsize;
+	left.coords.topLeft.x = cx - left.populationsizeTop;
 	right.coords.topLeft.x = cx;
-	right.coords.topRight.x = cx + right.populationsize;
+	right.coords.topRight.x = cx + right.populationsizeTop;
+
+
+	if (alignCX) cx = (left.coords.topLeft.x + right.coords.topRight.x) / 2;
 	
 	
 	// Translate the child subtrees so that the shortest horizontal distance between the two is GAP_BETWEEN_SUBTREES
@@ -362,8 +310,8 @@ function planSpeciesTree(node, maxTreeHeight) {
 	//translateTree(left,  -10, 0, true);
 	//translateTree(right, +10, 0, true);
 	
-	node.coords = { bottomLeft: {x: cx - 0.5*N, y: cy}, bottomRight: {x: cx + 0.5*N, y: cy}, topLeft: {x: cx - 0.5*N, y: parentcy}, topRight: {x: cx + 0.5*N, y: parentcy}, 
-					dashed: {left: cx - Math.max(left.populationsize, 0.5*N), right: cx + Math.max(right.populationsize, 0.5*N)} };
+	node.coords = { bottomLeft: {x: cx - 0.5*Nbottom, y: cy}, bottomRight: {x: cx + 0.5*Nbottom, y: cy}, topLeft: {x: cx - 0.5*Ntop, y: parentcy}, topRight: {x: cx + 0.5*Ntop, y: parentcy}, 
+					dashed: {left: Math.min(left.coords.topLeft.x, cx - 0.5*maxN), right: Math.max(right.coords.topRight.x, cx + 0.5*maxN)} };
 	node.coords.xrange = {left: Math.min(left.coords.xrange.left, node.coords.dashed.left), right: Math.max(right.coords.xrange.right, node.coords.dashed.right)};
 
 	
@@ -556,51 +504,6 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, durat
 
 
 
-function proposeMoveSpeciesTreeNode(node, alpha){
-	
-	var dy = alpha; 
-	
-	
-	
-	// Stores the changes in the event of the proposal being rejected
-	storeTree(node);
-	
-	node.coords.bottomRight.y += dy;
-	node.coords.bottomLeft.y += dy;
-	
-	node.children[0].coords.topLeft.y += dy;
-	node.children[0].coords.topRight.y += dy;
-	
-	node.children[1].coords.topLeft.y += dy;
-	node.children[1].coords.topRight.y += dy;
-	
-	node.height += alpha;
-	
-	
-	// Stores the changes in the event of the user pressing UNDO to watch the asnimation again
-	storeProposedTree(node);
-	
-	//console.log(node.height, alpha, node.height + alpha, node.parent.height, node.children[0].height, node.children[1].height);
-
-	if (node.height >= node.parent.height || node.height <= node.children[0].height || node.height <= node.children[1].height) return false;
-	
-
-	return true
-						
-	
-	
-}
-
-
-
-
-
-
-
-
-
-
-
 // Maps the two together
 function buildGeneTreeSpeciesTreeMap(geneTreeNum, node) {
 
@@ -739,7 +642,6 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	
 	// If this is on a species tree branch above left child, then draw lines coming out of left child
 	// These subbranches are called segments
-	
 	var leftAndRight = [left, right];
 	for (var x = 0; x < 2; x ++ ){
 	
@@ -748,7 +650,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 		if (childNode.speciesNodeMap.id != speciesNode.id){
 			
 			
-			var isActuallyLeft = childNode.speciesNodeMap.coords.xrange.left < childNode.speciesNodeMap.parent.coords.bottomLeft.x + childNode.speciesNodeMap.parent.populationsize*0.5;
+			var isActuallyLeft = childNode.speciesNodeMap.coords.xrange.left < childNode.speciesNodeMap.parent.coords.bottomLeft.x + childNode.speciesNodeMap.parent.populationsizeBottom*0.5;
 			var leftMappedToSpeciesNode = childNode.speciesNodeMap.parent;
 			//console.log(node.id, "Above", childNode.id, childNode.speciesNodeMap.id, leftMappedToSpeciesNode.nodeToGeneBranchMap);
 			
@@ -768,13 +670,13 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				// Left
 				if (isActuallyLeft){
 					startX = Math.max(leftMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.children[0].coords.topLeft.x);
-					endX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsize;
+					endX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsizeBottom;
 				} 
 				
 				// Right
 				else{
 					endX = Math.min(leftMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.children[1].coords.topRight.x);
-					startX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsize;
+					startX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsizeBottom;
 				}
 
 				
@@ -798,7 +700,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				
 				if (leftMappedToSpeciesNode.parent == null) break;
 				
-				isActuallyLeft = leftMappedToSpeciesNode.coords.xrange.left < leftMappedToSpeciesNode.parent.coords.bottomLeft.x + leftMappedToSpeciesNode.parent.populationsize*0.5;
+				isActuallyLeft = leftMappedToSpeciesNode.coords.xrange.left < leftMappedToSpeciesNode.parent.coords.bottomLeft.x + leftMappedToSpeciesNode.parent.populationsizeBottom*0.5;
 				leftMappedToSpeciesNode = leftMappedToSpeciesNode.parent;
 			}
 			
@@ -817,13 +719,13 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	var gradient = (speciesNode.coords.topLeft.y - speciesNode.coords.bottomLeft.y) / (speciesNode.coords.topLeft.x - speciesNode.coords.bottomLeft.x);
 	
 	
-	var leftX_intersectSpeciesNode = -(leftY - speciesNode.coords.bottomLeft.y) / gradient + leftX; // (leftX - speciesNode.coords.bottomLeft.x);
-	var rightX_intersectSpeciesNode = -(rightY - speciesNode.coords.bottomLeft.y) / gradient + rightX; // (rightX - speciesNode.coords.bottomLeft.x);
+	var leftX_intersectSpeciesNode = -(leftY - speciesNode.coords.bottomLeft.y) / gradient + leftX; 
+	var rightX_intersectSpeciesNode = -(rightY - speciesNode.coords.bottomLeft.y) / gradient + rightX;
 	
 	
-	// Add the final x,y coordinate at this node
+	// Add the final x, y coordinate at this node
 	var thisY = node.height;
-	var thisX = (thisY - speciesNode.coords.bottomLeft.y) / gradient + (leftX_intersectSpeciesNode + rightX_intersectSpeciesNode) / 2; // - speciesNode.coords.bottomLeft.x; 
+	var thisX = (thisY - speciesNode.coords.bottomLeft.y) / gradient + (leftX_intersectSpeciesNode + rightX_intersectSpeciesNode) / 2; 
 	
 	/// (leftX + rightX) / 2 * 
 	
@@ -892,7 +794,7 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 									y2: speciesTree.scaleY_fn(y2), 
 									gNum: geneTreeNum,
 									branchfornode: id,
-									style: "stroke:" + col + "; stroke-width:" + strokeWidth});
+									style: "stroke:" + col + "; stroke-width:" + strokeWidth + ";stroke-linecap:round"});
 		
 			
 		mappedToSpeciesNode = mappedToSpeciesNode.parent;	
@@ -1039,7 +941,7 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 				y2: y2, 
 				gNum: gNum,
 				branchfornode: node.htmlID,
-				style: "stroke:" + stroke + "; stroke-width:" + strokeWidth});
+				style: "stroke:" + stroke + "; stroke-width:" + strokeWidth + ";stroke-linecap:round"});
 			
 		}
 
@@ -1157,7 +1059,7 @@ function planAxis(label, min, max, minAtZero = min == 0, zeroLabel = true, niceB
 
 
 // Draw an axis. Sides: 1, 2, 3, 4 correspond to top, right, bottom, left
-function drawAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargin = 10, tickSize = 5){
+function drawAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargin = 0, tickSize = 5){
 
 
 
@@ -1197,7 +1099,7 @@ function drawAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, axisMargin =
 				x2: tx2,
 				y2: ty2, 
 				axis_val: val,
-				style: "stroke:" + stroke + "; stroke-width:0.3px;" });
+				style: "stroke:" + stroke + "; stroke-width:0.3px;stroke-linecap:round" });
 
 
 		drawSVGobj(axisGroup, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
@@ -1285,7 +1187,7 @@ function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, oldScaleF
 					x2: x2,
 					y2: y2, 
 					axis_val: val,
-					style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+					style: "stroke:" + stroke + "; stroke-width:0.5px;stroke-linecap:round" });
 
 
 				drawSVGobj(axisGroup, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
@@ -1313,7 +1215,7 @@ function animateAxis(svg, axisGroup, axis, side, scaleFn_x, scaleFn_y, oldScaleF
 					x2: tx2,
 					y2: ty2, 
 					axis_val: val,
-					style: "stroke:" + stroke + "; stroke-width:0.5px;" });
+					style: "stroke:" + stroke + "; stroke-width:0.5px;stroke-linecap:round" });
 						
 				drawSVGobj(axisGroup, "text", {class: "axis axis_" + side ,id: "axisText_" + side + "_" + i, 
 					x: tx1, 

@@ -50,7 +50,8 @@ function initVisualSettings(){
 	SPECIES_BRANCH_BGCOL_ANNOTATION = "_none";
 	SPECIES_BRANCH_BORDER_ANNOTATION = "_none";
 	SPECIES_BRANCH_MULTIPLIER = "_none";
-	SPECIES_WIDTH_ANNOTATION = "_none";
+	SPECIES_WIDTH_ANNOTATION_TOP = "_none";
+	SPECIES_WIDTH_ANNOTATION_BOTTOM = "_none";
 	GENE_BRANCH_MULTIPLIER = "_none";
 	GENE_NODE_MULTIPLIER = "_none";
 	GENE_BRANCH_BGCOL_ANNOTATION = "_none";
@@ -71,6 +72,8 @@ function initVisualSettings(){
 	SPECIES_BRANCH_WIDTH = 1;
 	SPECIES_TREE_OPACITY = 100;
 	GROUP_GENES_BY_TAXA = false;
+
+	
 	
 	FADE_TIME = 500;
 	ANIMATION_TIME = 500; // Remember to also update CSS sheet: path { transition: fill 0.5s ease;}
@@ -79,6 +82,7 @@ function initVisualSettings(){
 	CURRENT_ANIMATION_TIME = ANIMATION_TIME;
 	SHOW_X_AXIS = false;
 	SHOW_Y_AXIS = true;
+	X_RANGE = "treemax";
 
 
 	FIRST_ANNOTATION_PASS = true;
@@ -107,7 +111,9 @@ function setInterfaceFromVisualParams(){
 	$("#GENE_BRANCH_MULTIPLIER").val(GENE_BRANCH_MULTIPLIER);
 	$("#GENE_BRANCH_BGCOL_ANNOTATION").val(GENE_BRANCH_BGCOL_ANNOTATION);
 	$("#GENE_NODE_MULTIPLIER").val(GENE_NODE_MULTIPLIER);
-	$("#SPECIES_WIDTH_ANNOTATION").val(SPECIES_WIDTH_ANNOTATION);
+	$("#SPECIES_WIDTH_ANNOTATION_TOP").val(SPECIES_WIDTH_ANNOTATION_TOP);
+	$("#SPECIES_WIDTH_ANNOTATION_BOTTOM").val(SPECIES_WIDTH_ANNOTATION_BOTTOM);
+
 	$("#SPECIES_BRANCH_BGCOL_ANNOTATION").val(SPECIES_BRANCH_BGCOL_ANNOTATION);
 	$("#SPECIES_BRANCH_BORDER_ANNOTATION").val(SPECIES_BRANCH_BORDER_ANNOTATION);
 	$("#SPECIES_LABEL_FONT_SIZE").val(SPECIES_LABEL_FONT_SIZE);
@@ -116,7 +122,10 @@ function setInterfaceFromVisualParams(){
 	
 	$("#SHOW_X_AXIS").prop("checked", SHOW_X_AXIS);
 	$("#SHOW_Y_AXIS").prop("checked", SHOW_Y_AXIS);
-	
+
+	$('[name="X_RANGE"][value="' + X_RANGE + '"]').prop("checked", true);
+	if (X_RANGE != "input") $("#X_RANGE_INPUT").addClass("disabled");		
+	else $("#X_RANGE_INPUT").removeClass("disabled");	
 
 	renderParameterValues();
 
@@ -255,14 +264,8 @@ function setVisualParams(){
 	SPECIES_BRANCH_BORDER_ANNOTATION = $("#SPECIES_BRANCH_BORDER_ANNOTATION").val();
 	
 
-	
-	var newSpeciesWidthAnnotation = $("#SPECIES_WIDTH_ANNOTATION").val();
-	if (false && SPECIES_WIDTH_ANNOTATION != newSpeciesWidthAnnotation) {
-		if (newSpeciesWidthAnnotation != "_none") SHOW_X_AXIS = true;
-		$("#SHOW_X_AXIS").prop("checked", SHOW_X_AXIS);
-		
-	}
-	SPECIES_WIDTH_ANNOTATION = newSpeciesWidthAnnotation;
+	SPECIES_WIDTH_ANNOTATION_TOP = $("#SPECIES_WIDTH_ANNOTATION_TOP").val();
+	SPECIES_WIDTH_ANNOTATION_BOTTOM = $("#SPECIES_WIDTH_ANNOTATION_BOTTOM").val();
 	
 	SHOW_X_AXIS = $("#SHOW_X_AXIS").is(":checked");
 	SHOW_Y_AXIS = $("#SHOW_Y_AXIS").is(":checked");
@@ -272,6 +275,13 @@ function setVisualParams(){
 		GENE_TREE_DISPLAYS[g] = $("#selectGeneTree" + g).is(":checked");
 	}
 	
+
+
+
+	// Axis maxes
+	X_RANGE = $('[name="X_RANGE"]:checked').val();
+	if (X_RANGE != "input") $("#X_RANGE_INPUT").addClass("disabled");		
+	else $("#X_RANGE_INPUT").removeClass("disabled");	
 
 	
 	
@@ -639,13 +649,13 @@ function renderAnnotations(newAnnotations = []) {
 		FIRST_ANNOTATION_PASS = false;
 
 		// Attempt to set species branch width to population size
-		var patterns = ["pop", "dmv"];
+		var patternsTop = ["pop", "dmv[1]"];
 		for (var i = 0; i < TREE_ANNOTATIONS.length; i ++){
 
-			for (var j = 0; j < patterns.length; j ++){
-				if (TREE_ANNOTATIONS[i].name.includes(patterns[j])) {
-					SPECIES_WIDTH_ANNOTATION = TREE_ANNOTATIONS[i].name;
-					$("#SPECIES_WIDTH_ANNOTATION").val(SPECIES_WIDTH_ANNOTATION);
+			for (var j = 0; j < patternsTop.length; j ++){
+				if (TREE_ANNOTATIONS[i].name.includes(patternsTop[j])) {
+					SPECIES_WIDTH_ANNOTATION_TOP = TREE_ANNOTATIONS[i].name;
+					$("#SPECIES_WIDTH_ANNOTATION_TOP").val(SPECIES_WIDTH_ANNOTATION_TOP);
 					break;
 				}
 
@@ -653,6 +663,22 @@ function renderAnnotations(newAnnotations = []) {
 			}
 
 		}
+
+		var patternsBottom = ["pop", "dmv[0]"];
+		for (var i = 0; i < TREE_ANNOTATIONS.length; i ++){
+
+			for (var j = 0; j < patternsBottom.length; j ++){
+				if (TREE_ANNOTATIONS[i].name.includes(patternsBottom[j])) {
+					SPECIES_WIDTH_ANNOTATION_BOTTOM = TREE_ANNOTATIONS[i].name;
+					$("#SPECIES_WIDTH_ANNOTATION_BOTTOM").val(SPECIES_WIDTH_ANNOTATION_BOTTOM);
+					break;
+				}
+
+
+			}
+
+		}
+
 		
 	}
 

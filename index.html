@@ -353,8 +353,8 @@
 				for (var i = 0; i < SPECIES_TREE.nodeList.length; i ++) {
 				
 					var node = SPECIES_TREE.nodeList[i];
-					//node.rate = node.annotation["branchRates.Species"] = null ? 1 : parseFloat(node.annotation["branchRates.Species"]);
-					node.populationsize = node.annotation[SPECIES_WIDTH_ANNOTATION] == null ? 1 : parseFloat(node.annotation[SPECIES_WIDTH_ANNOTATION]);
+					node.populationsizeTop = node.annotation[SPECIES_WIDTH_ANNOTATION_TOP] == null ? 1 : parseFloat(node.annotation[SPECIES_WIDTH_ANNOTATION_TOP]);
+					node.populationsizeBottom = node.annotation[SPECIES_WIDTH_ANNOTATION_BOTTOM] == null ? node.populationsizeTop : parseFloat(node.annotation[SPECIES_WIDTH_ANNOTATION_BOTTOM]);
 					node.coords = { bottomLeft: {x: -1, y: -1}, bottomRight: {x: -1, y: -1}, topLeft: {x: -1, y: -1}, topRight: {x: -1, y: -1}, dashed: {left: -1, right: -1}, xrange: {left: -1, right: -1} };
 
 
@@ -371,7 +371,7 @@
 					
 					//if (node.children.length == 0) {
 					if (node.label != null) {	
-						totalNAtLeaves += node.populationsize;
+						totalNAtLeaves += node.populationsizeBottom;
 						SPECIES_LEAVES.push(node);
 					}
 				}
@@ -398,20 +398,48 @@
 				resizeInput($("#treeNum"));
 
 
-				// Get max tree height 
-				MAX_TREE_HEIGHT = SPECIES_TREE.root.height;
+
+				var tallestTreeHeight =  SPECIES_TREE.root.height;
 				for (var g = 0;  g < GENE_TREES.length; g ++){
 					if (GENE_TREES[g] == null) continue;
-					MAX_TREE_HEIGHT = Math.max(MAX_TREE_HEIGHT, GENE_TREES[g].root.height);
+					tallestTreeHeight = Math.max(tallestTreeHeight, GENE_TREES[g].root.height);
 				}
-				//if (MAX_TREE_HEIGHT == SPECIES_TREE.root.height) MAX_TREE_HEIGHT *= 1.1;
-				var effectiveMaxHeight = MAX_TREE_HEIGHT == SPECIES_TREE.root.height ? MAX_TREE_HEIGHT * 1.1 : MAX_TREE_HEIGHT;
+				var effectiveMaxHeight;
+
+
+				// Get max tree height 
+				switch (X_RANGE) {
+					case "treemax": {
+						MAX_TREE_HEIGHT = tallestTreeHeight;
+						effectiveMaxHeight = tallestTreeHeight == SPECIES_TREE.root.height ? tallestTreeHeight * 1.1 : tallestTreeHeight;
+						break;
+					}
+
+					case "globalmax": {
+
+						break;
+					}
+
+					case "input": {
+						MAX_TREE_HEIGHT = parseFloat($("#X_RANGE_INPUT").val());
+						effectiveMaxHeight = tallestTreeHeight;
+						break;
+					}
+
+					default: {
+						MAX_TREE_HEIGHT = tallestTreeHeight;
+						effectiveMaxHeight = tallestTreeHeight == SPECIES_TREE.root.height ? tallestTreeHeight * 1.1 : tallestTreeHeight;
+					}
+
+				}
+
+
 				
 				
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
-				planSpeciesTree(SPECIES_TREE.root, effectiveMaxHeight);
-				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, effectiveMaxHeight);	
+				planSpeciesTree(SPECIES_TREE.root, effectiveMaxHeight, SPECIES_WIDTH_ANNOTATION_TOP != "_none" && SPECIES_WIDTH_ANNOTATION_BOTTOM != "_none" && SPECIES_WIDTH_ANNOTATION_TOP != SPECIES_WIDTH_ANNOTATION_BOTTOM);
+				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	
 				else Y_AXIS = null;
 				
 				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, SPECIES_TREE.root.coords.xrange.right);	
@@ -422,7 +450,6 @@
 				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
 				console.log("maxTextSize", MAX_TEXT_SIZE);
 
-				storeTree(SPECIES_TREE.root);
 				console.log("SPECIES_TREE", SPECIES_TREE);
 			
 			
@@ -603,188 +630,6 @@
 					
 				}
 
-
-			}
-
-
-			function operate(step = 1) {
-
-				
-
-
-				var desc = "";
-				switch(step) {
-
-					case 1: {
-						restoreTree(SPECIES_TREE.root);
-						if (SPECIES_TREE_X != null) moveSpeciesTreeNode(SPECIES_TREE, SPECIES_TREE_X);
-						$("#sampledAlpha").html("");
-						desc = `Sample an internal node $x$ from the species tree $S$. Let $t_x$, $r_x$, and $N_x$ be its time, rate, and effective population size, respectively.`;
-						//desc = `$x$`;
-						break;
-					}
-
-					case 2: {
-						desc = `Sample $\\alpha \\sim \\text{Uniform}(-w, w)$ for some window size $w$.`;
-						break;
-					}
-
-					case 3: {
-				
-						desc = `Propose a new node time for $x$ as <br><br> $ {t_x}^\\prime \\leftarrow  t_x + \\alpha$ <br><br> Ensure that $\\max\\{t_{L}, t_{R} \\} < {t_x}^\\prime < t_{P}$. `;
-						break;
-					}
-					case 4: {
-
-						if (ALPHA != 0 && revALPHA == 1) moveSpeciesTreeNode(SPECIES_TREE_X, ALPHA)
-						desc = `Propose new rates for the following species tree nodes: <br><br> 
-							{r_x}^\prime &\leftarrow r_x \times  \frac{t_{P} - t_x}{t_{P} - {t_x}^\prime } \tag{$f_2$} <br> 
-							{r_{L}}^\prime &\leftarrow r_{L} \times  \frac{t_x - t_{L}}{{t_x}^\prime - t_{L} } \tag{$f_3$} <br> 
-							{r_{R}}^\prime &\leftarrow r_{R} \times  \frac{t_x - t_{R}}{{t_x}^\prime - t_{R} } \tag{$f_4$}`;
-						break;
-					}
-					case 5: {
-						desc = ``;
-						break;
-					}
-					case 6: {
-						desc = ``;
-						break;
-					}
-
-					case 7: {
-						desc = ``;
-						break;
-					}
-
-
-				}
-
-
-				$(".dialog").remove();
-				$("body").append(getstepDialogTemplate(step, desc));
-				//var math=MathJax.Hub.getAllJax("dialogDesc")[0];
-				//MathJax.Hub.Queue(["Text",math,desc]); 
-
-				
-
-			}
-
-
-
-
-			function doOperation(step = 1){
-
-
-				// Move the template
-				jQuery("#operatorDialog").detach().appendTo("#operatorPanel");
-				$("#operatorDialog").addClass("toTheSide");
-				$("#dialogBtn").html("Next");
-				$("#dialogBtn").attr("onclick", "operate(" + (step + 1) + ")");
-
-				$("#dialogBtnRev").hide(0);
-				switch(step) {
-
-					case 1: {
-						
-						// Sample a node
-						var speciesTreeInternalNodes = [];
-						for (var i = 0; i < SPECIES_TREE.nodeList.length; i ++) {
-							if (SPECIES_TREE.nodeList[i].parent != null && SPECIES_TREE.nodeList[i].children.length == 2) {
-								speciesTreeInternalNodes.push(SPECIES_TREE.nodeList[i]);
-							}
-						}
-						SPECIES_TREE_X = speciesTreeInternalNodes[Math.floor(Math.random() * speciesTreeInternalNodes.length)];
-						highlightNode(SPECIES_TREE_X.htmlID + "_P");
-						break;
-					}
-
-					case 2: {
-
-						// Sample alpha
-						ALPHA = roundToSF(Math.random() * 2 * ALPHA_WINDOW - ALPHA_WINDOW);
-						$("#sampledAlpha").html(ALPHA);
-
-						makeItGlow($("#sampledAlpha").parent());
-
-						break;
-					}
-
-					case 3: {
-
-						revALPHA = -1;
-						$("#dialogBtnRev").show(0);
-						$("#dialogBtnRev").click(function() {
-							if (revALPHA == -1) restoreTree(SPECIES_TREE_X, ALPHA * revALPHA);
-							else restoreProposedTree(SPECIES_TREE_X, ALPHA * revALPHA);
-							moveSpeciesTreeNode(SPECIES_TREE, SPECIES_TREE_X);
-							revALPHA *= -1;
-						});
-
-
-						//console.log(SPECIES_TREE_X, SPECIES_TREE_X.height, SPECIES_TREE_X.height + ALPHA, SPECIES_TREE_X.parent.height, SPECIES_TREE_X.children[0].height, SPECIES_TREE_X.children[1].height);
-
-					
-
-
-						var accepted = proposeMoveSpeciesTreeNode(SPECIES_TREE_X, ALPHA);
-						
-						if (!accepted) {
-						
-							// Reject
-							addAnnoyingFlashMessage("Rejected");
-							$("#dialogDesc").append(`<br><br><b>Proposal rejected. Try again.</b>`);
-							$("#dialogBtn").hide(0);
-							console.log("Reject");
-
-						}
-						
-						moveSpeciesTreeNode(SPECIES_TREE, SPECIES_TREE_X);
-
-
-
-						break;
-					}
-					case 4: {
-
-						break;
-					}
-					case 5: {
-
-						break;
-					}
-					case 6: {
-
-						break;
-					}
-
-					case 7: {
-
-						break;
-					}
-
-				}
-
-
-			}
-
-
-
-			function getstepDialogTemplate(stepNum, desc){
-				return `
-						<div id="operatorDialog" class="dialog">
-							<div class="dialog_inner">
-							<h2>Step ` + stepNum + `</h2>
-
-								<div id="dialogDesc" style="font-size:120%">` + desc + `</div><br>
-								
-								
-								<span id="dialogBtn" onclick=doOperation(` + stepNum + `) style="float:right" class="button">Do it</span>
-								<span id="dialogBtnRev" style="display:none; float:right" class="button">Undo</span>
-							</div>
-						</div>
-
-					`;
 
 			}
 
@@ -1341,7 +1186,45 @@
 					<input type="checkbox" id="SHOW_X_AXIS" checked="checked" name="radio" onchange="setVisualParams();">
 					<span class="checkmark"></span> Show x-axis
 				</label>
+
+				<!--
+				<div style="font-size:150%; text-align:left"> X-axis max:</div><br>
+				 <div style="font-size:80%; margin-left:4em">
+					
+					<label class="checkbox-container" for="treemax">
+						<input type="radio" id="treemax" name="X_RANGE" value="treemax"  onchange="setVisualParams();">
+						<span class="checkmark"></span> Tree max
+					</label>
+					
+
+					<label class="checkbox-container" for="globalmax">
+						<input type="radio" id="globalmax" name="X_RANGE" value="globalmax"  onchange="setVisualParams();">
+						<span class="checkmark"></span>Global max
+					</label>
+
+
+					<label class="checkbox-container" for="input">
+						<input type="radio" id="input" name="X_RANGE" value="input"  onchange="setVisualParams();">
+						<span class="checkmark"></span>Input:
+					</label>
+					<input class="numberinput cranberry" onclick="$(this).select()" id="X_RANGE_INPUT" style="width:5em;" value="1.0" onchange="setVisualParams();">
+					
+
+				</div>
+				-->
+
+
+
+			</div>
+
+
+
 			
+			<hr>
+
+
+
+			<div class="sideNavSetting" style="font-size:80%">
 				
 				<label class="checkbox-container">
 					<input type="checkbox" id="SHOW_Y_AXIS" checked="checked" name="radio" onchange="setVisualParams();">
@@ -1485,8 +1368,18 @@
 
 
 			<div class="sideNavSetting" title="Species tree x axis">
-				Species node width
-				<select class="dropdown speciesAnnotationsDropdown numericalOnly" id="SPECIES_WIDTH_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to describe branch line width by">
+				Species node width top
+				<select class="dropdown speciesAnnotationsDropdown numericalOnly" id="SPECIES_WIDTH_ANNOTATION_TOP" onchange="setVisualParams();" title="Tree annotation to describe node width by at the top of each branch">
+						<option value="_none">None</option>
+						
+				</select>
+
+			</div>
+
+
+			<div class="sideNavSetting" title="Species tree x axis">
+				Species node width bottom
+				<select class="dropdown speciesAnnotationsDropdown numericalOnly" id="SPECIES_WIDTH_ANNOTATION_BOTTOM" onchange="setVisualParams();" title="Tree annotation to describe node width by at the bottom of each branch. If this term is not set, then it will be the same as the top width.">
 						<option value="_none">None</option>
 						
 				</select>

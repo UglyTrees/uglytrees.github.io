@@ -160,6 +160,10 @@ line {
 }
 
 
+
+
+
+
 .button:hover{
 	color:white;
 	background-color:#DB5079;
@@ -292,6 +296,14 @@ line {
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 	color:white;
 }
+
+
+.numberinput.disabled {
+	background-color:#696969;
+	cursor:auto;
+	color:white;
+}
+
 
 
 input[type=number]::-webkit-inner-spin-button, 
@@ -886,6 +898,7 @@ input {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	text-align:left;
 
 }
 

@@ -50,7 +50,7 @@ function initTemplates(){
 			
 			var util_file = {id: -2, filename: URL, message: "", uploadedAs: "template"};
 			removeFile(util_file.id);
-			var tem = getFileUploadTemplate(util_file.id, "<b>GitHub content:</b> " + URL);
+			var tem = getFileUploadTemplate(util_file.id, "<b>" + (isHTTP ? "Web scrape" : "GitHub content") + ":</b> " + URL);
 			$("#sessionUploadTable").append(tem);
 			
 			
@@ -263,7 +263,8 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 		saveXML.writeAttributeString('SPECIES_TREE_OPACITY', SPECIES_TREE_OPACITY);
 		saveXML.writeAttributeString('SPECIES_LABEL_FONT_SIZE', SPECIES_LABEL_FONT_SIZE);
 		
-		saveXML.writeAttributeString('SPECIES_WIDTH_ANNOTATION', SPECIES_WIDTH_ANNOTATION);
+		saveXML.writeAttributeString('SPECIES_WIDTH_ANNOTATION_TOP', SPECIES_WIDTH_ANNOTATION_TOP);
+		saveXML.writeAttributeString('SPECIES_WIDTH_ANNOTATION_BOTTOM', SPECIES_WIDTH_ANNOTATION_BOTTOM);
 		saveXML.writeAttributeString('SUBTREE_SPACER', SUBTREE_SPACER);
 
 		saveXML.writeAttributeString('SPECIES_BRANCH_MULTIPLIER', SPECIES_BRANCH_MULTIPLIER);
@@ -399,7 +400,8 @@ function loadSessionFromString(text, resolve = function() { }) {
 			SPECIES_TREE_BG_COL = getVal(speciestree.getAttribute("SPECIES_TREE_BG_COL"), SPECIES_TREE_BG_COL);
 			SPECIES_BRANCH_BORDER_ANNOTATION = getVal(speciestree.getAttribute("SPECIES_BRANCH_BORDER_ANNOTATION"), "_none");
 			SPECIES_BRANCH_MULTIPLIER = getVal(speciestree.getAttribute("SPECIES_BRANCH_MULTIPLIER"), "_none");
-			SPECIES_WIDTH_ANNOTATION = getVal(speciestree.getAttribute("SPECIES_WIDTH_ANNOTATION"), "_none");
+			SPECIES_WIDTH_ANNOTATION_TOP = getVal(speciestree.getAttribute("SPECIES_WIDTH_ANNOTATION_TOP"), "_none");
+			SPECIES_WIDTH_ANNOTATION_BOTTOM = getVal(speciestree.getAttribute("SPECIES_WIDTH_ANNOTATION_BOTTOM"), "_none");
 			SPECIES_BRANCH_BGCOL_ANNOTATION = getVal(speciestree.getAttribute("SPECIES_BRANCH_BGCOL_ANNOTATION"), "_none");
 		}
 
