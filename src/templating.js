@@ -27,22 +27,30 @@
 function initTemplates(){
 
 
-	GITHUB_URL = null;
+	TEMPLATE_SCRAPE_URL = null;
 
 
-	// Attempt to load in a script from GitHub
+	// Attempt to load in a script from web (w) or GitHub (g)
 	var urlParams = window.location.search.substr(1);
 	
 	if (urlParams.length > 0){
 
 		var JSONurl = JSON.parse('{"' + decodeURI(urlParams).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
-		if (JSONurl.xml != null) {
+		if (JSONurl.w != null || JSONurl.g != null) {
 			console.log("JSONurl", JSONurl);
 
+			var URL, isHTTP;
+			if (JSONurl.g == null) {
+				URL = JSONurl.w;
+				isHTTP = true;
+			}else{
+				URL = JSONurl.g;
+				isHTTP = false;
+			}
 			
-			var util_file = {id: -2, filename: JSONurl.xml, message: "", uploadedAs: "template"};
+			var util_file = {id: -2, filename: URL, message: "", uploadedAs: "template"};
 			removeFile(util_file.id);
-			var tem = getFileUploadTemplate(util_file.id, "<b>GitHub content:</b> " + JSONurl.xml);
+			var tem = getFileUploadTemplate(util_file.id, "<b>GitHub content:</b> " + URL);
 			$("#sessionUploadTable").append(tem);
 			
 			
@@ -54,7 +62,7 @@ function initTemplates(){
 				}
 				else {
 					var content = session.content.content;
-					GITHUB_URL = JSONurl.xml;
+					TEMPLATE_SCRAPE_URL = {url: URL, isHTTP: isHTTP};
 					parseTemplateFile({target: {result: content}}, util_file);
 				}
 			}
@@ -70,7 +78,7 @@ function initTemplates(){
 			}
 
 
-			var urls = [{name: "session", url: JSONurl.xml, isHTTP: isUrl(JSONurl.xml)}];
+			var urls = [{name: "session", url: URL, isHTTP: isHTTP}];
 
 			requestFromGitHub(urls, callback, errorFn);
 		
@@ -456,19 +464,20 @@ function loadSessionFromString(text, resolve = function() { }) {
 			var species = treesXML.getElementsByTagName("species");
 			
 
-			// Get GitHub directory of the template session parsed in the url
+			// Get directory of the template session parsed in the url
 			// Example:
-			// 	uglytrees/uglytrees.github.io/trees/session.xml 
-			// will become
-			// 	uglytrees/uglytrees.github.io/trees/
+			// 	uglytrees/uglytrees.github.io/trees/session.xml -> uglytrees/uglytrees.github.io/trees/
+			// or
+			//	http://www.uglytrees.nz/trees/session.xml -> http://www.uglytrees.nz/trees/
 			var relativeDir = "";
-			if (GITHUB_URL != null){
-				var strsplit = GITHUB_URL.split("/");
+			if (TEMPLATE_SCRAPE_URL != null){
+				var strsplit = TEMPLATE_SCRAPE_URL.url.split("/");
 				for (var b = 0; b < strsplit.length - 1; b ++){
 					relativeDir += strsplit[b] + "/";
 				}
 			}
 
+			console.log("relativeDir", relativeDir);
 
 
 			// Parse trees if a) the tree is a http, or b) the session was loaded though the backend
@@ -496,8 +505,10 @@ function loadSessionFromString(text, resolve = function() { }) {
 						URLobj.isHTTP = true;
 
 					// Case 2: the tree is relative to the template xml and a template xml was parsed through the URL bar.
-					}else if (GITHUB_URL != null){
+					// could be website or could be github, depending on the location of template file
+					}else if (TEMPLATE_SCRAPE_URL != null){
 						URLobj.url = relativeDir + filename;
+						URLobj.isHTTP = TEMPLATE_SCRAPE_URL.isHTTP;
 					}
 
 					// Case 3: the tree is a file path and the template was uploaded manually. Do not attempt to locate the file. 

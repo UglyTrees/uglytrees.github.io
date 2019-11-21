@@ -11,7 +11,7 @@
 		<gene filename="http://www.uglytrees.nz/trees/gene5.trees" />
 	</trees>
 	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
-	<intro display="false">
+	<intro display="true">
 		<main string="Welcome to UglyTrees" />
 		<body string="This text may be edited in the .xml template to customise messages presented to the user when the template is loaded. &lt;br>&lt;br>
 							This &lt;b style='color:#DB5079'>message&lt;/b> can be rendered using inline HTML stylings if escape characters are used in the .xml string &lt;h2>Heading 2 &lt;/h2> &lt;h3>Heading 3 &lt;/h3>" />
