@@ -487,7 +487,7 @@ function downloadTree(){
 	
 	
 	// Draw the svg again with specified width and height
-	$("body").append(`<svg id="downloadSVG" style="display:none"></svg>`);
+	$("body").append(`<div id="downloadSVG_DIV" style="display:none"> <svg id="downloadSVG"></svg></div>`);
 	//planTrees({svgSelector: "#downloadSVG", width: width, height: height});
 	renderTrees({svgSelector: "#downloadSVG", width: width, height: height});
 	$(".draggableLegend").css("opacity", 1);
@@ -519,7 +519,7 @@ function downloadTree(){
 	
 	
 	// Delete the temporary canvas
-	$("#downloadSVG").remove();
+	$("#downloadSVG_DIV").remove();
 	
 	
 	

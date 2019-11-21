@@ -505,10 +505,15 @@ function loadSessionFromString(text, resolve = function() { }) {
 
 					// Activate file upload GUI 
 					var util_file = {id: g, filename: URLobj.url, message: "", uploadedAs: g == -1 ? "species" : "gene"};
+
 					removeFile(util_file.id);
 					var tem = getFileUploadTemplate(util_file.id, "<b>GitHub content:</b> " + util_file.filename);
 					if (isSpeciesTree) $("#speciesTreeUploadTable").append(tem);
 					else $("#geneTreeUploadTable").append(tem);
+
+
+					if (isSpeciesTree) SPECIES_UPLOADED_FILE = util_file;
+					else GENE_UPLOADED_FILES[g] = util_file;
 
 					// Download each tree one at a time
 					treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree);
