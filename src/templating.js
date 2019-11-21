@@ -487,11 +487,12 @@ function loadSessionFromString(text, resolve = function() { }) {
 
 
 					var requestName = isSpeciesTree ? "species" : "gene" + g;
-					var URLobj = {name: requestName, url: ""};
+					var URLobj = {name: requestName, url: "", isHTTP: false};
 
 					// Case 1: the tree has a url. Load the URL directly.
 					if (isUrl(filename)) {
 						URLobj.url = filename;
+						URLobj.isHTTP = true;
 
 					// Case 2: the tree is relative to the template xml and a template xml was parsed through the URL bar.
 					}else if (GITHUB_URL != null){

@@ -7,7 +7,7 @@
 		<gene filename="gene1.trees" />
 		<gene filename="gene2.trees" />
 		<gene filename="gene3.trees" />
-		<gene filename="../../gene4.trees" />
+		<gene filename="../trees/gene4.trees" />
 		<gene filename="http://www.uglytrees.nz/trees/gene5.trees" />
 	</trees>
 	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
