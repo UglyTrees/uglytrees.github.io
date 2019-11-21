@@ -70,7 +70,8 @@ function initTemplates(){
 			}
 
 
-			var urls = [{name: "session", url: JSONurl.xml}];
+			var urls = [{name: "session", url: JSONurl.xml, isHTTP: isUrl(JSONurl.xml)}];
+
 			requestFromGitHub(urls, callback, errorFn);
 		
 		}
