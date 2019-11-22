@@ -228,6 +228,8 @@
 				
 				var animate = resetZoom();
 				planTrees();
+
+				
 				renderTrees(null, animate, callback, progress);
 
 			}
@@ -1572,9 +1574,9 @@
 					
 					
 				</table>		
-
-				<svg id="tree" height=0 width=0 ></svg>
-
+				<div id="treeDIV">
+					<svg id="tree" height=0 width=0 ></svg>
+				</div>
 
 			</div>
 
@@ -1595,7 +1597,7 @@
 				<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; display:none" onclick="stop()">&#9632;</span> 
 
 
-				<!--<span title="Record" id="recordBtn" class="arrow" style="font-size:150%" onclick="record()">&#9679;</span> -->
+				<span title="Record" id="recordBtn" class="arrow" style="font-size:200%" onclick="record()">&#9679;</span>
 
 
 

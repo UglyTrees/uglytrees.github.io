@@ -273,10 +273,7 @@ function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 	// Get initial coordinates of children
 	var left = node.children[0];
 	var right = node.children[1];
-	if (left.ndescendents > right.ndescendents) {
-		left = node.children[1];
-		right = node.children[0];	
-	}
+
 
 	planSpeciesTree(left, maxTreeHeight, alignCX);
 	planSpeciesTree(right, maxTreeHeight, alignCX);
@@ -481,8 +478,10 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 
 		ele.velocity("finish");
 		
-		if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {points: points.join(" ")}, duration );
-		else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, {duration: duration, complete: callback, progress: progress} );
+		var properties = {duration: duration, complete: callback, progress: progress};
+		//if (RECORDING) properties.easing = [30];
+		if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {points: points.join(" ")}, properties );
+		else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, properties );
 		
 		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
 		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
@@ -645,6 +644,8 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	// Get initial coordinates of children
 	var left = node.children[0];
 	var right = node.children[1];
+
+
 	planGeneTree(geneTreeNum, left, geneTree, groupByTaxa);
 	planGeneTree(geneTreeNum, right, geneTree, groupByTaxa);
 	

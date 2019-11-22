@@ -29,9 +29,10 @@ function initRecorder() {
 
 
 
-
-
-
+	ANIMTATION_TIME_RECORDER = 1000;
+	FADE_TIME_RECORDER = 1000;
+	RECORDING = false;
+	recorder = null;
 
 }
 
@@ -41,12 +42,18 @@ function initRecorder() {
 function record(svgID = "tree"){
 
 
+	RECORDING = true;
+
+	$("#treeDIV").hide(0);
+	CURRENT_ANIMATION_TIME = ANIMTATION_TIME_RECORDER;
+	CURRENT_FADE_TIME = FADE_TIME_RECORDER;
 
 	// The svg
 	var svg = document.getElementById(svgID);
 	var svg_jq = $("#" + svgID);
 	var svg_width = parseFloat(svg_jq.width());
 	var svg_height = parseFloat(svg_jq.height());
+	var canvasSizeMultiplier = 1.5;
 
 	// Ensure that height and width are inline and not css
 	svg_jq.attr("height", svg_height);
@@ -55,8 +62,8 @@ function record(svgID = "tree"){
 
 	// The canvas
 	var canvas = document.createElement("canvas");
-	canvas.width = svg_width; 
-	canvas.height = svg_height; 
+	canvas.width = svg_width * canvasSizeMultiplier; 
+	canvas.height = svg_height * canvasSizeMultiplier; 
 	var context = canvas.getContext("2d");
 	context.fillStyle = "white";
 
@@ -65,7 +72,7 @@ function record(svgID = "tree"){
 
 	
     	var stream = canvas.captureStream();
-    	var recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+    	recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
 	recorder.ondataavailable = function(event) {
 		if (event.data && event.data.size) {
 			data.push(event.data);
@@ -73,13 +80,29 @@ function record(svgID = "tree"){
 	};
 
   	recorder.onstop = () => {
-		console.log("STOP", data);
-	   	var url = URL.createObjectURL(new Blob(data, { type: "video/webm" }));
-	    	d3.select("body")
-			.append("video")
-			.attr("src", url)
-			.attr("controls", true)
-			.attr("autoplay", true);
+		
+		var blob = new Blob(data, { type: "video/webm" })
+	   	var url = URL.createObjectURL(blob);
+		console.log("STOP", blob);
+	    	//d3.select("body")
+			//.append("video")
+			//.attr("src", url)
+			//.attr("controls", true)
+			//.attr("autoplay", true);
+
+
+		var downloadLink = document.createElement("a");
+		downloadLink.href = url;
+		downloadLink.download = "UglyTrees.webm";
+		document.body.appendChild(downloadLink);
+		downloadLink.click();
+		document.body.removeChild(downloadLink);
+
+		CURRENT_ANIMATION_TIME = ANIMATION_TIME;
+		CURRENT_FADE_TIME = FADE_TIME;
+		$("#treeDIV").show(0);
+		RECORDING = false;
+
 
   	};
 	
@@ -92,8 +115,8 @@ function record(svgID = "tree"){
 		var blob = URL.createObjectURL(new Blob([serialized], {type: "image/svg+xml"}));
 		img.src = blob;
 		img.onload = function() {
-			context.fillRect(0, 0, svg_width, svg_height); 
-			context.drawImage(img, 0, 0, svg_width, svg_height);
+			context.fillRect(0, 0, svg_width * canvasSizeMultiplier, svg_height * canvasSizeMultiplier); 
+			context.drawImage(img, 0, 0, svg_width * canvasSizeMultiplier, svg_height * canvasSizeMultiplier);
 			cb(null, img);
 		}
 	    	
@@ -132,13 +155,21 @@ function recordRecurse(n, recorder, data, drawFrame = function(x) { }){
 	}
 
 	drawFrame(function(a, b) {
-		nextTree(false, function() {}, function(elements, complete, remaining, start, tweenValue) {
+
+		recorder.pause();
+		nextTree(false, function() {recorder.resume();}, function(elements, complete, remaining, start, tweenValue) {
 			//console.log((complete * 100) + "%");
         		//console.log(remaining + "ms remaining!");
         		//console.log("The current tween value is " + tweenValue)
+			
 			drawFrame();
 
-			if (complete == 1) recordRecurse(n-1, recorder, data, drawFrame);
+			if (complete == 1) {
+				setTimeout(function() {
+					
+					recordRecurse(n-1, recorder, data, drawFrame);					
+				}, 100);
+			}
 		});
 
 	});
