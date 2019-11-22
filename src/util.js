@@ -404,6 +404,7 @@ function uploadNewFiles(){
 	READY_TO_DRAW = false;
 	
 	$("#fileUploading").show(0);
+	unhover();
 	//$(".showAfterTreeUpload").hide(300);
 				
 	var svg = $("#tree");
@@ -484,43 +485,49 @@ function downloadTree(){
 	var width = parseFloat($("#downloadWidth").val());
 	var height = parseFloat($("#downloadHeight").val()); 
 	var format = $("#downloadFormat").val();
-	
+	CURRENT_FADE_TIME = 0;
 	
 	// Draw the svg again with specified width and height
 	$("body").append(`<div id="downloadSVG_DIV" style="display:none"> <svg id="downloadSVG"></svg></div>`);
 	//planTrees({svgSelector: "#downloadSVG", width: width, height: height});
-	renderTrees({svgSelector: "#downloadSVG", width: width, height: height});
-	$(".draggableLegend").css("opacity", 1);
-	switch (format){
-		
-		case "svg":
-			console.log("Downloading as svg with w=", width, ", h=", height);
+	
 
-			saveSvg(document.getElementById("downloadSVG"), "UglyTrees.svg")
-		
-			break;
+	renderTrees({svgSelector: "#downloadSVG", width: width, height: height}, false, function() {
+
+		$(".draggableLegend").css("opacity", 1);
+		switch (format){
+			
+			case "svg":
+				console.log("Downloading as svg with w=", width, ", h=", height);
+
+				saveSvg(document.getElementById("downloadSVG"), "UglyTrees.svg")
+			
+				break;
+				
+				
+			case "png":
+				console.log("Downloading as png with w=", width, ", h=", height);
+
+				var svg = document.getElementById("downloadSVG");
+				
+				break;
+
+				svg.toBlob(function(blob) {
+					saveAs(blob, "UglyTrees.png");
+				}, "image/png");
+			
+				break;
 			
 			
-		case "png":
-			console.log("Downloading as png with w=", width, ", h=", height);
+		}
+		
+		
+		// Delete the temporary canvas
+		//$("#downloadSVG_DIV").remove();
+		CURRENT_FADE_TIME = FADE_TIME;
 
-			var svg = document.getElementById("downloadSVG");
-			
-			break;
 
-			svg.toBlob(function(blob) {
-				saveAs(blob, "UglyTrees.png");
-			}, "image/png");
-		
-			break;
-		
-		
-	}
-	
-	
-	// Delete the temporary canvas
-	$("#downloadSVG_DIV").remove();
-	
+	});
 	
 	
 }

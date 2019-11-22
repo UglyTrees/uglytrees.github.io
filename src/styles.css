@@ -995,15 +995,22 @@ input {
 }
 
 
-#hoverAnnotationDiv.topPointer {
+#hoverAnnotationDiv.topLeftPointer {
 	border-top-left-radius: 0px;
-	%box-shadow: 0 -10px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 
-#hoverAnnotationDiv.bottomPointer {
+#hoverAnnotationDiv.bottomLeftPointer {
 	border-bottom-left-radius: 0px;
-	%box-shadow: 0 10px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#hoverAnnotationDiv.topRightPointer {
+	border-top-right-radius: 0px;
+}
+
+
+#hoverAnnotationDiv.bottomRightPointer {
+	border-bottom-right-radius: 0px;
 }
 
 

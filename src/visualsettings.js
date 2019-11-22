@@ -80,6 +80,7 @@ function initVisualSettings(){
 	PLAY_TIME = 800;
 
 	CURRENT_ANIMATION_TIME = ANIMATION_TIME;
+	CURRENT_FADE_TIME = FADE_TIME;
 	SHOW_X_AXIS = false;
 	SHOW_Y_AXIS = true;
 	X_RANGE = "treemax";
@@ -235,6 +236,8 @@ function openSettings(id){
 
 // Load in all visual parameters from sidenav menus and redraw the tree
 function setVisualParams(){
+
+	stop();
 	
 	SUBTREE_SPACER = parseFloat($("#SUBTREE_SPACER").val());
 	SUBTREE_SPACER = Math.max(SUBTREE_SPACER, 0);

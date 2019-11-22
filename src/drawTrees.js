@@ -241,6 +241,9 @@ function getSizeOfText(text, fontSize){
 
 
 
+
+
+
 // Generates the initial coordinated, later to be linearly transformed onto the svg
 function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 
@@ -270,6 +273,11 @@ function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 	// Get initial coordinates of children
 	var left = node.children[0];
 	var right = node.children[1];
+	if (left.ndescendents > right.ndescendents) {
+		left = node.children[1];
+		right = node.children[0];	
+	}
+
 	planSpeciesTree(left, maxTreeHeight, alignCX);
 	planSpeciesTree(right, maxTreeHeight, alignCX);
 
@@ -329,7 +337,7 @@ function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 
 
 // Draws a pre-scaled species tree onto the svg
-function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {fontSize: SPECIES_LABEL_FONT_SIZE,  opacity: SPECIES_TREE_OPACITY}) {
+function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = function() { }, rootProgress = function() { }, styles = {fontSize: SPECIES_LABEL_FONT_SIZE,  opacity: SPECIES_TREE_OPACITY}) {
 
 	
 	var strokeWidth = tree.linewidth_fn(node); //styles.lineWidthMultiplier * Math.max(Math.min(roundToSF(node.rate), 3), 0.2);
@@ -386,8 +394,8 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {fontSi
 
 
 	// Internal/root node. Draw children first
-	drawASpeciesTree(svg, textGroup, tree, treename, node.children[0], styles);
-	drawASpeciesTree(svg, textGroup, tree, treename, node.children[1], styles);
+	drawASpeciesTree(svg, textGroup, tree, treename, node.children[0], rootCallback, rootProgress, styles);
+	drawASpeciesTree(svg, textGroup, tree, treename, node.children[1], rootCallback, rootProgress, styles);
 	
 
 
@@ -406,6 +414,11 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {fontSi
 
 
 
+	if (node.parent == null) {
+		rootCallback();
+		rootProgress();
+	}
+
 
 }
 
@@ -414,30 +427,31 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, styles = {fontSi
 
 
 // Animates a pre-rendered species tree
-function animateASpeciesTree(speciesGroup, textGroup, tree, treename, node, animation_time = 1000, styles = {fontSize: SPECIES_LABEL_FONT_SIZE,  opacity: SPECIES_TREE_OPACITY}) {
+function animateASpeciesTree(speciesGroup, textGroup, tree, treename, node, animation_time = 1000, rootCallback = function() { }, rootProgress = function() { }, styles = {fontSize: SPECIES_LABEL_FONT_SIZE,  opacity: SPECIES_TREE_OPACITY}) {
 
 
 	var id = treename + "_" + node.id;
 	node.htmlID = id;
 
-	animateSpeciesBranch(speciesGroup, tree, node, "P", styles, animation_time);
-	animateSpeciesBranch(textGroup, tree, node, "L", styles, animation_time);
-	
-
-	
 	
 	// Animate children
 	for (var c = 0; c < node.children.length; c++){
-		animateASpeciesTree(speciesGroup, textGroup, tree, treename, node.children[c], animation_time, styles);
+		animateASpeciesTree(speciesGroup, textGroup, tree, treename, node.children[c], animation_time, rootCallback, rootProgress, styles);
 	}
 
+
+	var callback = node.parent == null ? rootCallback : function() { };
+	var progress = node.parent == null ? rootProgress : function() { };
+	animateSpeciesBranch(speciesGroup, tree, node, "P", styles, callback, progress, animation_time);
+	animateSpeciesBranch(textGroup, tree, node, "L", styles,  function() { },  function() { }, animation_time);
+	
 	
 }
 
 
 
 // Animate a pre-rendered species tree branch
-function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, duration = 1000) {
+function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callback, progress, duration = 1000) {
 
 
 
@@ -463,11 +477,12 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, durat
 		
 		//console.log("fill", fill, node, node.annotation.pop);
 		
-		
+
+
 		ele.velocity("finish");
 		
 		if (parseFloat(ele.css("stroke-width")) == strokeWidth) ele.velocity( {points: points.join(" ")}, duration );
-		else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, duration );
+		else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, {duration: duration, complete: callback, progress: progress} );
 		
 		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
 		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );

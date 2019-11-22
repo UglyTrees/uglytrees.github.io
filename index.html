@@ -56,12 +56,17 @@
 		<script language='JavaScript' type='text/JavaScript' src="src/util.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="src/templating.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="src/speciesGeneMapper.js"></script>
+		<script language='JavaScript' type='text/JavaScript' src="src/recorder.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/velocity.min.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/dropzone.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/chroma.js-master/chroma.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/easypz.latest.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/XMLWriter/XMLWriter.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"> </script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.3/d3.min.js"></script>
+		<script src="https://d3js.org/topojson.v2.min.js"></script>
+
 		<script>
 
 
@@ -108,7 +113,10 @@
 				oldScaleY_fn = null;
 				
 				
-				
+				// Init other js pages
+				initUtil();
+				initTemplates();
+				initRecorder();
 				initVisualSettings();
 				initMapper();
 				
@@ -120,25 +128,13 @@
 				$(".speciesAnnotationDiscrete").hide(0);
 				$(".speciesAnnotationNumerical").hide(0);
 				
+	
 				
 
 
-				// Operator
-				SPECIES_TREE_X = null;
-				ALPHA = 0; 		
-				ALPHA_WINDOW = 0.003;
-				$("#windowInput").val(ALPHA_WINDOW);
-				revALPHA = 1;
-
-				initUtil();
-				initTemplates();
-
-
 			}
 
-			function updateAlphaWindow() {
-				ALPHA_WINDOW = parseFloat($("#windowInput").val());
-			}
+
 
 
 			function stop() {
@@ -146,7 +142,7 @@
 			}
 
 
-			function play(){
+			function play(callback = function() { }, progress = function() { }){
 
 				if (START_PLAYING || NTREES == 0) return;
 
@@ -194,8 +190,19 @@
 				
 				var animate = resetZoom();
 				planTrees();
-				renderTrees(null, animate);
-				setTimeout(function() { play_recursive(); }, CURRENT_ANIMATION_TIME);
+				renderTrees(null, animate, function() { 
+					setTimeout(function() { play_recursive(); }, 50);
+				 });
+
+				//$("#trees").velocity("{}", {complete: function() {
+
+					//alert("FINISH");
+					// play_recursive();
+
+					//setTimeout(function() { play_recursive(); }, 50);
+				//}});
+
+				//
 				
 
 
@@ -203,7 +210,7 @@
 			}
 
 
-			function nextTree(skip = false) {
+			function nextTree(skip = false, callback = function() { }, progress = function() { }) {
 				stop();
 				if (skip) {
 					var skipBy = Math.round(roundToSF(NTREES / 20, 0));
@@ -221,13 +228,13 @@
 				
 				var animate = resetZoom();
 				planTrees();
-				renderTrees(null, animate);
+				renderTrees(null, animate, callback, progress);
 
 			}
 
 
 			
-			function prevTree(skip = false) {
+			function prevTree(skip = false, callback = function() { }, progress = function() { }) {
 				stop();
 				if (skip) {
 					var skipBy = Math.round(roundToSF(NTREES / 20, 0));
@@ -245,13 +252,13 @@
 				
 				var animate = resetZoom();
 				planTrees();
-				renderTrees(null, animate);
+				renderTrees(null, animate, callback, progress);
 
 			}
 
 
 
-			function setTree(){
+			function setTree(callback = function() { }, progress = function() { }){
 
 				stop();
 				var newVal = parseFloat($("#treeNum").val());
@@ -533,7 +540,7 @@
 			}
 
 
-			function renderTrees(options = null, animate = false) {
+			function renderTrees(options = null, animate = false, callback = function() { }, progress = function() { }) {
 
 
 				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW || !SPECIES_TREE.successfullyMapped) return;
@@ -586,7 +593,6 @@
 
 				
 
-
 				// Legends
 				for (var treeAnnotNum = 0; treeAnnotNum < TREE_ANNOTATIONS.length; treeAnnotNum ++){
 					var annotation = TREE_ANNOTATIONS[treeAnnotNum];
@@ -606,8 +612,8 @@
 				else animateAxis(svg, axisGroup, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, oldScaleX_fn, oldScaleY_fn, SVG_LEFT_MARGIN, CURRENT_ANIMATION_TIME);
 
 				// Draw the species tree
-				if (!animate) drawASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root);
-				else animateASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME);
+				if (!animate) drawASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, callback, progress);
+				else animateASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME, callback, progress);
 
 				
 				// Draw the gene tree
@@ -620,7 +626,7 @@
 					
 					// Do not render if unchecked
 					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) {
-						$(`[gNum="` + g + `"]`).fadeOut(FADE_TIME, function() { $(this).remove(); });
+						$(`[gNum="` + g + `"]`).fadeOut(CURRENT_FADE_TIME, function() { $(this).remove(); });
 						continue;
 					}
 					
@@ -629,6 +635,7 @@
 
 					
 				}
+
 
 
 			}
@@ -683,15 +690,18 @@
 				if (isNode) newObj.setAttribute("class", "node");
 				//console.log(styles["stroke-width"]);
 
+				//window.requestAnimationFrame(function() {
 				svg.append(newObj);
-				$(newObj).hide().fadeIn(FADE_TIME);
-
-				
+				$(newObj).hide().fadeIn(CURRENT_FADE_TIME);	
 				if (isNode && attr.id != null){
 					$("#" + attr.id).click(function(e) { hoverNode(attr.id, e) });
 				}
 				
+			
+				//});
 
+				
+				
 				
 				return newObj;
 
@@ -792,109 +802,37 @@
 				
 				// If mouse on bottom half of tree, add the .top class and set bottom to mouse
 				var topPointer = y < parseFloat($("#innerBody").height()) / 2;
-				if (topPointer) {
-					$("#hoverAnnotationDiv").addClass("topPointer");
-					$("#hoverAnnotationDiv").removeClass("bottomPointer");
+				var leftPointer = x < parseFloat($("#innerBody").width()) / 2;
+				$("#hoverAnnotationDiv").removeClass("topLeftPointer");
+				$("#hoverAnnotationDiv").removeClass("topRightPointer");
+				$("#hoverAnnotationDiv").removeClass("bottomLeftPointer");
+				$("#hoverAnnotationDiv").removeClass("bottomRightPointer");
+				if (topPointer && leftPointer) {
+					$("#hoverAnnotationDiv").addClass("topLeftPointer");
 					$("#hoverAnnotationDiv").animate({top: y + "px", left: x + "px"}, $("#hoverAnnotationDiv").is(":hidden") ? 0 : 200);
-				}else{
-					$("#hoverAnnotationDiv").removeClass("topPointer");
-					$("#hoverAnnotationDiv").addClass("bottomPointer");
+				}
+				else if (!topPointer && leftPointer){
+					$("#hoverAnnotationDiv").addClass("bottomLeftPointer");
 					var topY = y - parseFloat($("#hoverAnnotationDiv").height());
 					$("#hoverAnnotationDiv").animate({top: topY + "px", left: x + "px"}, $("#hoverAnnotationDiv").is(":hidden") ? 0 : 200);
-					//console.log(x, y, topY, parseFloat($("#hoverAnnotationDiv").height()));
+				}
+				else if (topPointer && !leftPointer){
+					$("#hoverAnnotationDiv").addClass("topRightPointer");
+					var rightX = x - parseFloat($("#hoverAnnotationDiv").width()) - 5;
+					//var topY = y - parseFloat($("#hoverAnnotationDiv").height());
+					$("#hoverAnnotationDiv").animate({top: y + "px", left: rightX + "px"}, $("#hoverAnnotationDiv").is(":hidden") ? 0 : 200);
+				}
+				else if (!topPointer && !leftPointer){
+					$("#hoverAnnotationDiv").addClass("bottomRightPointer");
+					var rightX = x - parseFloat($("#hoverAnnotationDiv").width()) - 5;
+					var topY = y - parseFloat($("#hoverAnnotationDiv").height());
+					$("#hoverAnnotationDiv").animate({top: topY + "px", left: rightX + "px"}, $("#hoverAnnotationDiv").is(":hidden") ? 0 : 200);
 				}
 				
 				$("#hoverAnnotationDiv").show(0);
 
 
 				
-				
-				/*
-				unhover();
-
-				
-
-				if(SPECIES_TREE_X != null) highlightNode(SPECIES_TREE_X.htmlID + "_P");
-
-
-				if($("#" + id).attr("name") == null) return;
-
-				$("#currentNodeName").html("(" + $("#" + id).attr("name") + ")");
-
-
-				//console.log("node.id", id);
-
-				var treeName = id.split("_")[0];
-
-			
-				var tree = treeName == "speciestree" ? SPECIES_TREE : GENE_TREES[parseFloat(treeName.split("gene")[1])];
-				var nodeID = parseFloat(id.split("_")[1]);
-
-
-
-
-
-				if (treeName != "speciestree") {
-					//$(`[branchfornode="` + id + `"].genebranch`).css("stroke", "#DB5079");
-					//$(`[branchfornode="` + id + `"].genebranch`).css("stroke-width", "3px");
-					$(`[branchfornode="` + id + `"].genebranch`).addClass("selected");
-					
-					
-				}else {
-					$("#" + id).attr("opacity", "0.5");
-					$("#" + id).attr("fill", "#DB5079");
-					
-					// Get the node
-					for (var s = 0; s < SPECIES_TREE.nodeList.length; s++){
-						if (SPECIES_TREE.nodeList[s].id == nodeID){
-							var node = SPECIES_TREE.nodeList[s];
-							for (var g = 0; g < GENE_TREES.length; g++){
-							
-								console.log(g, GENE_TREES.length);
-							
-								for (var m in node.branchToGeneNodeMap[g]){
-									$("#gene" + g + "_" + m).addClass("selected");
-								}
-								
-								for (var m in node.nodeToGeneBranchMap[g]){
-									$(`[branchfornode="gene` + g + `_` + m + `"].genebranch`).addClass("selected");
-								}
-								
-							}
-							
-	
-							
-							break;
-													
-							
-						}
-					
-					}
-					
-				}
-
-
-
-
-				var node = null;
-				for (var i = 0; i < tree.nodeList.length; i ++) {
-					if (tree.nodeList[i].id == nodeID) {
-						node = tree.nodeList[i];
-						break;
-					}
-				}
-
-				$("#currentNodeTime").html(roundToSF(node.height));
-				$("#currentNodeRate").html(roundToSF(node.rate));
-				$("#currentNodeSize").html(roundToSF(node.populationsize));
-				if (node.parent != null){
-					$("#currentNodeDistance").html(roundToSF(node.rate * (node.parent.height - node.height)));
-				}else {
-					$("#currentNodeDistance").html("NA");
-				}
-
-
-			*/
 
 			}
 
@@ -1526,7 +1464,6 @@
 				Line width multiplier
 				<select class="dropdown geneAnnotationsDropdown numericalOnly" id="GENE_BRANCH_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe branch line width by">
 						<option value="_none">None</option>
-						<option value="Label">Label</option>
 						
 				</select>
 
@@ -1543,6 +1480,7 @@
 				Colour branches by
 				<select class="dropdown geneAnnotationsDropdown" id="GENE_BRANCH_BGCOL_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branches by">
 						<option value="_none">None</option>
+						<option value="Label">Label</option>
 				</select>
 
 			</div>
@@ -1636,9 +1574,10 @@
 				</table>		
 
 				<svg id="tree" height=0 width=0 ></svg>
+
+
 			</div>
 
-<!--easypz='{"applyTransformTo": "svg > *", "options": { "minScale": 0.8, "maxScale": 10, "bounds": { "top": -50, "right": 50, "bottom": 50, "left": -50 }} }' width="400" height="400">-->
 
 			<div id="footer" >
 
@@ -1654,6 +1593,10 @@
 
 				<span title="Play" id="playBtn" class="arrow" style="font-size:150%" onclick="play()">&#9654;</span> 
 				<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; display:none" onclick="stop()">&#9632;</span> 
+
+
+				<!--<span title="Record" id="recordBtn" class="arrow" style="font-size:150%" onclick="record()">&#9679;</span> -->
+
 
 
 
