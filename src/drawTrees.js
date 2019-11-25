@@ -726,40 +726,46 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 		
 		if (childNode.speciesNodeMap.id != speciesNode.id){
 			
+	
+
+			var leftMappedToSpeciesNode = childNode.speciesNodeMap;
+			var leftParentMappedToSpeciesNode = leftMappedToSpeciesNode.parent;
+			//console.log(node.id, "Above", childNode.id, childNode.speciesNodeMap.id, leftParentMappedToSpeciesNode.nodeToGeneBranchMap);
 			
-			var sibling = x == 0 ? right.speciesNodeMap : left.speciesNodeMap; 
-			//var isActuallyLeft = childNode.speciesNodeMap.coords.xrange.left < childNode.speciesNodeMap.parent.coords.bottomLeft.x + childNode.speciesNodeMap.parent.populationsizeBottom*0.5;
-			var isActuallyLeft = childNode.speciesNodeMap.coords.xrange.left < sibling.coords.xrange.left;
+			
+			while(leftParentMappedToSpeciesNode.nodeToGeneBranchMap[geneTreeNum][childNode.id] != null){
+				
 
 
-			var leftMappedToSpeciesNode = childNode.speciesNodeMap.parent;
-			//console.log(node.id, "Above", childNode.id, childNode.speciesNodeMap.id, leftMappedToSpeciesNode.nodeToGeneBranchMap);
-			
-			
-			while(leftMappedToSpeciesNode.nodeToGeneBranchMap[geneTreeNum][childNode.id] != null){
-				
-				//console.log(node.id, "Above2", childNode.id, leftMappedToSpeciesNode.id);
-				
+				var isActuallyLeft = true;
+				if (leftParentMappedToSpeciesNode != null) {
+					var speciesSibling = leftParentMappedToSpeciesNode.children[0];
+					if (speciesSibling.id == leftMappedToSpeciesNode.id) speciesSibling = leftParentMappedToSpeciesNode.children[1];
+					isActuallyLeft = leftMappedToSpeciesNode.coords.xrange.left < speciesSibling.coords.xrange.left;
+				}
 				
 				// Map this branch segement to a position on the bottom of the current species tree node
-				var mappedPos = getPositionInMap(leftMappedToSpeciesNode.nodeToGeneBranchMap[geneTreeNum], childNode.id, true); // nodeToGeneBranchMap branchToGeneNodeMap
+				var mappedPos = getPositionInMap(leftParentMappedToSpeciesNode.nodeToGeneBranchMap[geneTreeNum], childNode.id, true); // nodeToGeneBranchMap branchToGeneNodeMap
 				if (mappedPos.index == mappedPos.n) alert("2. i = n");
 			
 			
 				var startX, endX;
-				
+				startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);	
+				endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);		
+
+
 				// Left
 				if (isActuallyLeft){
-					startX = Math.max(leftMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.children[0].coords.topLeft.x);
-					//endX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsizeBottom;
-					endX = leftMappedToSpeciesNode.children[0].coords.topRight.x;
+					//startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);
+					//endX  = leftParentMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftParentMappedToSpeciesNode.populationsizeBottom;
+					//endX = leftMappedToSpeciesNode.coords.topRight.x;
 				} 
 				
 				// Right
 				else{
-					endX = Math.min(leftMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.children[1].coords.topRight.x);
-					//startX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsizeBottom;
-					startX = leftMappedToSpeciesNode.children[1].coords.topLeft.x;
+					//endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);
+					//startX  = leftParentMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftParentMappedToSpeciesNode.populationsizeBottom;
+					//startX = leftMappedToSpeciesNode.coords.topLeft.x;
 				}
 
 				
@@ -775,22 +781,24 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				
 				
 
-				console.log(childNode, isActuallyLeft, startX, endX, widthScale, xIndex, mappedPos);
+				//console.log(childNode, isActuallyLeft, startX, endX, widthScale, xIndex, mappedPos);
 
 				var segmentX = xIndex * widthScale + startX;
-				var segmentY = leftMappedToSpeciesNode.coords.bottomLeft.y;
+				var segmentY = leftParentMappedToSpeciesNode.coords.bottomLeft.y;
 				
 				childNode.coords.x.push(segmentX);
 				childNode.coords.y.push(segmentY);
 				childNode.coords.strokeWidths.push(1); 
 				
-				if (leftMappedToSpeciesNode.parent == null) break;
+				if (leftParentMappedToSpeciesNode.parent == null) break;
 				
-				//isActuallyLeft = leftMappedToSpeciesNode.coords.xrange.left < leftMappedToSpeciesNode.parent.coords.bottomLeft.x + leftMappedToSpeciesNode.parent.populationsizeBottom*0.5;
-				sibling = leftMappedToSpeciesNode.parent.children[0];
-				if (sibling.id == leftMappedToSpeciesNode.id) sibling = leftMappedToSpeciesNode.parent.children[1];
-				isActuallyLeft = leftMappedToSpeciesNode.coords.xrange.left < sibling.coords.xrange.left;
+				//isActuallyLeft = leftParentMappedToSpeciesNode.coords.xrange.left < leftParentMappedToSpeciesNode.parent.coords.bottomLeft.x + leftParentMappedToSpeciesNode.parent.populationsizeBottom*0.5;
+				//sibling = leftParentMappedToSpeciesNode.parent.children[0];
+				//if (sibling.id == leftParentMappedToSpeciesNode.id) sibling = leftParentMappedToSpeciesNode.parent.children[1];
+				
+
 				leftMappedToSpeciesNode = leftMappedToSpeciesNode.parent;
+				leftParentMappedToSpeciesNode = leftParentMappedToSpeciesNode.parent;
 			}
 			
 			
