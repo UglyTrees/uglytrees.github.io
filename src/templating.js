@@ -449,12 +449,10 @@ function loadSessionFromString(text, resolve = function() { }) {
 			intro = intro[0];
 			var display = intro.getAttribute("display") === "true";
 			
-			var main = getVal(intro.getElementsByTagName("main")[0].getAttribute("string"), "");
-			var body = getVal(intro.getElementsByTagName("body")[0].getAttribute("string"), "");
-
-			console.log("display", intro.getAttribute("display"), display, main, body)
-
 			if (display) {
+				var main = getVal(intro.getElementsByTagName("main")[0].getAttribute("string"), "");
+				var body = getVal(intro.getElementsByTagName("body")[0].getAttribute("string"), "");
+				console.log("display", intro.getAttribute("display"), display, main, body)
 				closeDialogs();
 				$("#innerBody").css("opacity", 0.5);
 				$("body").append(getdialogTemplate(main, body, "The views expressed in the above message are not affiliated with and are not endorsed by UglyTrees."));

@@ -749,24 +749,8 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				if (mappedPos.index == mappedPos.n) alert("2. i = n");
 			
 			
-				var startX, endX;
-				startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);	
-				endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);		
-
-
-				// Left
-				if (isActuallyLeft){
-					//startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);
-					//endX  = leftParentMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftParentMappedToSpeciesNode.populationsizeBottom;
-					//endX = leftMappedToSpeciesNode.coords.topRight.x;
-				} 
-				
-				// Right
-				else{
-					//endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);
-					//startX  = leftParentMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftParentMappedToSpeciesNode.populationsizeBottom;
-					//startX = leftMappedToSpeciesNode.coords.topLeft.x;
-				}
+				var startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);	
+				var endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);		
 
 				
 				// Group by taxa vs group by gene tree
@@ -811,22 +795,50 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	var leftY = left.coords.y[left.coords.y.length - 1];
 	var rightX = right.coords.x[right.coords.x.length - 1];
 	var rightY = right.coords.y[right.coords.y.length - 1];
+
+
+
+
+	// Find where the branch *would* intersect the above species node if there was not a coalescence event 
+	var mL = (speciesNode.coords.topLeft.y - speciesNode.coords.bottomLeft.y) / (speciesNode.coords.topLeft.x - speciesNode.coords.bottomLeft.x);	
+	var mR = (speciesNode.coords.topRight.y - speciesNode.coords.bottomRight.y) / (speciesNode.coords.topRight.x - speciesNode.coords.bottomRight.x);
 	
 	
-	var gradient = (speciesNode.coords.topLeft.y - speciesNode.coords.bottomLeft.y) / (speciesNode.coords.topLeft.x - speciesNode.coords.bottomLeft.x);
+	//var gradient = (speciesNode.coords.topLeft.y - speciesNode.coords.bottomLeft.y) / (speciesNode.coords.topLeft.x - speciesNode.coords.bottomLeft.x);	
+	
+	var gradientX, gradientLeft, gradientRight;
+	if (mL == Infinity) {
+		gradientX = Infinity;
+		gradientLeft = Infinity;
+		gradientRight = Infinity;
+	}else{
+		var xPos = (0.5*(rightX + leftX)  - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+		gradientX = mL + (mR - mL) * xPos;
+
+		var leftPos = (leftX - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+		gradientLeft = mL + (mR - mL) * leftPos;
+
+		var rightPos = (rightX - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+		gradientRight = mL + (mR - mL) * rightPos;
+
+		//console.log(speciesNode, mL, mR, xPos, leftPos, rightPos, gradientX, gradientLeft, gradientLeft);
+
+	}
+
 	
 	
-	var leftX_intersectSpeciesNode = -(leftY - speciesNode.coords.bottomLeft.y) / gradient + leftX; 
-	var rightX_intersectSpeciesNode = -(rightY - speciesNode.coords.bottomLeft.y) / gradient + rightX;
+	var leftX_intersectSpeciesNode = -(leftY - speciesNode.coords.bottomLeft.y) / gradientLeft + leftX; 
+	var rightX_intersectSpeciesNode = -(rightY - speciesNode.coords.bottomLeft.y) / gradientRight + rightX;
+	
 	
 	
 	// Add the final x, y coordinate at this node
 	var thisY = node.height;
-	var thisX = (thisY - speciesNode.coords.bottomLeft.y) / gradient + (leftX_intersectSpeciesNode + rightX_intersectSpeciesNode) / 2; 
+	var thisX = (thisY - speciesNode.coords.bottomLeft.y) / gradientX + (leftX_intersectSpeciesNode + rightX_intersectSpeciesNode) / 2; 
 	
 	/// (leftX + rightX) / 2 * 
 	
-	//console.log(thisX, thisY, gradient, speciesNode.coords.bottomLeft.y);
+	//console.log(thisX, thisY, leftX_intersectSpeciesNode, rightX_intersectSpeciesNode);
 	
 	node.coords = { cx: thisX, cy: thisY, x: [thisX], y: [thisY], strokeWidths: [1] };
 	left.coords.x.push(thisX);
