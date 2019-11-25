@@ -493,7 +493,7 @@ input[type=number] {
 	background-color:#DB5079;
 }
 
-.uploader  div {
+.uploader > div {
 	font-size:200%;
 	margin-top: 3em;
 	color:#DB5079;
@@ -522,7 +522,7 @@ input[type=number] {
 }
 
 
-.uploader.dz-drag-hover div, .uploader:hover div {
+.uploader.dz-drag-hover div, .uploader:hover div, .uploader.dz-drag-hover > a, .uploader:hover > a {
 	color:white;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
@@ -673,6 +673,33 @@ input[type=number] {
 .textbutton:hover{
 	color:black;
 	text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
+.textbutton a{
+	text-decoration:none;
+	color:white;
+}
+
+
+.textbutton:hover a{
+	color:black;
+	text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
+
+.textbutton.selected{
+	cursor:auto;
+}
+
+.textbutton.selected a{
+	cursor:auto;
+	color:white;
+	text-shadow: none;
+}
+
+.textbutton.selected:hover a{
+	text-shadow: none;
+	color:white;
 }
 
 
@@ -1024,6 +1051,7 @@ input {
 	border-style:solid; 
 	border-color:white;
 	border-width:1px;
+	
 }
 
 #hoverAnnotationDiv table{
@@ -1066,6 +1094,65 @@ input {
 	cursor:move;
 
 }
+
+
+
+.aboutsection{
+	margin-top:5em;
+	margin-left:10%;
+	margin-right:10%;
+	min-width:800px;
+	max-width:1300px;
+	%border-style:solid;
+	%border-radius:5px;
+	%padding: 1em;
+}
+
+.aboutsection h1, .aboutsection h2, .aboutsection h3{
+	%background-color:#DB5079;
+	color:#DB5079;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	padding:0.2em 1em;
+	%border-style:solid;
+	border-color:black;
+	border-radius:0.5em;
+}
+
+
+.aboutsection.inner{
+	margin-top:2em;
+	margin-bottom:1em;
+	margin-left:5%;
+	width:90%;
+	margin-right:0%;
+
+}
+
+.aboutsection div{
+	margin-left:3em;
+
+}
+
+.code{
+	font-family:'Courier New';
+	color:black;
+	background-color:#d3d3d3;
+	padding: 0 0.5em;
+	word-break: break-all;
+}
+
+div.code{
+	padding: 0.5em 0.5em;
+	margin-top:1em;
+	margin-bottom:1em;
+}
+
+
+.hoverwhite:hover{
+	color:white;
+}
+
+
 
 
 

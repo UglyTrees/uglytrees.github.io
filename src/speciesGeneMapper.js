@@ -191,7 +191,7 @@ function mapGeneTreeToSpeciesTree(g, geneLeaves, speciesLeaves){
 		return "";
 
 	}else{
-		return `<b>Unable to automatically map tree to the species tree.</b>  Please ensure that the species labels substrings of the gene labels, (perhaps also delimited by '_', '-', or '.'), and ensure that each gene taxon maps to only one species taxon.`;
+		return `<b>Unable to automatically map tree to the species tree.</b>  Please ensure that the species labels substrings of the gene labels, (perhaps also delimited by '_', '-', or '.'), and ensure that each gene taxon maps to only one species taxon. See <a style="color:black" href="about/#mapping">example</a>.`;
 		
 	}
 

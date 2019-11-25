@@ -383,7 +383,7 @@ function openDownloadDialog(){
 						<div style="font-size:80%; width:20em; text-align:justify"> 
 						By downloading an UglyTrees template, the current visual settings can be restored by
 						uploading the xml template next time. UglyTree can also scrape the web for your template and tree files,
-						allowing for users to visualise your trees with just one click. <a href="">More info here</a> <br> 
+						allowing for users to visualise your trees with just one click. <a href="about/#webscraping">More info here</a> <br> 
 						</div><br><br>
 						
 						<span class="button" onclick="saveSession(); closeDialogs()">Download</span>
