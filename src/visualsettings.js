@@ -136,6 +136,8 @@ function setInterfaceFromVisualParams(){
 	if (Y_RANGE != "input") $("#Y_RANGE_INPUT").prop("disabled", true);
 	else $("#Y_RANGE_INPUT").prop("disabled", false);
 
+	if (parseFloat($("#Y_RANGE_INPUT").val()) <= 0)  $("#Y_RANGE_INPUT").val(0.01);
+	if (parseFloat($("#X_RANGE_INPUT").val()) <= 0)  $("#X_RANGE_INPUT").val(0.01);
 
 
 	renderParameterValues();
@@ -293,7 +295,8 @@ function setVisualParams(){
 	}
 	
 
-
+	if (parseFloat($("#Y_RANGE_INPUT").val()) <= 0)  $("#Y_RANGE_INPUT").val(0.01);
+	if (parseFloat($("#X_RANGE_INPUT").val()) <= 0)  $("#X_RANGE_INPUT").val(0.01);
 
 	// Axis maxes
 	X_RANGE = $('[name="X_RANGE"]:checked').val();

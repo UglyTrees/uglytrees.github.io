@@ -273,7 +273,7 @@ function getTreeAnnotations(tree, speciesTree = true){
 		if (!isNumerical && !allInteger) annotation.mustBeNominal = true;
 
 		annotation.complete = isComplete;
-		annotation.format = isNumerical ? "numerical" : "nominal";
+		annotation.format = isNumerical && ann_name != "Label" ? "numerical" : "nominal";
 		
 		// Get discrete values and assign colours
 		if (!isNumerical || allInteger) {

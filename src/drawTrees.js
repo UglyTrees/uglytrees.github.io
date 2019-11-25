@@ -46,20 +46,41 @@ function translateTree(node, dx, dy, anchorTop = false) {
 	node.coords.bottomLeft.x += dx;
 	node.coords.bottomRight.y += dy;
 	node.coords.bottomLeft.y += dy;
-	node.coords.xrange.left += dx;
-	node.coords.xrange.right += dx;
+
+	
+	node.coords.xrangeBottom.left += dx;
+	node.coords.xrangeBottom.right += dx;
+
+	
+
+	
 	
 	if (!anchorTop) {
 		node.coords.topRight.x += dx;
 		node.coords.topLeft.x += dx;
 		node.coords.topRight.y += dy;
 		node.coords.topLeft.y += dy;
+
+		node.coords.xrangeTop.left += dx;
+		node.coords.xrangeTop.right += dx;
+
 	}
 	
 	if (node.coords.dashed != null){
 		node.coords.dashed.left += dx;
 		node.coords.dashed.right += dx;
 	}
+
+
+	node.coords.xrange.left += dx;
+	node.coords.xrange.right += dx;
+
+	
+	node.coords.xrange.left = Math.min(Math.min(node.coords.xrange.left, node.coords.xrangeTop.left), node.coords.xrangeBottom.left);
+	node.coords.xrange.right = Math.max(Math.max(node.coords.xrange.right, node.coords.xrangeTop.right), node.coords.xrangeBottom.right);
+
+
+
 
 	
 }
@@ -272,7 +293,10 @@ function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 		var parentcy = node.parent.height;
 
 		node.coords = { bottomLeft: {x: cx - 0.5*Nbottom, y: cy}, bottomRight: {x: cx + 0.5*Nbottom, y: cy}, topLeft: {x: cx - 0.5*Ntop, y: parentcy}, topRight: {x: cx + 0.5*Ntop, y: parentcy},
-					    dashed: null, xrange: {left: cx - 0.5*maxN, right: cx + 0.5*maxN} };
+					    dashed: null, 
+						xrange: {left: cx - 0.5*maxN, right: cx + 0.5*maxN},
+						xrangeTop: {left: cx - 0.5*Ntop, right: cx + 0.5*Ntop},
+						xrangeBottom: {left: cx - 0.5*Nbottom, right: cx + 0.5*Nbottom} };
 
 
 
@@ -328,6 +352,10 @@ function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 	
 	node.coords = { bottomLeft: {x: cx - 0.5*Nbottom, y: cy}, bottomRight: {x: cx + 0.5*Nbottom, y: cy}, topLeft: {x: cx - 0.5*Ntop, y: parentcy}, topRight: {x: cx + 0.5*Ntop, y: parentcy}, 
 					dashed: {left: Math.min(left.coords.topLeft.x, cx - 0.5*maxN), right: Math.max(right.coords.topRight.x, cx + 0.5*maxN)} };
+
+
+	node.coords.xrangeTop = {left: cx - 0.5*Ntop, right: cx + 0.5*Ntop};
+	node.coords.xrangeBottom = {left: cx - 0.5*Nbottom, right: cx + 0.5*Nbottom};
 	node.coords.xrange = {left: Math.min(left.coords.xrange.left, node.coords.dashed.left), right: Math.max(right.coords.xrange.right, node.coords.dashed.right)};
 
 	
@@ -699,7 +727,11 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 		if (childNode.speciesNodeMap.id != speciesNode.id){
 			
 			
-			var isActuallyLeft = childNode.speciesNodeMap.coords.xrange.left < childNode.speciesNodeMap.parent.coords.bottomLeft.x + childNode.speciesNodeMap.parent.populationsizeBottom*0.5;
+			var sibling = x == 0 ? right.speciesNodeMap : left.speciesNodeMap; 
+			//var isActuallyLeft = childNode.speciesNodeMap.coords.xrange.left < childNode.speciesNodeMap.parent.coords.bottomLeft.x + childNode.speciesNodeMap.parent.populationsizeBottom*0.5;
+			var isActuallyLeft = childNode.speciesNodeMap.coords.xrange.left < sibling.coords.xrange.left;
+
+
 			var leftMappedToSpeciesNode = childNode.speciesNodeMap.parent;
 			//console.log(node.id, "Above", childNode.id, childNode.speciesNodeMap.id, leftMappedToSpeciesNode.nodeToGeneBranchMap);
 			
@@ -719,13 +751,15 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				// Left
 				if (isActuallyLeft){
 					startX = Math.max(leftMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.children[0].coords.topLeft.x);
-					endX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsizeBottom;
+					//endX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsizeBottom;
+					endX = leftMappedToSpeciesNode.children[0].coords.topRight.x;
 				} 
 				
 				// Right
 				else{
 					endX = Math.min(leftMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.children[1].coords.topRight.x);
-					startX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsizeBottom;
+					//startX  = leftMappedToSpeciesNode.coords.bottomLeft.x + 0.5*leftMappedToSpeciesNode.populationsizeBottom;
+					startX = leftMappedToSpeciesNode.children[1].coords.topLeft.x;
 				}
 
 				
@@ -740,6 +774,9 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 				
 				
+
+				console.log(childNode, isActuallyLeft, startX, endX, widthScale, xIndex, mappedPos);
+
 				var segmentX = xIndex * widthScale + startX;
 				var segmentY = leftMappedToSpeciesNode.coords.bottomLeft.y;
 				
@@ -749,7 +786,10 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				
 				if (leftMappedToSpeciesNode.parent == null) break;
 				
-				isActuallyLeft = leftMappedToSpeciesNode.coords.xrange.left < leftMappedToSpeciesNode.parent.coords.bottomLeft.x + leftMappedToSpeciesNode.parent.populationsizeBottom*0.5;
+				//isActuallyLeft = leftMappedToSpeciesNode.coords.xrange.left < leftMappedToSpeciesNode.parent.coords.bottomLeft.x + leftMappedToSpeciesNode.parent.populationsizeBottom*0.5;
+				sibling = leftMappedToSpeciesNode.parent.children[0];
+				if (sibling.id == leftMappedToSpeciesNode.id) sibling = leftMappedToSpeciesNode.parent.children[1];
+				isActuallyLeft = leftMappedToSpeciesNode.coords.xrange.left < sibling.coords.xrange.left;
 				leftMappedToSpeciesNode = leftMappedToSpeciesNode.parent;
 			}
 			
