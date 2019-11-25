@@ -103,7 +103,7 @@ function initVisualSettings(){
 function setInterfaceFromVisualParams(){
 
 
-	
+	$("#MODEL_ANNOTATIONS_SPECIES").val("_none");
 	$("#SPECIES_TREE_OPACITY").val(SPECIES_TREE_OPACITY);
 	$("#GENE_TREE_OPACITY").val(GENE_TREE_OPACITY);
 
@@ -609,7 +609,7 @@ function renderAnnotations(newAnnotations = []) {
 			if (newAnnotation.name == oldAnnotation.name){
 				isNew = false;
 				oldAnnotation.complete = newAnnotation.complete;
-				oldAnnotation.format = newAnnotation.format;
+				//oldAnnotation.format = newAnnotation.format;
 				oldAnnotation.mustBeNumerical = newAnnotation.mustBeNumerical;
 				oldAnnotation.mustBeNominal = newAnnotation.mustBeNominal;
 				for (var ele in newAnnotation.discreteCols){
@@ -757,6 +757,7 @@ function getAnnotation(name){
 // Open settings for the selected species tree annotation
 function selectSpeciesAnnotationSettings() {
 	
+
 	var a = $("#MODEL_ANNOTATIONS_SPECIES").val();
 	if (a == "_none") {
 		CURRENTLY_SELECTED_SPECIES_ANNOTATION = {};
@@ -786,13 +787,15 @@ function selectSpeciesAnnotationSettings() {
 	// Annotation is discrete
 	if (discrete){
 
+
+
 		$("#speciesAnnotationDiscreteChk").prop("checked", true);
 		if (annotation.mustBeNumerical) return;
 		else if (annotation.mustBeNominal) $("#speciesAnnotationDiscreteSpan").addClass("disabled");
 		else $("#speciesAnnotationDiscreteSpan").removeClass("disabled");
 
 
-		
+		annotation.legend.showLegend = false;
 		$(".speciesAnnotationNumerical").hide(0);
 		$(".speciesAnnotationDiscrete").show(300);
 		$("#speciesAnnotationDiscreteTable").html("");
@@ -846,9 +849,7 @@ function selectSpeciesAnnotationSettings() {
 	}
 	
 	
-	
 	setVisualParams();
-	
 	
 	
 }
@@ -859,6 +860,8 @@ function setAnnotationDataType(){
 	
 	var switchTo = $("#speciesAnnotationDiscreteChk").is(":checked") ? "nominal" : "numerical";
 
+
+	
 	if (CURRENTLY_SELECTED_SPECIES_ANNOTATION != null) {
 
 		if (switchTo == "nominal" && CURRENTLY_SELECTED_SPECIES_ANNOTATION.mustBeNumerical) {
@@ -874,11 +877,14 @@ function setAnnotationDataType(){
 
 
 		CURRENTLY_SELECTED_SPECIES_ANNOTATION.format = switchTo;
+
+
+
 	}
+
 
 	renderAnnotations();
 	selectSpeciesAnnotationSettings();
-
 
 }
 

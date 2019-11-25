@@ -28,12 +28,12 @@
 
 function initUtil(){
 
-
 	
 	SPECIES_UPLOADED_FILE = null;
 	TEMPLATE_UPLOADED_FILE = null;
 	GENE_UPLOADED_FILES = [];
 	NUMBER_OF_GENE_TREES = 0;
+
 
 	// Species tree upload
 	var speciesTreeDropzone = new Dropzone("div#species_tree_upload", { url: "/file/post"});
@@ -59,7 +59,6 @@ function initUtil(){
 		reader.readAsText(file);
 
 	});
-
 
 
 	// Gene tree upload
@@ -113,9 +112,7 @@ function initUtil(){
 	});
 
 
-
 }
-
 
 
 
@@ -158,8 +155,9 @@ function parseSpeciesTree(e, util_file){
 	if (SPECIES_TREES_ALL.length > 0 && SPECIES_TREES_ALL[0].successfullyMapped) $("#renderTreesBtn").removeClass("disabled");
 	$("#fileUpload_" + util_file.id + " .loader").remove();
 	FIRST_ANNOTATION_PASS = true;
-	TREE_ANNOTATIONS = [];
-
+	if (!ANNOTATIONS_UPLOADED_FROM_XML) {
+		TREE_ANNOTATIONS = [];
+	}
 }
 
 

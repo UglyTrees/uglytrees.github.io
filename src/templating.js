@@ -28,7 +28,7 @@ function initTemplates(){
 
 
 	TEMPLATE_SCRAPE_URL = null;
-
+	ANNOTATIONS_UPLOADED_FROM_XML = false;
 
 	// Attempt to load in a script from web (w) or GitHub (g)
 	var urlParams = window.location.search.substr(1);
@@ -357,6 +357,8 @@ function loadSessionFromString(text, resolve = function() { }) {
 
 			var annotations = view.getElementsByTagName("annotation");
 			for (var i = 0; i < annotations.length; i ++){
+
+				ANNOTATIONS_UPLOADED_FROM_XML = true;
 		
 				var ann_name = getVal(annotations[i].getAttribute("name"), "", "Cannot find name for annotation " + (i+1));
 				var format = getVal(annotations[i].getAttribute("format"), "nominal")

@@ -19,7 +19,7 @@
 	<view SHOW_X_AXIS="false" SHOW_Y_AXIS="true">
 		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
-			<class value="A" col="#50b2db" />
+			<class value="A" col="black" />
 			<class value="E" col="#50db79" />
 			<class value="N" col="#db506d" />
 			<class value="L" col="#7950DB" />
@@ -90,7 +90,7 @@
 			<class value="J_2" col="#db506d" />
 			<class value="J_3" col="#7950DB" />
 		</annotation>
-		<annotation name="pop" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
+		<annotation name="pop" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="50">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 		</annotation>
 		<annotation name="branchRates.Species" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">

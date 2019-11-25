@@ -139,7 +139,8 @@ function planColour(tree, annotation_name, backgroundCol, isGeneTree = false){
 	if (annotation_name == "_none") colour_fn = function(node) { return rgbToHex(backgroundCol); };
 	
 	else {
-		
+
+
 		
 		// Get annotation from name
 		var annotation = getAnnotation(annotation_name);
@@ -148,9 +149,13 @@ function planColour(tree, annotation_name, backgroundCol, isGeneTree = false){
 		var annotationBelongsToSpeciesNode = annotation_name != "Label" && isGeneTree && annotation.speciesTree;
 		
 		var discrete = annotation.format == "nominal";
+
+		console.log("discrete?", annotation, discrete);
 		
 		// Discrete parameter
 		if (discrete){
+
+			console.log("discrete", discrete);
 			
 			colour_fn = function(node, speciesNodeMappedTo = null) {
 				
@@ -158,9 +163,14 @@ function planColour(tree, annotation_name, backgroundCol, isGeneTree = false){
 									!annotationBelongsToSpeciesNode ? node.annotation[annotation_name] : 
 									speciesNodeMappedTo.annotation[annotation_name];
 				
+
+
+				console.log("discrete", annotation_name, val, annotation.discreteCols[val]);
+
 				// Missing data
 				if (val == null || annotation.discreteCols[val] == null) return rgbToHex(backgroundCol); 
 				
+
 				return rgbToHex(annotation.discreteCols[val]);
 				
 				
@@ -1323,14 +1333,8 @@ function drawLegend(svg, legendGroup, annotation, scaleX_fn, scaleY_fn, svgWidth
 	// Create the draggable group which contains all the legend elements
 	drawSVGobj(legendGroup, "g", {class:"draggableLegend", annotation: annotation.name, origX: x, origY: y0});
 	var group = legendGroup.find(`[annotation="` + annotation.name + `"]`);
+	
 	group.draggable({
-		//containment : [svgWidth,0,-svgWidth,svgHeight], 
-		start: function(event, ui){
-			event.stopPropagation();
-		},
-		drag: function(event, ui){
-			event.stopPropagation();
-		},
         	stop: function(event, ui){
           		//console.log("stop", event);
 			
@@ -1354,6 +1358,7 @@ function drawLegend(svg, legendGroup, annotation, scaleX_fn, scaleY_fn, svgWidth
 
      		}
 	});
+	
 
 
 	// Use the chroma.js library to create a colour palette
