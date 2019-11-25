@@ -304,6 +304,12 @@ line {
 	color:white;
 }
 
+.numberinput:disabled {
+	background-color:#696969;
+	cursor:auto;
+	color:white;
+}
+
 
 
 input[type=number]::-webkit-inner-spin-button, 

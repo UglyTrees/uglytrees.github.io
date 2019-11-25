@@ -89,6 +89,7 @@
 				SPECIES_TREE = null;
 				GENE_TREES = [];
 				MAX_TREE_HEIGHT = 0;
+				MAX_TREE_WIDTH = 0;
 				SPECIES_TREES_ALL = [];
 				GENE_TREES_ALL = [];
 				READY_TO_DRAW = false;
@@ -417,10 +418,10 @@
 
 
 				// Get max tree height 
-				switch (X_RANGE) {
+				switch (Y_RANGE) {
 					case "treemax": {
-						MAX_TREE_HEIGHT = tallestTreeHeight;
-						effectiveMaxHeight = tallestTreeHeight == SPECIES_TREE.root.height ? tallestTreeHeight * 1.1 : tallestTreeHeight;
+						MAX_TREE_HEIGHT = tallestTreeHeight == SPECIES_TREE.root.height ? tallestTreeHeight * 1.1 : tallestTreeHeight;
+						effectiveMaxHeight = MAX_TREE_HEIGHT;
 						break;
 					}
 
@@ -430,7 +431,7 @@
 					}
 
 					case "input": {
-						MAX_TREE_HEIGHT = parseFloat($("#X_RANGE_INPUT").val());
+						MAX_TREE_HEIGHT = parseFloat($("#Y_RANGE_INPUT").val());
 						effectiveMaxHeight = tallestTreeHeight;
 						break;
 					}
@@ -443,15 +444,44 @@
 				}
 
 
+
+
+				// Get max tree width
+				
+				switch (X_RANGE) {
+					case "treemax": {
+						MAX_TREE_WIDTH = null;
+						break;
+					}
+
+					case "globalmax": {
+
+						break;
+					}
+
+					case "input": {
+						MAX_TREE_WIDTH = parseFloat($("#X_RANGE_INPUT").val());
+						break;
+					}
+
+					default: {
+						MAX_TREE_WIDTH = null;
+					}
+
+				}
+
+
 				
 				
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root, effectiveMaxHeight, SPECIES_WIDTH_ANNOTATION_TOP != "_none" && SPECIES_WIDTH_ANNOTATION_BOTTOM != "_none" && SPECIES_WIDTH_ANNOTATION_TOP != SPECIES_WIDTH_ANNOTATION_BOTTOM);
-				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT);	
+				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, Math.max(MAX_TREE_HEIGHT, effectiveMaxHeight));	
 				else Y_AXIS = null;
+
+				console.log(effectiveMaxHeight, MAX_TREE_HEIGHT, "SHOW_Y_AXIS", Y_AXIS);
 				
-				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, SPECIES_TREE.root.coords.xrange.right);	
+				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, Math.max(SPECIES_TREE.root.coords.xrange.right, (MAX_TREE_WIDTH == null ? 0 : MAX_TREE_WIDTH)));	
 				else X_AXIS = null;
 
 
@@ -582,7 +612,9 @@
 
 	
 
-				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN + AXIS_MARGIN , svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE-AXIS_MARGIN-MAX_TEXT_SIZE, svg.width()-SVG_RIGHT_MARGIN-AXIS_MARGIN , SVG_TOP_MARGIN+AXIS_MARGIN );
+				var ymax = MAX_TREE_HEIGHT;
+				var xmax = MAX_TREE_WIDTH;
+				scaleTreeRanges(SPECIES_TREE, SVG_LEFT_MARGIN + AXIS_MARGIN , svg.height()-SVG_BOTTOM_MARGIN-GENE_NODE_SIZE-AXIS_MARGIN-MAX_TEXT_SIZE, svg.width()-SVG_RIGHT_MARGIN-AXIS_MARGIN , SVG_TOP_MARGIN+AXIS_MARGIN, xmax, ymax);
 				
 				
 				
@@ -1127,31 +1159,31 @@
 					<span class="checkmark"></span> Show x-axis
 				</label>
 
-				<!--
+				
 				<div style="font-size:150%; text-align:left"> X-axis max:</div><br>
 				 <div style="font-size:80%; margin-left:4em">
 					
-					<label class="checkbox-container" for="treemax">
-						<input type="radio" id="treemax" name="X_RANGE" value="treemax"  onchange="setVisualParams();">
+					<label class="checkbox-container" for="treemaxX">
+						<input type="radio" id="treemaxX" name="X_RANGE" value="treemax"  onchange="setVisualParams();">
 						<span class="checkmark"></span> Tree max
 					</label>
 					
-
-					<label class="checkbox-container" for="globalmax">
-						<input type="radio" id="globalmax" name="X_RANGE" value="globalmax"  onchange="setVisualParams();">
+				<!--
+					<label class="checkbox-container" for="globalmaxX">
+						<input type="radio" id="globalmaxX" name="X_RANGE" value="globalmax"  onchange="setVisualParams();">
 						<span class="checkmark"></span>Global max
 					</label>
+				-->
 
-
-					<label class="checkbox-container" for="input">
-						<input type="radio" id="input" name="X_RANGE" value="input"  onchange="setVisualParams();">
+					<label class="checkbox-container" for="inputX">
+						<input type="radio" id="inputX" name="X_RANGE" value="input"  onchange="setVisualParams();">
 						<span class="checkmark"></span>Input:
 					</label>
-					<input class="numberinput cranberry" onclick="$(this).select()" id="X_RANGE_INPUT" style="width:5em;" value="1.0" onchange="setVisualParams();">
+					<input type="number" step="0.1" class="numberinput cranberry" onclick="$(this).select()" id="X_RANGE_INPUT" style="width:5em;" value="1.0" onchange="setVisualParams();">
 					
 
 				</div>
-				-->
+				
 
 
 
@@ -1171,10 +1203,41 @@
 					<span class="checkmark"></span> Show y-axis
 				</label>
 
+
+				
+				<div style="font-size:150%; text-align:left"> Y-axis max:</div><br>
+				 <div style="font-size:80%; margin-left:4em">
+					
+					<label class="checkbox-container" for="treemaxY">
+						<input type="radio" id="treemaxY" name="Y_RANGE" value="treemax"  onchange="setVisualParams();">
+						<span class="checkmark"></span> Tree max
+					</label>
+					
+				<!--
+					<label class="checkbox-container" for="globalmaxY">
+						<input type="radio" id="globalmaxY" name="Y_RANGE" value="globalmax"  onchange="setVisualParams();">
+						<span class="checkmark"></span>Global max
+					</label>
+				-->
+
+					<label class="checkbox-container" for="inputY">
+						<input type="radio" id="inputY" name="Y_RANGE" value="input"  onchange="setVisualParams();">
+						<span class="checkmark"></span>Input:
+					</label>
+					<input type="number" step="0.1" class="numberinput cranberry" onclick="$(this).select()" id="Y_RANGE_INPUT" style="width:5em;" value="1.0" onchange="setVisualParams();">
+					
+
+				</div>
+				
+
+
+
 			</div>
+
+
+
 			
 			<hr>
-
 
 
 			<div class="sideNavSetting" title="Specify annotation properties">
@@ -1424,6 +1487,16 @@
 				<a href="javascript:void(0)" title="Close" class="closebtn" onclick="closeNav()">&times;</a>
 			</div>
 
+			<hr>
+
+
+
+			
+			<div class="sideNavSetting" id="geneOpacityDiv">
+				<input id="GENE_TREE_OPACITY" class="slider" onchange="setVisualParams();" type="range" min="0" max="100" value="0" step="1">
+				Opacity (<span></span>%)
+			</div>
+			
 			<hr>
 			
 			<div class="sideNavSetting" title="Group gene tree nodes by genes or taxa">

@@ -71,6 +71,7 @@ function initVisualSettings(){
 	GENE_BRANCH_WIDTH = 1;
 	SPECIES_BRANCH_WIDTH = 1;
 	SPECIES_TREE_OPACITY = 100;
+	GENE_TREE_OPACITY = 100;
 	GROUP_GENES_BY_TAXA = false;
 
 	
@@ -84,6 +85,7 @@ function initVisualSettings(){
 	SHOW_X_AXIS = false;
 	SHOW_Y_AXIS = true;
 	X_RANGE = "treemax";
+	Y_RANGE = "treemax";
 
 
 	FIRST_ANNOTATION_PASS = true;
@@ -103,6 +105,8 @@ function setInterfaceFromVisualParams(){
 
 	
 	$("#SPECIES_TREE_OPACITY").val(SPECIES_TREE_OPACITY);
+	$("#GENE_TREE_OPACITY").val(GENE_TREE_OPACITY);
+
 	$("#SUBTREE_SPACER").val(SUBTREE_SPACER);
 	$("#GENE_NODE_SIZE").val(GENE_NODE_SIZE);
 	$("#GENE_BRANCH_WIDTH").val(GENE_BRANCH_WIDTH);
@@ -125,8 +129,14 @@ function setInterfaceFromVisualParams(){
 	$("#SHOW_Y_AXIS").prop("checked", SHOW_Y_AXIS);
 
 	$('[name="X_RANGE"][value="' + X_RANGE + '"]').prop("checked", true);
-	if (X_RANGE != "input") $("#X_RANGE_INPUT").addClass("disabled");		
-	else $("#X_RANGE_INPUT").removeClass("disabled");	
+	if (X_RANGE != "input") $("#X_RANGE_INPUT").prop("disabled", true);	
+	else $("#X_RANGE_INPUT").prop("disabled", false);
+
+	$('[name="Y_RANGE"][value="' + Y_RANGE + '"]').prop("checked", true);
+	if (Y_RANGE != "input") $("#Y_RANGE_INPUT").prop("disabled", true);
+	else $("#Y_RANGE_INPUT").prop("disabled", false);
+
+
 
 	renderParameterValues();
 
@@ -254,6 +264,10 @@ function setVisualParams(){
 	SPECIES_TREE_OPACITY = parseFloat($("#SPECIES_TREE_OPACITY").val());
 	SPECIES_TREE_OPACITY = Math.min(Math.max(SPECIES_TREE_OPACITY, 0), 100);
 
+	GENE_TREE_OPACITY = parseFloat($("#GENE_TREE_OPACITY").val());
+	GENE_TREE_OPACITY = Math.min(Math.max(GENE_TREE_OPACITY, 0), 100);
+
+
 	SPECIES_LABEL_FONT_SIZE = $("#SPECIES_LABEL_FONT_SIZE").val();	
 	SPECIES_LABEL_FONT_SIZE = Math.max(SPECIES_LABEL_FONT_SIZE, 0);
 
@@ -283,8 +297,15 @@ function setVisualParams(){
 
 	// Axis maxes
 	X_RANGE = $('[name="X_RANGE"]:checked').val();
-	if (X_RANGE != "input") $("#X_RANGE_INPUT").addClass("disabled");		
-	else $("#X_RANGE_INPUT").removeClass("disabled");	
+	if (X_RANGE != "input") $("#X_RANGE_INPUT").prop("disabled", true);	
+	else $("#X_RANGE_INPUT").prop("disabled", false);
+
+	Y_RANGE = $('[name="Y_RANGE"]:checked').val();
+	if (Y_RANGE != "input") $("#Y_RANGE_INPUT").prop("disabled", true);
+	else $("#Y_RANGE_INPUT").prop("disabled", false)
+
+
+
 
 	
 	
