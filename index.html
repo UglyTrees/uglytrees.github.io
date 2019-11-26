@@ -580,6 +580,7 @@
 			function renderTrees(options = null, animate = false, callback = function() { }, progress = function() { }) {
 
 
+
 				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW || !SPECIES_TREE.successfullyMapped) return;
 
 				
@@ -599,7 +600,7 @@
 
 						SVG_HEIGHT = parseFloat($("body").height()) - parseFloat($("#header").height()) - parseFloat($("#footer").height()) - SVG_UNDER_BOTTOM_MARGIN;
 						SVG_WIDTH = parseFloat($("#main").width());
-						
+
 
 						svg.height(SVG_HEIGHT);
 						svg.width(SVG_WIDTH);
@@ -615,6 +616,8 @@
 
 				}
 
+				
+				console.log("SVG_HEIGHT", SVG_HEIGHT, "SVG_WIDTH", SVG_WIDTH, $("#main"));
 	
 
 				var ymax = MAX_TREE_HEIGHT;
