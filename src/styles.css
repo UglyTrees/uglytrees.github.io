@@ -73,6 +73,7 @@ body {
 	min-height:100%;
 	margin:0;
 	padding:0;
+	
 
 	@media screen and (orientation:portrait) {
 		text-size-adjust: 160%;
@@ -178,6 +179,7 @@ line {
 #main{
 	margin-left:50px;
 	margin-right:20px;
+	display:inline;
 }
 
 .outlinedText{
@@ -209,7 +211,7 @@ line {
 
 
 .dialog{
-
+	text-size-adjust:350%;
 	z-index:1000;
 	position:fixed;
 	width:50%;
@@ -230,8 +232,10 @@ line {
 	.dialog{
 		width:95%;
 		margin-left:2.5%;
+		text-size-adjust:150%;
 	}
 }
+
 
 
 .dialog.toTheSide{
@@ -312,6 +316,14 @@ line {
 }
 
 
+@media only screen and (max-width: 1200px) {
+	.numberinput{
+		text-size-adjust:150%;	
+		width:10em;
+	}
+}
+
+
 
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
@@ -325,6 +337,7 @@ input[type=number] {
 
 
 #header{
+	text-size-adjust: 170%;
 	text-align:center;
 	font-size:450%;
 	line-height:1.3em;
@@ -339,6 +352,42 @@ input[type=number] {
 	border-style:solid;
 	border-width:1px;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.mainheader{
+	text-size-adjust: 500%;
+	width:40%;  
+	font-size:580%; 
+	line-height:120%;
+}
+
+
+.subheader{
+	text-size-adjust: 200%;
+	margin-top:-0.65em;
+	font-size:23%;
+	line-height:1.7em;
+}
+
+.topbuttondiv{
+	margin-top:5em;
+	text-size-adjust: 200%;
+}
+
+
+@media only screen and (max-width: 1200px) and (orientation:landscape) {
+	#header{
+		text-size-adjust: 100%;
+	}
+	.mainheader{
+		text-size-adjust: 300%;
+	}
+	.subheader{
+		text-size-adjust: 100%;
+	}
+	.topbuttondiv{
+		margin-top:1em;
+	}
 }
 
 
@@ -381,12 +430,6 @@ input[type=number] {
 	user-select: none;
 }
 
-
-.subheader{
-	margin-top:-0.65em;
-	font-size:23%;
-	line-height:1.7em;
-}
 
 .rotate90{
 	transform: rotate(90deg);
@@ -475,7 +518,7 @@ input[type=number] {
 
 
 .uploader {
-	height:25em;
+	height:20em;
 	border-style:dashed;
 	border-radius: 20px;
 	text-align:center;
@@ -495,8 +538,9 @@ input[type=number] {
 }
 
 .uploader > div {
+	text-size-adjust:200%;
 	font-size:200%;
-	margin-top: 3em;
+	margin-top: 1em;
 	color:#DB5079;
 	padding: 10;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
@@ -506,6 +550,7 @@ input[type=number] {
 
 
 .uploader.small div{
+	text-size-adjust:200%;
 	font-size:150%;
 }
 
@@ -546,20 +591,23 @@ input[type=number] {
 }
 
 @media only screen and (max-width: 1200px) {
+
+	@media screen and (orientation:landscape) {
+		.uploaderTd{
+			width:15em;
+		}
+	}
+
 	@media screen and (orientation:portrait) {
 
-	.uploaderTd{
-		width:20em;
-	}
-}
-@media screen and (orientation:landscape) {
-	.uploaderTd{
-		width:15em;
+		.uploaderTd{
+			width:20em;
+			max-width:300px;
+		}
 	}
 }
 
 
-}
 
 
 
@@ -646,6 +694,7 @@ input[type=number] {
 
 
 .textbutton{
+	text-size-adjust:150%;
 	cursor:pointer;
 	vertical-align:bottom;
 	font-size:120%;
@@ -704,10 +753,29 @@ input[type=number] {
 }
 
 
+
+
+@media only screen and (max-width: 1200px) {
+	.textbutton{
+		
+	}
+}
+
+
+
+
 #innerBody {
 	transition: 0.5s;
-
+	
 }
+
+
+@media only screen and (max-width: 1200px) {
+	#innerBody{
+		display:inline;
+	}
+}
+
 
 .sidenav {
 	height: 100%;
@@ -737,7 +805,7 @@ input[type=number] {
 	border-style:solid;
 	border-width:1px;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-
+	text-size-adjust:200%;
 }
 
 
@@ -746,8 +814,11 @@ input[type=number] {
 	text-decoration:none;
 	color:white;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-	text-size-adjust:250%;
+	text-size-adjust:350%;
 }
+
+
+
 
 
 .sidenav .closebtn:hover {
@@ -1112,6 +1183,15 @@ input {
 	.outersection{
 		margin-left:0.2em;
 		margin-right:0.2em;
+		margin-top:1em;
+	}
+
+}
+
+
+@media only screen and (max-width: 1200px) and (orientation:landscape) {
+	.outersection{
+		text-size-adjust:120%;
 	}
 }
 
@@ -1135,6 +1215,14 @@ input {
 	border-color:black;
 	border-radius:0.5em;
 }
+
+
+@media only screen and (max-width: 1200px) and (orientation:landscape) {
+	.aboutsection h1, .aboutsection h2, .aboutsection h3{
+		text-size-adjust:120%;
+	}
+}
+
 
 
 .aboutsection.inner{

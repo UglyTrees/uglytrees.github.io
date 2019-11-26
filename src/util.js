@@ -391,10 +391,20 @@ function openDownloadDialog(){
 	
 				</ul>`;
 	
-	$("body").append(getdialogTemplate("Save As", html));
+	
+	//$("body").append(getdialogTemplate("Save As", html));
+	var node = createElementFromHTML(getdialogTemplate("Save As", html));      
+	document.body.appendChild(node);
 	openDialog();
 }
 
+
+
+function createElementFromHTML(htmlString) {
+	var div = document.createElement('div');
+	div.innerHTML = htmlString.trim();
+	return div.firstChild; 
+}
 
 
 function uploadNewFiles(){
@@ -419,14 +429,18 @@ function uploadNewFiles(){
 function openDialog(){
 
 
-
+	
 
 	window.setTimeout(function(){
 		
-	
+		// https://demos.jquerymobile.com/1.3.2/faq/injected-content-is-not-enhanced.html
+		//$(".dialog").trigger("create");
+		//$(".dialog").listview('refresh');
+		//$(".dialog_inner").trigger("create");
+		//$(".numberinput").trigger("create");
 		
 		$(".dialog_inner").click(function(event){
-			console.log("THE PROPAGATION HAS BEEN SEVERED");
+			//console.log("THE PROPAGATION HAS BEEN SEVERED");
 			event.stopPropagation();
 		});
 		
