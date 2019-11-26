@@ -765,7 +765,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				
 				
 
-				//console.log(childNode, isActuallyLeft, startX, endX, widthScale, xIndex, mappedPos);
+				//console.log(childNode, startX, endX, widthScale, xIndex, mappedPos);
 
 				var segmentX = xIndex * widthScale + startX;
 				var segmentY = leftParentMappedToSpeciesNode.coords.bottomLeft.y;

@@ -104,207 +104,213 @@
 
 			<div id="main">
 
-				<div class="aboutsection">
 
-					<h1>UglyTrees Guide</h1>
-
-					<div>
-							
-						UglyTrees is a browser-based multispecies coalescent tree visualiser. This tutorial details some of the advanced features of UglyTrees.
+				<div class="outersection">
 
 
-					</div>
+					<div class="aboutsection">
 
-					<div class="aboutsection inner" id="webscraping">
-
-						<h2>1) Web scraping</h2>
+						<h1>UglyTrees Guide</h1>
 
 						<div>
-							
-							Any changes made to the visual settings of UglyTrees can be downloaded as a template (in .xml format). To do this, select
-							'Save As' from the main program. The settings can be restored by uploading the template from the 'Open' menu. <br><br>
+								
+							UglyTrees is a browser-based multispecies coalescent tree visualiser. This tutorial details some of the advanced features of UglyTrees.
 
-							Alternatively, UglyTrees can load a template file by scraping the web if the location of the template is provided in the URL. This is achieved two 
-							ways: by using either the 'w' (web) or the 'g' (GitHub) URL parameter. 
 
-								<div class="aboutsection inner">
+						</div>
 
-									<h3>1.1) General case (w)</h3>
+						<div class="aboutsection inner" id="webscraping">
 
-									<div>
-										Use the following URL: 
-										<div class="code">
-											www.uglytrees.nz/?<b style="color:#DB5079;">w</b>=http://website.com/template.xml
+							<h2>1) Web scraping</h2>
+
+							<div>
+								
+								Any changes made to the visual settings of UglyTrees can be downloaded as a template (in .xml format). To do this, select
+								'Save As' from the main program. The settings can be restored by uploading the template from the 'Open' menu. <br><br>
+
+								Alternatively, UglyTrees can load a template file by scraping the web if the location of the template is provided in the URL. This is achieved two 
+								ways: by using either the 'w' (web) or the 'g' (GitHub) URL parameter. 
+
+									<div class="aboutsection inner">
+
+										<h3>1.1) General case (w)</h3>
+
+										<div>
+											Use the following URL: 
+											<div class="code">
+												www.uglytrees.nz/?<b style="color:#DB5079;">w</b>=http://website.com/template.xml
+											</div>
+											where <span class="code">http://website.com/template.xml</span> is a web-location of an UglyTrees template.
+											
+
 										</div>
-										where <span class="code">http://website.com/template.xml</span> is a web-location of an UglyTrees template.
-										
+
+
+
+										<h3>1.2) GitHub (g)</h3>
+
+										<div>
+											Use the following URL: 
+											<div class="code">
+												www.uglytrees.nz/?<b style="color:#DB5079;">g</b>=OWNER/REPO/PATH/TO/template.xml
+											</div>
+											where <span class="code">OWNER</span> is the owner of the GitHub repository  <span class="code">REPO</span>
+											and  <span class="code">PATH/TO/template.xml</span> is the path to the UglyTrees template from the
+											master branch root. Due to restrictions in the GitHub API, files larger than 1MB may not be retrieved.
+											For large files, the <b style="color:#DB5079;">w</b> parameterisation should be used.
+											
+
+										</div>
 
 									</div>
 
 
+									This enables the sharing of multispecies coalescent visualisations with just one click.
+									The 'trees' section of the template file looks like the following:
 
-									<h3>1.2) GitHub (g)</h3>
 
-									<div>
-										Use the following URL: 
-										<div class="code">
-											www.uglytrees.nz/?<b style="color:#DB5079;">g</b>=OWNER/REPO/PATH/TO/template.xml
-										</div>
-										where <span class="code">OWNER</span> is the owner of the GitHub repository  <span class="code">REPO</span>
-										and  <span class="code">PATH/TO/template.xml</span> is the path to the UglyTrees template from the
-										master branch root. Due to restrictions in the GitHub API, files larger than 1MB may not be retrieved.
-										For large files, the <b style="color:#DB5079;">w</b> parameterisation should be used.
-										
-
+									<div class="code">
+										&lt;trees&gt; <br>
+											&nbsp;&nbsp; &lt;species filename="species.trees" /&gt; <br>
+											&nbsp;&nbsp; &lt;gene filename="../trees/gene1.trees" /&gt; <br>
+											&nbsp;&nbsp; &lt;gene filename="http://www.uglytrees.nz/trees/gene2.trees" /&gt; <br>
+										&lt;/trees&gt;
 									</div>
 
+
+									In this example, one species and two gene tree files will be loaded into UglyTrees.
+									The second gene tree is scraped directly from the specified URL (http/https must be specified),
+									whereas, the species tree and the other gene are scraped from the relative directory (relative to
+									the template file specified by <b style="color:#DB5079;">w</b> or <b style="color:#DB5079;">g</b>).  
+									However, due to security restrictions imposed by the web browser, if the template.xml file is uploaded
+									directly from local storage, relative tree files are ignored. 
+
+
+									<div class="aboutsection inner">
+
+										<h3>1.3) Examples</h3>
+
+										<div>
+
+											<a href="http://www.uglytrees.nz/?w=http://uglytrees.nz/trees/session.xml">
+												http://www.uglytrees.nz/?<b>w</b>=http://uglytrees.nz/trees/session.xml
+											</a> <br><br>
+
+											<a href="http://www.uglytrees.nz/?g=uglytrees/uglytrees.github.io/trees/session.xml">
+												http://www.uglytrees.nz/?<b>g</b>=uglytrees/uglytrees.github.io/trees/session.xml
+											</a>
+
+										</div>
+
+									</div>
+									
+
+
+
+							</div>
+
+
+
+						</div>
+
+
+
+
+
+
+
+
+
+
+
+
+						<div class="aboutsection inner" id="mapping">
+
+							<h2>2) Species to gene node mapping</h2>
+
+							<div>
+								In order to embed one (or more) gene trees inside a species tree, a mapping function between species leaves and gene leaves is required.
+								This function is automatically detected by UglyTrees by comparing species and gene leaf labels. The mapping algorithm attempts to map each gene leaf 								to exactly one species. This is achieved by substring comparison, and if that fails, the labels are
+								split using a range of delimiters (<span class="code">_</span>, <span class="code">-</span>, and <span class="code">.</span>). If a mapping cannot
+								be found, the user is notified. Consider the following (simulated) nexus files:
+
+
+								
+								<div class="code">
+									<b>species.nexus:</b><br>
+									#NEXUS<br><br>
+
+									Begin taxa;<br>
+										&nbsp;&nbsp; Dimensions ntax=4;<br>
+											&nbsp;&nbsp; &nbsp;&nbsp; Taxlabels<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; horse<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; seahorse<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; cat<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; catfish<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; ;<br>
+									End;<br>
+									Begin trees;<br>
+										&nbsp;&nbsp; Translate<br>
+											 &nbsp;&nbsp; &nbsp;&nbsp;   1 horse,<br>
+											 &nbsp;&nbsp; &nbsp;&nbsp;   2 seahorse,<br>
+											 &nbsp;&nbsp; &nbsp;&nbsp;   3 cat,<br>
+											 &nbsp;&nbsp; &nbsp;&nbsp;   4 catfish<br>
+									;<br>
+									tree STATE_0 = (((1[&pop=2.6]:0.03225324288335552,4[&pop=1]:0.03225324288335552)[&pop=3]:0.43392160615904984,3[&pop=1.2]:0.46617484904240536)[&pop=0.5]:0.3061633578277898,2[&pop=0.5]:0.7723382068701952)[&pop=0.5];
 								</div>
 
-
-								This enables the sharing of multispecies coalescent visualisations with just one click.
-								The 'trees' section of the template file looks like the following:
 
 
 								<div class="code">
-									&lt;trees&gt; <br>
-										&nbsp;&nbsp; &lt;species filename="species.trees" /&gt; <br>
-										&nbsp;&nbsp; &lt;gene filename="../trees/gene1.trees" /&gt; <br>
-										&nbsp;&nbsp; &lt;gene filename="http://www.uglytrees.nz/trees/gene2.trees" /&gt; <br>
-									&lt;/trees&gt;
+									<b>gene1.nexus:</b><br>
+									#NEXUS<br><br>
+
+									Begin taxa;<br>
+										&nbsp;&nbsp; Dimensions ntax=6;<br>
+											&nbsp;&nbsp; &nbsp;&nbsp; Taxlabels<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; horse_1<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; horse_2<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; seahorse_1<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; seahorse_7<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; cat_1<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; catfish_jerry<br>
+												&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; ;<br>
+									End;<br>
+									Begin trees;<br>
+										&nbsp;&nbsp; Translate<br>
+											&nbsp;&nbsp; &nbsp;&nbsp;   1 horse_1,<br>
+											&nbsp;&nbsp; &nbsp;&nbsp;    2 horse_2,<br>
+											&nbsp;&nbsp; &nbsp;&nbsp;    3 seahorse_1,<br>
+											 &nbsp;&nbsp; &nbsp;&nbsp;   4 seahorse_7,<br>
+											 &nbsp;&nbsp; &nbsp;&nbsp;   5 cat_1,<br>
+											&nbsp;&nbsp; &nbsp;&nbsp;    6 catfish_jerry<br>
+									;<br>
+									tree STATE_0 = (((((1:0.21108720449043908,2:0.21108720449043908):0.2680638042699739,6:0.479151008760413):0.12515560798169428,5:0.6043066167421073):0.538020168481041,4:1.1423267852231482):0.7086261037474311,3:1.8509528889705793):0.0;
 								</div>
 
-
-								In this example, one species and two gene tree files will be loaded into UglyTrees.
-								The second gene tree is scraped directly from the specified URL (http/https must be specified),
-								whereas, the species tree and the other gene are scraped from the relative directory (relative to
-								the template file specified by <b style="color:#DB5079;">w</b> or <b style="color:#DB5079;">g</b>).  
-								However, due to security restrictions imposed by the web browser, if the template.xml file is uploaded
-								directly from local storage, relative tree files are ignored. 
+								In this example, <span class="code">horse_1</span> and <span class="code">horse_2</span> are mapped to species
+								<span class="code">horse</span>, <span class="code">seahorse_1</span> and <span class="code">seahorse_7</span>
+								are mapped to <span class="code">seahorse</span>, etc. The use of <span class="code">_</span> delimiters ensures that
+								each gene is mapped to exactly 1 species, by preventing  <span class="code">horse_1</span> from being mapped to <span class="code">seahorse</span>.
+								<br><br>If UglyTrees is unable to find a mapping, consider changing the gene/species labels to something like the above example.
 
 
-								<div class="aboutsection inner">
-
-									<h3>1.3) Examples</h3>
-
-									<div>
-
-										<a href="http://www.uglytrees.nz/?w=http://uglytrees.nz/trees/session.xml">
-											http://www.uglytrees.nz/?<b>w</b>=http://uglytrees.nz/trees/session.xml
-										</a> <br><br>
-
-										<a href="http://www.uglytrees.nz/?g=uglytrees/uglytrees.github.io/trees/session.xml">
-											http://www.uglytrees.nz/?<b>g</b>=uglytrees/uglytrees.github.io/trees/session.xml
-										</a>
-
-									</div>
-
-								</div>
-								
 
 
+							</div>
 
 						</div>
 
 
 
-					</div>
+		
 
-
-
-
-
-
-
-
-
-
-
-
-					<div class="aboutsection inner" id="mapping">
-
-						<h2>2) Species to gene node mapping</h2>
-
-						<div>
-							In order to embed one (or more) gene trees inside a species tree, a mapping function between species leaves and gene leaves is required.
-							This function is automatically detected by UglyTrees by comparing species and gene leaf labels. The mapping algorithm attempts to map each gene leaf 								to exactly one species. This is achieved by substring comparison, and if that fails, the labels are
-							split using a range of delimiters (<span class="code">_</span>, <span class="code">-</span>, and <span class="code">.</span>). If a mapping cannot
-							be found, the user is notified. Consider the following (simulated) nexus files:
-
-
-							
-							<div class="code">
-								<b>species.nexus:</b><br>
-								#NEXUS<br><br>
-
-								Begin taxa;<br>
-									&nbsp;&nbsp; Dimensions ntax=4;<br>
-										&nbsp;&nbsp; &nbsp;&nbsp; Taxlabels<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; horse<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; seahorse<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; cat<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; catfish<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; ;<br>
-								End;<br>
-								Begin trees;<br>
-									&nbsp;&nbsp; Translate<br>
-										 &nbsp;&nbsp; &nbsp;&nbsp;   1 horse,<br>
-										 &nbsp;&nbsp; &nbsp;&nbsp;   2 seahorse,<br>
-										 &nbsp;&nbsp; &nbsp;&nbsp;   3 cat,<br>
-										 &nbsp;&nbsp; &nbsp;&nbsp;   4 catfish<br>
-								;<br>
-								tree STATE_0 = (((1[&pop=2.6]:0.03225324288335552,4[&pop=1]:0.03225324288335552)[&pop=3]:0.43392160615904984,3[&pop=1.2]:0.46617484904240536)[&pop=0.5]:0.3061633578277898,2[&pop=0.5]:0.7723382068701952)[&pop=0.5];
-							</div>
-
-
-
-							<div class="code">
-								<b>gene1.nexus:</b><br>
-								#NEXUS<br><br>
-
-								Begin taxa;<br>
-									&nbsp;&nbsp; Dimensions ntax=6;<br>
-										&nbsp;&nbsp; &nbsp;&nbsp; Taxlabels<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; horse_1<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; horse_2<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; seahorse_1<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; seahorse_7<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; cat_1<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; catfish_jerry<br>
-											&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; ;<br>
-								End;<br>
-								Begin trees;<br>
-									&nbsp;&nbsp; Translate<br>
-										&nbsp;&nbsp; &nbsp;&nbsp;   1 horse_1,<br>
-										&nbsp;&nbsp; &nbsp;&nbsp;    2 horse_2,<br>
-										&nbsp;&nbsp; &nbsp;&nbsp;    3 seahorse_1,<br>
-										 &nbsp;&nbsp; &nbsp;&nbsp;   4 seahorse_7,<br>
-										 &nbsp;&nbsp; &nbsp;&nbsp;   5 cat_1,<br>
-										&nbsp;&nbsp; &nbsp;&nbsp;    6 catfish_jerry<br>
-								;<br>
-								tree STATE_0 = (((((1:0.21108720449043908,2:0.21108720449043908):0.2680638042699739,6:0.479151008760413):0.12515560798169428,5:0.6043066167421073):0.538020168481041,4:1.1423267852231482):0.7086261037474311,3:1.8509528889705793):0.0;
-							</div>
-
-							In this example, <span class="code">horse_1</span> and <span class="code">horse_2</span> are mapped to species
-							<span class="code">horse</span>, <span class="code">seahorse_1</span> and <span class="code">seahorse_7</span>
-							are mapped to <span class="code">seahorse</span>, etc. The use of <span class="code">_</span> delimiters ensures that
-							each gene is mapped to exactly 1 species, by preventing  <span class="code">horse_1</span> from being mapped to <span class="code">seahorse</span>.
-							<br><br>If UglyTrees is unable to find a mapping, consider changing the gene/species labels to something like the above example.
-
-
-
-
-						</div>
 
 					</div>
-
-
-
-	
-
 
 				</div>
-
 			</div>
+			
 
 			<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 

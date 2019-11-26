@@ -9,6 +9,7 @@
 
 a {
 	color:#DB5079;
+	word-break: break-all; 
 }
 
 
@@ -1097,18 +1098,35 @@ input {
 
 
 
-.aboutsection{
+
+.outersection{
 	margin-top:5em;
 	margin-left:10%;
 	margin-right:10%;
 	min-width:800px;
 	max-width:1300px;
+}
+
+
+@media only screen and (max-width: 1200px) {
+	.outersection{
+		margin-left:0.2em;
+		margin-right:0.2em;
+	}
+}
+
+
+
+.aboutsection{
+
 	%border-style:solid;
 	%border-radius:5px;
 	%padding: 1em;
+	display:inline;
 }
 
 .aboutsection h1, .aboutsection h2, .aboutsection h3{
+	text-size-adjust: 320%;
 	%background-color:#DB5079;
 	color:#DB5079;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
@@ -1130,8 +1148,18 @@ input {
 
 .aboutsection div{
 	margin-left:3em;
+	margin-right:1em;
 
 }
+
+
+@media only screen and (max-width: 1200px) {
+	.aboutsection div{
+		margin-left:0.2em;
+		margin-right:0.2em;
+	}
+}
+
 
 .code{
 	font-family:'Courier New';
