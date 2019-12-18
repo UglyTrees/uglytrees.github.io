@@ -1181,8 +1181,8 @@ input {
 
 @media only screen and (max-width: 1200px) {
 	.outersection{
-		margin-left:0.2em;
-		margin-right:0.2em;
+		margin-left:1.5em;
+		margin-right:1.5em;
 		margin-top:1em;
 	}
 
@@ -1205,6 +1205,8 @@ input {
 	display:inline;
 }
 
+
+
 .aboutsection h1, .aboutsection h2, .aboutsection h3{
 	text-size-adjust: 320%;
 	%background-color:#DB5079;
@@ -1214,6 +1216,10 @@ input {
 	%border-style:solid;
 	border-color:black;
 	border-radius:0.5em;
+}
+
+.aboutsection h2{
+	margin-top:2em;
 }
 
 
