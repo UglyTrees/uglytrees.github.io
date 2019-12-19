@@ -418,7 +418,7 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 		drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 										points: points.join(" "), 
 										fill: fill,
-										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth + "px"}, "", true);		
+										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth}, "", true);		
 		
 
 		
