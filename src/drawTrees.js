@@ -451,6 +451,7 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 
 
 	if (node.parent == null) {
+		rootCallback();
 		rootProgress();
 	}
 
