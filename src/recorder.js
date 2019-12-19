@@ -42,6 +42,9 @@ function initRecorder() {
 function record(svgID = "tree"){
 
 
+	
+
+
 	RECORDING = true;
 
 	$("#treeDIV").hide(0);
@@ -71,24 +74,25 @@ function record(svgID = "tree"){
 	var data = [];
 
 	
-    	var stream = canvas.captureStream();
+    	var stream = canvas.captureStream(0);
     	recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
 	recorder.ondataavailable = function(event) {
+		//console.log("data?", event);
 		if (event.data && event.data.size) {
 			data.push(event.data);
 		}
 	};
 
+
+
+	
+
   	recorder.onstop = () => {
-		
+
+		//return;
 		var blob = new Blob(data, { type: "video/webm" })
 	   	var url = URL.createObjectURL(blob);
 		console.log("STOP", blob);
-	    	//d3.select("body")
-			//.append("video")
-			//.attr("src", url)
-			//.attr("controls", true)
-			//.attr("autoplay", true);
 
 
 		var downloadLink = document.createElement("a");
@@ -103,13 +107,15 @@ function record(svgID = "tree"){
 		$("#treeDIV").show(0);
 		RECORDING = false;
 
+		console.log("ndraws", ndraws);
+
 
   	};
 	
 
+	var ndraws = 0;
 
-
-	var drawFrame = function(cb = function() { }) {
+	var drawFrame = function(cb = function(a, b) { }) {
 		var img = new Image();
 		var serialized = new XMLSerializer().serializeToString(svg); 
 		var blob = URL.createObjectURL(new Blob([serialized], {type: "image/svg+xml"}));
@@ -117,7 +123,11 @@ function record(svgID = "tree"){
 		img.onload = function() {
 			context.fillRect(0, 0, svg_width * canvasSizeMultiplier, svg_height * canvasSizeMultiplier); 
 			context.drawImage(img, 0, 0, svg_width * canvasSizeMultiplier, svg_height * canvasSizeMultiplier);
+			ndraws++;
+			stream.requestFrame();
+			recorder.requestData();
 			cb(null, img);
+			
 		}
 	    	
 	  }
@@ -130,22 +140,12 @@ function record(svgID = "tree"){
 	recordRecurse(5, recorder, data, drawFrame);
 
 	return; 
-	drawFrame(function(a, b) {
-		nextTree(false, function() {
-			drawFrame(function(a, b) {
-				recorder.stop();
-			});
-
-
-		});
-
-	});
-
+	
 
 }
 
 
-function recordRecurse(n, recorder, data, drawFrame = function(x) { }){
+function recordRecurse(n, recorder, data, drawFrame = function(cb) { }){
 
 
 	if (n == 0) {
@@ -154,15 +154,27 @@ function recordRecurse(n, recorder, data, drawFrame = function(x) { }){
 
 	}
 
+	recorder.pause();
 	drawFrame(function(a, b) {
 
-		recorder.pause();
-		nextTree(false, function() {recorder.resume();}, function(elements, complete, remaining, start, tweenValue) {
-			//console.log((complete * 100) + "%");
+		
+		nextTree(false, function() { }, function(elements, complete, remaining, start, tweenValue) {
+			recorder.resume();
+			console.log((complete * 100) + "%");
         		//console.log(remaining + "ms remaining!");
         		//console.log("The current tween value is " + tweenValue)
+
+			$(`[animatable="true"]`).velocity("pause");
 			
-			drawFrame();
+			
+			drawFrame(function(a, b) { 
+				console.log("drawn");
+				recorder.pause();
+				setTimeout(function() { 
+					
+					$(`[animatable="true"]`).velocity("resume") 
+				}, 10); 
+			});
 
 			if (complete == 1) {
 				setTimeout(function() {

@@ -691,6 +691,8 @@
 				}
 
 
+				callback();
+
 
 			}
 
@@ -733,7 +735,7 @@
 					else newObj.setAttribute(a, attr[a]);
 				}
 				if (val != null) newObj.innerHTML = val;
-
+				newObj.setAttribute("animatable", "true");
 
 
 				// Set some of the styles as attributes because safari and IE do not like styles for svgs

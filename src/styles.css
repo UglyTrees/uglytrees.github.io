@@ -20,11 +20,11 @@ svg {
 }
 
 .loader {
-	border: 0.3em solid white; 
-	border-top: 0.3em solid #DB5079; 
+	border: 0.5em solid white; 
+	border-top: 0.5em solid #DB5079; 
 	border-radius: 50%;
-	width: 0.2em;
-	height: 0.2em;
+	width: 0.4em;
+	height: 0.4em;
 	animation: spin 2s linear infinite;
 
 }
