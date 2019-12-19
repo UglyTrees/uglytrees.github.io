@@ -3,10 +3,10 @@
 	<trees>
 		<!-- The file names below may be edited to point to a url. If the UglyTrees session is uploaded from GitHub, these files will
 		be read relative to the template directory on GitHub. Otherwise, the files will not be read at all. -->
-		<species filename="starbeast3_UCLN.species.trees" />
-		<gene filename="starbeast3_UCLN.gene26.trees" />
-		<gene filename="starbeast3_UCLN.gene29.trees" />
-		<gene filename="starbeast3_UCLN.gene47.trees" />
+		<species filename="gopher.species.trees" />
+		<gene filename="gopher.gene26.trees" />
+		<gene filename="gopher.gene29.trees" />
+		<gene filename="gopher.gene47.trees" />
 	</trees>
 	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
 	<intro display="false">
