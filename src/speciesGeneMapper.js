@@ -300,7 +300,6 @@ function getTreeAnnotations(tree, speciesTree = true){
 	}
 	
 	
-	console.log(annotations);
 	return annotations;
 	
 	

@@ -99,7 +99,7 @@ function requestFromGitHub(githubURLs, callback = function(response) {}, errorFn
 
 	var scriptUrl = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec";
 	var url = scriptUrl + "?urls=" + JSON.stringify(githubURLs) + "&callback=?";
-	console.log("Requesting", url);
+	//console.log("Requesting", url);
 
 	$.ajax({
 		url: url,
@@ -225,6 +225,8 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 				saveXML.writeAttributeString('gradientMin', annotation.gradientMin);
 				saveXML.writeAttributeString('gradientMax', annotation.gradientMax);
 				saveXML.writeAttributeString('ncols', annotation.ncols);
+				saveXML.writeAttributeString('speciesTree', annotation.speciesTree);
+				
 
 					// Legend
 					saveXML.writeStartElement('legend');
@@ -362,6 +364,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 		
 				var ann_name = getVal(annotations[i].getAttribute("name"), "", "Cannot find name for annotation " + (i+1));
 				var format = getVal(annotations[i].getAttribute("format"), "nominal")
+				var isSpeciesTree = annotations[i].getAttribute("speciesTree") === "true";
 				var gradientMin = getVal(annotations[i].getAttribute("gradientMin"), "#ffff1a");
 				var gradientMax = getVal(annotations[i].getAttribute("gradientMax"), "#7950DB");;
 				var ncols = getValFloat(annotations[i].getAttribute("ncols"), 20);
@@ -371,6 +374,8 @@ function loadSessionFromString(text, resolve = function() { }) {
 				var h = getValFloat(legend.getAttribute("height"), 20);
 				var x = getValFloat(legend.getAttribute("x"), 0.95);
 				var y = getValFloat(legend.getAttribute("y"), 0.95);
+
+
 
 
 				// DiscreteCols
@@ -383,7 +388,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 				}
 				
 		
-				var annotation = {name: ann_name, complete: true, format: format, mustBeNumerical: false, mustBeNominal: false, gradientMin: gradientMin, gradientMax: gradientMax, ncols: ncols, discreteCols: discreteCols, speciesTree: false, minVal: 0, maxVal: 0, legend: {showLegend: showLegend, width: w, height: h, x: x, y: y}};
+				var annotation = {name: ann_name, complete: true, format: format, mustBeNumerical: false, mustBeNominal: false, gradientMin: gradientMin, gradientMax: gradientMax, ncols: ncols, discreteCols: discreteCols, speciesTree: isSpeciesTree, minVal: 0, maxVal: 0, legend: {showLegend: showLegend, width: w, height: h, x: x, y: y}};
 
 				renderAnnotations([annotation]);
 

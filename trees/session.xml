@@ -15,7 +15,7 @@
 							This &lt;b style='color:#DB5079'>message&lt;/b> can be rendered using inline HTML stylings if escape characters are used in the .xml string &lt;h2>Heading 2 &lt;/h2> &lt;h3>Heading 3 &lt;/h3>" />
 	</intro>
 	<view SHOW_X_AXIS="false" SHOW_Y_AXIS="true">
-		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
+		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="false">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 			<class value="townsendii" col="#50b2db" />
 			<class value="talpoides" col="#50db79" />
@@ -52,14 +52,14 @@
 			<class value="Thomomys_umbrinus_atroavarius" col="#50db79" />
 			<class value="Thomomys_umbrinus_chihuahuae" col="#db506d" />
 		</annotation>
-		<annotation name="pop" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
+		<annotation name="pop" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 			<class value="100.0" col="#50b2db" />
 		</annotation>
-		<annotation name="branchRates.Species" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
+		<annotation name="branchRates.Species" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 		</annotation>
-		<annotation name="rate" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20">
+		<annotation name="rate" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="false">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 		</annotation>
 	</view>
