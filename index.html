@@ -95,7 +95,7 @@
 				SVG_UNDER_BOTTOM_MARGIN = 25;
 				SVG_LEFT_MARGIN = 20;
 	
-				AXIS_MARGIN = 20;			
+				AXIS_MARGIN = 30;			
 				SVG_RIGHT_MARGIN = 20;
 				SPECIES_LEAVES = [];
 				textLabelPadding = 5;
@@ -493,7 +493,7 @@
 				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
 				
 				planSpeciesTree(SPECIES_TREE.root, effectiveMaxHeight, SPECIES_WIDTH_ANNOTATION_TOP != "_none" && SPECIES_WIDTH_ANNOTATION_BOTTOM != "_none" && SPECIES_WIDTH_ANNOTATION_TOP != SPECIES_WIDTH_ANNOTATION_BOTTOM);
-				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, Math.max(MAX_TREE_HEIGHT, effectiveMaxHeight));	
+				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT); // Math.max(MAX_TREE_HEIGHT, effectiveMaxHeight));	
 				else Y_AXIS = null;
 
 				console.log(effectiveMaxHeight, MAX_TREE_HEIGHT, "SHOW_Y_AXIS", Y_AXIS);
@@ -665,12 +665,8 @@
 				if (!animate) drawAxis(svg, axisGroup, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, SVG_LEFT_MARGIN);
 				else animateAxis(svg, axisGroup, Y_AXIS, 4, SPECIES_TREE.scaleX_fn, SPECIES_TREE.scaleY_fn, oldScaleX_fn, oldScaleY_fn, SVG_LEFT_MARGIN, CURRENT_ANIMATION_TIME);
 
-				// Draw the species tree
-				if (!animate) drawASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, callback, progress);
-				else animateASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME, callback, progress);
-
 				
-				// Draw the gene tree
+				// Draw the gene trees
 				for (var g = 0; g < GENE_TREES.length; g++){
 
 					var gene_tree = GENE_TREES[g];
@@ -684,14 +680,21 @@
 						continue;
 					}
 					
-					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g);
-					else animateAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME);
+					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, function() { });
+					else animateAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME, function() { });
 
 					
 				}
 
 
-				callback();
+				// Draw the species tree
+				if (!animate) drawASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, callback, progress);
+				else animateASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME, callback, progress);
+
+				
+
+
+				//callback();
 
 
 			}

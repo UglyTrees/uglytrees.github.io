@@ -861,7 +861,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 
 // Draws a gene tree onto the svg
-function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, styles = {opacity: GENE_TREE_OPACITY}) {
+function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY}) {
 	
 	
 	
@@ -876,8 +876,8 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 		//console.log("Drawing", node.coords, speciesTree.scaleX_fn(node.coords.cx));
 
 		// Internal/root node. Draw children first
-		drawAGeneTree(svg, geneTree, treename, node.children[0], speciesTree, geneTreeNum, styles)
-		drawAGeneTree(svg, geneTree, treename, node.children[1], speciesTree, geneTreeNum, styles)
+		drawAGeneTree(svg, geneTree, treename, node.children[0], speciesTree, geneTreeNum, rootCallback, styles)
+		drawAGeneTree(svg, geneTree, treename, node.children[1], speciesTree, geneTreeNum, rootCallback, styles)
 
 	}
 
@@ -923,6 +923,7 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 
 
 
+	if (node.parent == null) rootCallback();
 	
 	
 	
@@ -933,7 +934,7 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 
 
 // Animates a pre-rendered gene tree
-function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, animation_time = 1000, styles = {opacity: GENE_TREE_OPACITY}) {
+function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, animation_time = 1000, rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY}) {
 
 
 	var id = treename + "_" + node.id;
@@ -950,7 +951,7 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 		var strokeWidth = geneTree.linewidth_fn(node, mappedToSpeciesNode);
 		var col = geneTree.bgcolour_fn(node, mappedToSpeciesNode);
 
-		animateGeneBranch(svg, i, speciesTree, node, geneTreeNum, col, strokeWidth, animation_time, styles.opacity);
+		animateGeneBranch(svg, i, speciesTree, node, geneTreeNum, col, strokeWidth, animation_time, function() { }, styles.opacity);
 		
 		
 			
@@ -970,12 +971,13 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 	
 	var radius = geneTree.noderadius_fn(node, node.speciesNodeMap);
 	var col = geneTree.bgcolour_fn(node, node.speciesNodeMap);
-	animateGeneBranch(svg, -1, speciesTree, node, geneTreeNum, col, radius, animation_time, styles.opacity);
+	var cb = node.parent == null ? rootCallback : function() { };
+	animateGeneBranch(svg, -1, speciesTree, node, geneTreeNum, col, radius, animation_time, cb, styles.opacity);
 	
 	
 	// Animate children
 	for (var c = 0; c < node.children.length; c++){
-		animateAGeneTree(svg, geneTree, treename, node.children[c], speciesTree, geneTreeNum, animation_time, styles);
+		animateAGeneTree(svg, geneTree, treename, node.children[c], speciesTree, geneTreeNum, animation_time, rootCallback, styles);
 	}
 
 	
@@ -985,7 +987,7 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 
 
 
-function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size, duration = 1000, opacity) {
+function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size, duration = 1000,  callback = function() { }, opacity) {
 
 
 
@@ -995,7 +997,6 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 		
 		var ele = svg.find("#" + node.htmlID);
 		
-
 		var cx = speciestree.scaleX_fn(node.coords.cx);
 		var cy = speciestree.scaleY_fn(node.coords.cy);
 		var r = size;
@@ -1011,13 +1012,15 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 								gNum: gNum,
 								name: (node.children.length == 0 ? node.id + "," + node.label : node.id),
 								fill: fill}, "", true);
+				callback();
 
 		} 
 		
 		// Animate it
 		else {
+			var properties = {duration: duration, complete: callback};
 			ele.velocity("finish");
-			ele.velocity( {cx: cx, cy: cy, r: r}, duration);
+			ele.velocity( {cx: cx, cy: cy, r: r}, properties);
 			ele.css("fill", fill);
 			
 		}
