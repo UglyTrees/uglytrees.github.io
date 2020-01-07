@@ -848,18 +848,39 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	}
 	*/
 
-	// Find the population size at y (the coalescence event)
-	var thisY = node.height;
-	var xPos = (0.5*(rightX + leftX)  - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+
+	// Linear equation governing this species branch
+	var dT = (speciesNode.coords.topRight.y - speciesNode.coords.bottomRight.y);
 	var popBtm = (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
 	var popTop = (speciesNode.coords.topRight.x - speciesNode.coords.topLeft.x);
-	var dT = (speciesNode.coords.topRight.y - speciesNode.coords.bottomRight.y);
+
+
+	// Find the % along the width the left and right child branches are
+	var populationSizeAtLeftBranch = popBtm + (leftY-speciesNode.coords.bottomRight.y) * (popTop - popBtm)/dT;
+	var populationSizeAtRightBranch = popBtm + (rightY-speciesNode.coords.bottomRight.y) * (popTop - popBtm)/dT;
+	var leftBorderXatLeftBranch = (leftY-speciesNode.coords.bottomRight.y) / mL + speciesNode.coords.bottomLeft.x;
+	var leftBorderXatRightBranch = (rightY-speciesNode.coords.bottomRight.y) / mL + speciesNode.coords.bottomLeft.x;
+	var leftPos = (leftX - leftBorderXatLeftBranch) / populationSizeAtLeftBranch;
+	var rightPos = (rightX - leftBorderXatRightBranch) / populationSizeAtRightBranch;
+
+
+	// Set the % along the width of this node as the midpoint between its two children's %'s
+	var xPos = (leftPos + rightPos) / 2;
+
+	// Find the population size at y (the coalescence event)
+	
+	//var leftPos = (leftX - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+	//var rightPos = (rightX - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+	
+	
+	// Compute x coords of this node
+	var thisY = node.height;
 	var populationSizeAtY = popBtm + (thisY-speciesNode.coords.bottomRight.y) * (popTop - popBtm)/dT;
 	var leftBorderXatY = (thisY-speciesNode.coords.bottomRight.y) / mL + speciesNode.coords.bottomLeft.x;
 	var thisX = leftBorderXatY + xPos*populationSizeAtY;
 
 
-	console.log(thisY-speciesNode.coords.bottomRight.y, popBtm, popTop, dT, populationSizeAtY,  leftBorderXatY, xPos, thisX); 
+	//console.log(thisY-speciesNode.coords.bottomRight.y, popBtm, popTop, dT, populationSizeAtY,  leftBorderXatY, xPos, thisX, populationSizeAtLeftBranch, populationSizeAtRightBranch, leftBorderXatLeftBranch, leftBorderXatRightBranch, leftPos, rightPos); 
 	
 	/*
 	var leftX_intersectSpeciesNode = -(leftY - speciesNode.coords.bottomLeft.y) / gradientLeft + leftX; 
