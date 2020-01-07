@@ -141,6 +141,10 @@
 				$(".showOnSpeciesAnnotationSelect").hide(0);
 				$(".speciesAnnotationDiscrete").hide(0);
 				$(".speciesAnnotationNumerical").hide(0);
+
+
+
+			$("#hoverAnnotationDiv").draggable();
 				
 	
 				
@@ -299,7 +303,7 @@
 			$(window).resize(function() {
 				stop();
 				$("#tree").html("");
-				$("#hoverAnnotationDiv").hide(0);
+				unhover();
 				closeDialogs();
 				resetZoom();
 				clearTimeout(resizeId);
@@ -798,7 +802,7 @@
 			function hoverNode(id, event){
 
 				if (DONT_HOVER) return;
-
+				$(".svg-selected").removeClass("svg-selected");
 
 				var treeName = id.split("_")[0];
 				var tree = treeName == "speciestree" ? SPECIES_TREE : GENE_TREES[parseFloat(treeName.split("gene")[1])];
@@ -815,12 +819,15 @@
 				if (node == null) return;
 
 
+		
+
+
 				// Can flip subtree if node has children (and if it is a species tree)
 				$("#flipSubtreeBtn").unbind("click");
 				if (node.children.length == 2 && treeName == "speciestree") {
 					$("#flipSubtreeBtn").show(0);
  					$("#flipSubtreeBtn").click(function() { 
-						$('#hoverAnnotationDiv').hide(0);
+						unhover();
 						flipSubtree(node); 
 					});
 				} 
@@ -851,6 +858,25 @@
 				// Tree name
 				var filename = treeName == "speciestree" ? SPECIES_UPLOADED_FILE.filename : GENE_UPLOADED_FILES[parseFloat(treeName.split("gene")[1])].filename;
 				$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td><i>` + filename + `</i></td></tr>`);
+
+
+
+				// Hover over incident branches if gene tree
+				if (treeName != "speciestree"){
+					console.log("node", node, node.htmlID);
+					$("#" + node.htmlID).addClass("svg-selected");
+					$(`[branchfornode="` + node.htmlID + `"]`).addClass("svg-selected");
+					if (node.children.length != 0) {
+						$(`[branchfornode="` + node.children[0].htmlID + `"]`).addClass("svg-selected");
+						$(`[branchfornode="` + node.children[1].htmlID + `"]`).addClass("svg-selected");
+					}
+					
+					
+				}else{
+					$("#" + node.htmlID + "_P").addClass("svg-selected");
+				}
+
+
 				
 
 
@@ -900,9 +926,8 @@
 				$("#hoverAnnotationDiv").hide(0);
 
 				$("path.node").attr("fill", SPECIES_TREE_BG_COL);
-				$("circle.node").removeClass("selected");
+				$(".svg-selected").removeClass("svg-selected");
 				$(".node").attr("opacity", "1");
-				$(".genebranch").removeClass("selected");
 				$(".currentNodeInfo").html("");
 
 				
@@ -1159,7 +1184,7 @@
 						<td>Flip subtree</td>
 					</tr>
 
-					<tr  class="rowbutton" title="Close annotation box" onclick="$('#hoverAnnotationDiv').hide(0);">
+					<tr  class="rowbutton" title="Close annotation box" onclick="unhover()">
 						<td>Close</td>
 					</tr>
 				</table>

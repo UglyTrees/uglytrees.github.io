@@ -182,7 +182,7 @@ function openNav(id) {
 // Close a side navigation menu, or close all side navigation menus if is is not specified
 function closeNav(id = null) {
 	
-	$('#hoverAnnotationDiv').hide(0);
+	unhover();
 	if (id == null) {
 		$(".sidenav").width(0);
 		$(".sidenav").attr("opened", "no");
@@ -231,9 +231,8 @@ function openSettings(id){
 	closeAllNavsExcept(id);
 	if (!alreadyOpen) {
 		$("#tree").html("");
-		$('#hoverAnnotationDiv').hide(0);
+		unhover();
 		stop();
-		$('#hoverAnnotationDiv').hide(0);
 		setTimeout(function(){
 			resetZoom();
 			planTrees();
@@ -934,7 +933,7 @@ function initialiseZoom(){
 		//console.log(transform);	
 
 		
-		$("#hoverAnnotationDiv").hide(0);
+		unhover();
 		ZOOM_SCALE = transform.scale;
 		$(".labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
 

@@ -47,14 +47,20 @@ svg {
 
 }
 
-line.selected {
-	stroke: #DB5079 !important;
-	stroke-width: 3px !important;
+line.svg-selected {
+	filter: invert(100%) !important;
 }
 
-circle.selected {
-	fill: #DB5079 !important;
+circle.svg-selected {
+	filter: invert(100%) !important;
+	stroke: black; !important;
 }
+
+polygon.svg-selected {
+	filter: invert(50%) !important;
+	stroke: white; !important;
+}
+
 
 
 #tree{
@@ -1085,6 +1091,7 @@ input {
 }
 
 #hoverAnnotationDiv {
+	opacity:85%;
 	z-index:200;
 	position:absolute;
 	color:white; 
@@ -1097,6 +1104,14 @@ input {
 	background-color:#BEBEBE;
 	border-color:#BEBEBE;;
 	%border-left-color:#A9A9A9;
+	cursor: move; /* fallback if grab cursor is unsupported */
+	cursor: grab;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
+}
+
+#hoverAnnotationDiv:hover {
+	opacity:100% !important;
 }
 
 
