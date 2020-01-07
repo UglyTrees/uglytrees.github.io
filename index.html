@@ -144,10 +144,7 @@
 
 
 
-			$("#hoverAnnotationDiv").draggable();
-				
-	
-				
+				$("#hoverAnnotationDiv").draggable();
 
 
 			}
@@ -863,7 +860,6 @@
 
 				// Hover over incident branches if gene tree
 				if (treeName != "speciestree"){
-					console.log("node", node, node.htmlID);
 					$("#" + node.htmlID).addClass("svg-selected");
 					$(`[branchfornode="` + node.htmlID + `"]`).addClass("svg-selected");
 					if (node.children.length != 0) {
@@ -877,12 +873,9 @@
 				}
 
 
-				
-
 
 				var x = event.pageX;
 				var y = event.pageY;
-				console.log(x, y, treeName, node);
 				
 				
 				// If mouse on bottom half of tree, add the .top class and set bottom to mouse

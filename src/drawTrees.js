@@ -749,18 +749,29 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				if (mappedPos.index == mappedPos.n) alert("2. i = n");
 			
 			
-				var startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);	
-				var endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);		
+				//var startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);	
+				//var endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);		
+
+
+				var startX = leftMappedToSpeciesNode.coords.topLeft.x;	
+				var endX = leftMappedToSpeciesNode.coords.topRight.x;			
 
 				
 				// Group by taxa vs group by gene tree
-				var widthScale = (endX - startX) / mappedPos.n;
+				var widthScale = (endX - startX);
 				if (groupByTaxa) widthScale /= mappedPos.n;
 				else widthScale /= geneTree.offsetTotal;
+
+
 					
 				var xIndex = 0;
-				if (groupByTaxa) xIndex = mappedPos.index + (geneTree.offsetIndex+1)/(geneTree.offsetTotal+1);
-				else xIndex = (mappedPos.index+1)/(mappedPos.n+1) + geneTree.offsetIndex;
+				if (groupByTaxa) {
+					xIndex = mappedPos.index + (geneTree.offsetIndex+1)/(geneTree.offsetTotal+1);
+					
+				}
+				else {
+					xIndex = (mappedPos.index+1)/(mappedPos.n+1) + geneTree.offsetIndex;
+				}
 
 				
 				
@@ -797,6 +808,14 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	var rightY = right.coords.y[right.coords.y.length - 1];
 
 
+	if (leftX > rightX) {
+		leftX = left.coords.x[left.coords.x.length - 1];
+		leftY = left.coords.y[left.coords.y.length - 1];
+		rightX = right.coords.x[right.coords.x.length - 1];
+		rightY = right.coords.y[right.coords.y.length - 1];
+	}
+
+
 
 
 	// Find where the branch *would* intersect the above species node if there was not a coalescence event 
@@ -825,17 +844,40 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 	}
 
+
+	// Find the population size at y (the coalescence event)
+	var thisY = node.height;
+	var popBtm = (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+	var popTop = (speciesNode.coords.topRight.x - speciesNode.coords.topLeft.x);
+	var dT = (speciesNode.coords.topRight.y - speciesNode.coords.bottomRight.y);
+	var populationSizeAtY = popBtm + (thisY-speciesNode.coords.bottomRight.y) * (popTop - popBtm)/dT;
+	var leftBorderXatY = (thisY-speciesNode.coords.bottomRight.y) / mL + speciesNode.coords.bottomLeft.x;
+	var thisX = leftBorderXatY + xPos*populationSizeAtY;
+
+
+	//console.log(thisY-speciesNode.coords.bottomRight.y, popBtm, popTop, dT, populationSizeAtY,  leftBorderXatY,thisX); 
 	
-	
+	/*
 	var leftX_intersectSpeciesNode = -(leftY - speciesNode.coords.bottomLeft.y) / gradientLeft + leftX; 
 	var rightX_intersectSpeciesNode = -(rightY - speciesNode.coords.bottomLeft.y) / gradientRight + rightX;
 	
 	
 	
 	// Add the final x, y coordinate at this node
-	var thisY = node.height;
-	var thisX = (thisY - speciesNode.coords.bottomLeft.y) / gradientX + (leftX_intersectSpeciesNode + rightX_intersectSpeciesNode) / 2; 
 	
+	var thisX = (thisY - speciesNode.coords.bottomLeft.y) / gradientX + (leftX_intersectSpeciesNode + rightX_intersectSpeciesNode) / 2; 
+	if (node.parent == null) {
+
+
+		var widthScale = (speciesNode.coords.topRight.x - speciesNode.coords.topLeft.x); // / (geneTree.offsetTotal+1);
+
+		var xIndex = (geneTree.offsetIndex+1)/(geneTree.offsetTotal+1);
+		thisX = speciesNode.coords.topLeft.x + xIndex*widthScale;
+		console.log("ROOT", geneTree.offsetIndex, geneTree.offsetTotal, xIndex, widthScale, thisX);
+
+
+	}
+	*/
 	/// (leftX + rightX) / 2 * 
 	
 	//console.log(thisX, thisY, leftX_intersectSpeciesNode, rightX_intersectSpeciesNode);
@@ -849,7 +891,6 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	right.coords.strokeWidths.push(1);
 	
 	
-	//console.log(node.id, left.coords);
 	
 
 }
