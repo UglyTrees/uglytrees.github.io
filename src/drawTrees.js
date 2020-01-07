@@ -749,12 +749,12 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				if (mappedPos.index == mappedPos.n) alert("2. i = n");
 			
 			
-				//var startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);	
-				//var endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);		
+				var startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);	
+				var endX = Math.min(leftParentMappedToSpeciesNode.coords.bottomRight.x, leftMappedToSpeciesNode.coords.topRight.x);		
 
 
-				var startX = leftMappedToSpeciesNode.coords.topLeft.x;	
-				var endX = leftMappedToSpeciesNode.coords.topRight.x;			
+				//var startX = leftMappedToSpeciesNode.coords.topLeft.x;	
+				//var endX = leftMappedToSpeciesNode.coords.topRight.x;			
 
 				
 				// Group by taxa vs group by gene tree
@@ -825,13 +825,16 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	
 	//var gradient = (speciesNode.coords.topLeft.y - speciesNode.coords.bottomLeft.y) / (speciesNode.coords.topLeft.x - speciesNode.coords.bottomLeft.x);	
 	
-	var gradientX, gradientLeft, gradientRight;
+
+	/*
+	var xPos, gradientX, gradientLeft, gradientRight;
 	if (mL == Infinity) {
+		
 		gradientX = Infinity;
 		gradientLeft = Infinity;
 		gradientRight = Infinity;
 	}else{
-		var xPos = (0.5*(rightX + leftX)  - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+		
 		gradientX = mL + (mR - mL) * xPos;
 
 		var leftPos = (leftX - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
@@ -843,10 +846,11 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 		//console.log(speciesNode, mL, mR, xPos, leftPos, rightPos, gradientX, gradientLeft, gradientLeft);
 
 	}
-
+	*/
 
 	// Find the population size at y (the coalescence event)
 	var thisY = node.height;
+	var xPos = (0.5*(rightX + leftX)  - speciesNode.coords.bottomLeft.x) / (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
 	var popBtm = (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
 	var popTop = (speciesNode.coords.topRight.x - speciesNode.coords.topLeft.x);
 	var dT = (speciesNode.coords.topRight.y - speciesNode.coords.bottomRight.y);
@@ -855,7 +859,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 	var thisX = leftBorderXatY + xPos*populationSizeAtY;
 
 
-	//console.log(thisY-speciesNode.coords.bottomRight.y, popBtm, popTop, dT, populationSizeAtY,  leftBorderXatY,thisX); 
+	console.log(thisY-speciesNode.coords.bottomRight.y, popBtm, popTop, dT, populationSizeAtY,  leftBorderXatY, xPos, thisX); 
 	
 	/*
 	var leftX_intersectSpeciesNode = -(leftY - speciesNode.coords.bottomLeft.y) / gradientLeft + leftX; 
