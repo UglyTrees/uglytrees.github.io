@@ -429,7 +429,7 @@ function uploadNewFiles(){
 function openDialog(){
 
 
-	
+	stop();
 
 	window.setTimeout(function(){
 		

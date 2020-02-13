@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<uglytrees datetime="13Feb2020-16:57:2" TREE_NUM="0">
+<uglytrees datetime="13Feb2020-17:16:13" TREE_NUM="0">
 	<trees>
 		<!-- The file names below may be edited to point to a url. If the UglyTrees session is uploaded from GitHub, these files will
 		be read relative to the template directory on GitHub. Otherwise, the files will not be read at all. -->
@@ -14,7 +14,7 @@
 		<body string="This text may be edited in the .xml template to customise messages presented to the user when the template is loaded. &lt;br>&lt;br>
 							This &lt;b style='color:#DB5079'>message&lt;/b> can be rendered using inline HTML stylings if escape characters are used in the .xml string &lt;h2>Heading 2 &lt;/h2> &lt;h3>Heading 3 &lt;/h3>" />
 	</intro>
-	<view SHOW_X_AXIS="true" SHOW_Y_AXIS="true">
+	<view SHOW_X_AXIS="false" SHOW_Y_AXIS="true">
 		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 			<class value="A" col="#50b2db" />
@@ -92,13 +92,13 @@
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 		</annotation>
 		<annotation name="clockrate" format="numerical" gradientMin="#FFFFFF" gradientMax="#B2DB50" ncols="20" speciesTree="true">
-			<legend showLegend="true" width="20" height="100" x="0.95" y="0.05" />
+			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 		</annotation>
 	</view>
-	<speciestree SPECIES_TREE_OPACITY="100" SPECIES_LABEL_FONT_SIZE="17" SPECIES_WIDTH_ANNOTATION_TOP="pop" SPECIES_WIDTH_ANNOTATION_BOTTOM="pop" SUBTREE_SPACER="0.2" SPECIES_BRANCH_MULTIPLIER="_none" SPECIES_BRANCH_WIDTH="1" SPECIES_BRANCH_BORDER_ANNOTATION="_none" SPECIES_TREE_BORDER_COL="#000000" SPECIES_BRANCH_BGCOL_ANNOTATION="clockrate" SPECIES_TREE_BG_COL="#FFFFFF" />
-	<genetrees GENE_TREE_OPACITY="100" GROUP_GENES_BY_TAXA="false" GENE_NODE_MULTIPLIER="_none" GENE_NODE_SIZE="4.25" GENE_BRANCH_MULTIPLIER="_none" GENE_BRANCH_WIDTH="1" GENE_BRANCH_BGCOL_ANNOTATION="_none">
-		<gene display="true" col="#000000" />
-		<gene display="true" col="#707070" />
-		<gene display="true" col="#D3D3D3" />
+	<speciestree SPECIES_TREE_OPACITY="100" SPECIES_LABEL_FONT_SIZE="17" SPECIES_WIDTH_ANNOTATION_TOP="pop" SPECIES_WIDTH_ANNOTATION_BOTTOM="pop" SUBTREE_SPACER="0.3" SPECIES_BRANCH_MULTIPLIER="_none" SPECIES_BRANCH_WIDTH="4.15" SPECIES_BRANCH_BORDER_ANNOTATION="_none" SPECIES_TREE_BORDER_COL="#000000" SPECIES_BRANCH_BGCOL_ANNOTATION="_none" SPECIES_TREE_BG_COL="#FFFFFF" />
+	<genetrees GENE_TREE_OPACITY="100" GROUP_GENES_BY_TAXA="false" GENE_NODE_MULTIPLIER="_none" GENE_NODE_SIZE="0" GENE_BRANCH_MULTIPLIER="_none" GENE_BRANCH_WIDTH="2.65" GENE_BRANCH_BGCOL_ANNOTATION="_none">
+		<gene display="true" col="#50B2DB" />
+		<gene display="true" col="#DB506D" />
+		<gene display="false" col="#FFFF1A" />
 	</genetrees>
 </uglytrees>
