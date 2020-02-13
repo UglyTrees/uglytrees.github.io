@@ -215,6 +215,12 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 		saveXML.writeStartElement('view');
 		saveXML.writeAttributeString('SHOW_X_AXIS', SHOW_X_AXIS);
 		saveXML.writeAttributeString('SHOW_Y_AXIS', SHOW_Y_AXIS);
+		saveXML.writeAttributeString('X_RANGE', X_RANGE);
+		saveXML.writeAttributeString('Y_RANGE', Y_RANGE);
+		saveXML.writeAttributeString('X_RANGE_INPUT', $("#X_RANGE_INPUT").val());
+		saveXML.writeAttributeString('Y_RANGE_INPUT', $("#Y_RANGE_INPUT").val());
+
+
 		
 			// Annotations
 			for (var i = 0; i < TREE_ANNOTATIONS.length; i ++){
@@ -356,6 +362,13 @@ function loadSessionFromString(text, resolve = function() { }) {
 			view = view[0];
 			SHOW_X_AXIS = view.getAttribute("SHOW_X_AXIS") === "true";
 			SHOW_Y_AXIS = view.getAttribute("SHOW_Y_AXIS") === "true";
+			X_RANGE = getVal(view.getAttribute("X_RANGE"), "treemax");
+			Y_RANGE = getVal(view.getAttribute("Y_RANGE"), "treemax");
+			var xRangeInput = getValFloat(view.getAttribute("X_RANGE_INPUT"), null);
+			var yRangeInput = getValFloat(view.getAttribute("Y_RANGE_INPUT"), null);
+			if (xRangeInput != null) $("#X_RANGE_INPUT").val(xRangeInput);
+			if (yRangeInput != null) $("#Y_RANGE_INPUT").val(yRangeInput);
+
 
 			var annotations = view.getElementsByTagName("annotation");
 			for (var i = 0; i < annotations.length; i ++){
