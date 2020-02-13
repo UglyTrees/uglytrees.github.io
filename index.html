@@ -436,9 +436,7 @@
 
 
 
-				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
-				
-				planSpeciesTree(SPECIES_TREE.root, effectiveMaxHeight, SPECIES_WIDTH_ANNOTATION_TOP != "_none" && SPECIES_WIDTH_ANNOTATION_BOTTOM != "_none" && SPECIES_WIDTH_ANNOTATION_TOP != SPECIES_WIDTH_ANNOTATION_BOTTOM);
+
 
 
 				// Get max tree height 
@@ -470,10 +468,10 @@
 
 
 
-				// Get max tree width
+				
 				switch (X_RANGE) {
 					case "treemax": {
-						MAX_TREE_WIDTH = null; 
+						MAX_TREE_WIDTH = null;
 						break;
 					}
 
@@ -496,7 +494,9 @@
 
 				
 				
-			
+				GAP_BETWEEN_SUBTREES = SUBTREE_SPACER * totalNAtLeaves / SPECIES_LEAVES.length;
+				
+				planSpeciesTree(SPECIES_TREE.root, effectiveMaxHeight, SPECIES_WIDTH_ANNOTATION_TOP != "_none" && SPECIES_WIDTH_ANNOTATION_BOTTOM != "_none" && SPECIES_WIDTH_ANNOTATION_TOP != SPECIES_WIDTH_ANNOTATION_BOTTOM);
 				if (SHOW_Y_AXIS) Y_AXIS = planAxis("time", 0, MAX_TREE_HEIGHT); // Math.max(MAX_TREE_HEIGHT, effectiveMaxHeight));	
 				else Y_AXIS = null;
 
