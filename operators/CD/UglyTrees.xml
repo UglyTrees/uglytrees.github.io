@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<uglytrees datetime="13Feb2020-18:5:44" TREE_NUM="0">
+<uglytrees datetime="13Feb2020-16:57:2" TREE_NUM="0">
 	<trees>
 		<!-- The file names below may be edited to point to a url. If the UglyTrees session is uploaded from GitHub, these files will
 		be read relative to the template directory on GitHub. Otherwise, the files will not be read at all. -->
-		<species filename="uglytrees/uglytrees.github.io/operators/CD/animated.species.trees" />
-		<gene filename="uglytrees/uglytrees.github.io/operators/CD/animated.gene1.trees" />
-		<gene filename="uglytrees/uglytrees.github.io/operators/CD/animated.gene2.trees" />
-		<gene filename="uglytrees/uglytrees.github.io/operators/CD/animated.gene3.trees" />
+		<species filename="animated.species.trees" />
+		<gene filename="animated.gene1.trees" />
+		<gene filename="animated.gene2.trees" />
+		<gene filename="animated.gene3.trees" />
 	</trees>
 	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
 	<intro display="false">
