@@ -14,7 +14,7 @@
 		<body string="This text may be edited in the .xml template to customise messages presented to the user when the template is loaded. &lt;br>&lt;br>
 							This &lt;b style='color:#DB5079'>message&lt;/b> can be rendered using inline HTML stylings if escape characters are used in the .xml string &lt;h2>Heading 2 &lt;/h2> &lt;h3>Heading 3 &lt;/h3>" />
 	</intro>
-	<view SHOW_X_AXIS="true" SHOW_Y_AXIS="true">
+	<view SHOW_X_AXIS="true" SHOW_Y_AXIS="true" X_RANGE="input" Y_RANGE="treemax" X_RANGE_INPUT="3000" Y_RANGE_INPUT="1.0">
 		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
 			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
 			<class value="A" col="#50b2db" />
