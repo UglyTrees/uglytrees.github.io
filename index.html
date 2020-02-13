@@ -499,7 +499,7 @@
 
 				console.log(effectiveMaxHeight, MAX_TREE_HEIGHT, "SHOW_Y_AXIS", Y_AXIS);
 				
-				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, Math.max(SPECIES_TREE.root.coords.xrange.right, (MAX_TREE_WIDTH == null ? 0 : MAX_TREE_WIDTH)));	
+				if (SHOW_X_AXIS) X_AXIS = planAxis("pop", SPECIES_TREE.root.coords.xrange.left, MAX_TREE_WIDTH) ; //Math.max(SPECIES_TREE.root.coords.xrange.right, (MAX_TREE_WIDTH == null ? 0 : MAX_TREE_WIDTH)));	
 				else X_AXIS = null;
 
 
