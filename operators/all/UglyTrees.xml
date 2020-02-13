@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<uglytrees datetime="13Feb2020-17:49:5" TREE_NUM="0">
+	<trees>
+		<!-- The file names below may be edited to point to a url. If the UglyTrees session is uploaded from GitHub, these files will
+		be read relative to the template directory on GitHub. Otherwise, the files will not be read at all. -->
+		<species filename="animated.species.trees" />
+		<gene filename="animated.gene1.trees" />
+		<gene filename="animated.gene2.trees" />
+		<gene filename="animated.gene3.trees" />
+	</trees>
+	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
+	<intro display="false">
+		<main string="Welcome to UglyTrees" />
+		<body string="This text may be edited in the .xml template to customise messages presented to the user when the template is loaded. &lt;br>&lt;br>
+							This &lt;b style='color:#DB5079'>message&lt;/b> can be rendered using inline HTML stylings if escape characters are used in the .xml string &lt;h2>Heading 2 &lt;/h2> &lt;h3>Heading 3 &lt;/h3>" />
+	</intro>
+	<view SHOW_X_AXIS="true" SHOW_Y_AXIS="true">
+		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
+			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
+			<class value="A" col="#50b2db" />
+			<class value="D" col="#50db79" />
+			<class value="B" col="#db506d" />
+			<class value="E" col="#7950DB" />
+			<class value="F" col="#b2db50" />
+			<class value="G" col="#db7950" />
+			<class value="H" col="#4e8791" />
+			<class value="I" col="#ff1919" />
+			<class value="J" col="#228B22" />
+			<class value="N" col="#91584e" />
+			<class value="O" col="#584e91" />
+			<class value="K" col="#009fe1" />
+			<class value="M" col="#ffff1a" />
+			<class value="P" col="#ff8d1a" />
+			<class value="L" col="#DB5079" />
+			<class value="Q" col="#000000" />
+			<class value="R" col="#606060" />
+			<class value="S" col="#707070" />
+			<class value="C" col="#A0A0A0" />
+			<class value="T" col="#BEBEBE" />
+			<class value="A_1" col="#50b2db" />
+			<class value="A_3" col="#50db79" />
+			<class value="A_2" col="#db506d" />
+			<class value="A_4" col="#7950DB" />
+			<class value="B_1" col="#b2db50" />
+			<class value="O_1" col="#db7950" />
+			<class value="J_1" col="#4e8791" />
+			<class value="J_2" col="#ff1919" />
+			<class value="I_1" col="#228B22" />
+			<class value="R_1" col="#91584e" />
+			<class value="F_1" col="#584e91" />
+			<class value="S_1" col="#009fe1" />
+			<class value="H_1" col="#ffff1a" />
+			<class value="H_8" col="#ff8d1a" />
+			<class value="H_2" col="#DB5079" />
+			<class value="H_5" col="#000000" />
+			<class value="H_7" col="#606060" />
+			<class value="H_6" col="#707070" />
+			<class value="N_13" col="#A0A0A0" />
+			<class value="H_3" col="#BEBEBE" />
+			<class value="H_4" col="#d3d3d3" />
+			<class value="M_1" col="#E0E0E0" />
+			<class value="N_1" col="#FFFFFF" />
+			<class value="N_5" col="#50b2db" />
+			<class value="N_10" col="#50db79" />
+			<class value="N_7" col="#db506d" />
+			<class value="N_8" col="#7950DB" />
+			<class value="N_2" col="#b2db50" />
+			<class value="N_6" col="#db7950" />
+			<class value="N_9" col="#4e8791" />
+			<class value="H_9" col="#ff1919" />
+			<class value="N_14" col="#228B22" />
+			<class value="N_11" col="#91584e" />
+			<class value="N_4" col="#584e91" />
+			<class value="N_3" col="#009fe1" />
+			<class value="N_12" col="#ffff1a" />
+			<class value="G_1" col="#ff8d1a" />
+			<class value="L_1" col="#DB5079" />
+			<class value="Q_1" col="#000000" />
+			<class value="Q_2" col="#606060" />
+			<class value="C_1" col="#707070" />
+			<class value="T_1" col="#A0A0A0" />
+			<class value="E_1" col="#BEBEBE" />
+			<class value="D_1" col="#d3d3d3" />
+			<class value="K_1" col="#E0E0E0" />
+			<class value="P_1" col="#FFFFFF" />
+			<class value="P_2" col="#50b2db" />
+			<class value="P_5" col="#50db79" />
+			<class value="P_3" col="#db506d" />
+			<class value="P_4" col="#7950DB" />
+		</annotation>
+		<annotation name="pop" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
+			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
+		</annotation>
+		<annotation name="quantileRates.Species" format="numerical" gradientMin="#FFFF1A" gradientMax="#000000" ncols="20" speciesTree="true">
+			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
+		</annotation>
+	</view>
+	<speciestree SPECIES_TREE_OPACITY="100" SPECIES_LABEL_FONT_SIZE="17" SPECIES_WIDTH_ANNOTATION_TOP="pop" SPECIES_WIDTH_ANNOTATION_BOTTOM="pop" SUBTREE_SPACER="0.2" SPECIES_BRANCH_MULTIPLIER="quantileRates.Species" SPECIES_BRANCH_WIDTH="1" SPECIES_BRANCH_BORDER_ANNOTATION="_none" SPECIES_TREE_BORDER_COL="#000000" SPECIES_BRANCH_BGCOL_ANNOTATION="_none" SPECIES_TREE_BG_COL="#FFFFFF" />
+	<genetrees GENE_TREE_OPACITY="100" GROUP_GENES_BY_TAXA="false" GENE_NODE_MULTIPLIER="_none" GENE_NODE_SIZE="4" GENE_BRANCH_MULTIPLIER="_none" GENE_BRANCH_WIDTH="1" GENE_BRANCH_BGCOL_ANNOTATION="_none">
+		<gene display="true" col="#50b2db" />
+		<gene display="true" col="#50db79" />
+		<gene display="true" col="#db506d" />
+	</genetrees>
+</uglytrees>
