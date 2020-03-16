@@ -412,6 +412,7 @@ function uploadNewFiles(){
 	READY_TO_DRAW = false;
 	
 	$("#fileUploading").show(0);
+	$(".displayOnRender").hide(0);
 	unhover();
 	//$(".showAfterTreeUpload").hide(300);
 				

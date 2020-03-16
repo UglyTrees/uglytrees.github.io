@@ -130,7 +130,7 @@ function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false
 		var annotationBelongsToSpeciesNode = isGeneTree && annotation.speciesTree;
 
 		// Normalise values into range [1, 4]
-		linewidth_fn = function(node, speciesNodeMappedTo = null) {
+		linewidth_fn = function(node, speciesNodeMappedTo = null, scaler = 1) {
 
 			if (baseLineWidth == 0) return 0 + "px";
 
@@ -144,7 +144,7 @@ function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false
 			if (isNaN(val) || val == null) return baseLineWidth + "px";
 			
 			val = 1 + (isRadius ? 1.5 : 3) * (val - annotation.minVal)/(annotation.maxVal - annotation.minVal) ;
-			return val * baseLineWidth + "px";
+			return val * baseLineWidth * scaler + "px";
 		};
 		
 	}
@@ -928,7 +928,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 
 // Draws a gene tree onto the svg
-function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY}) {
+function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, zoomScale = 1, rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY}) {
 	
 	
 	
@@ -943,8 +943,8 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 		//console.log("Drawing", node.coords, speciesTree.scaleX_fn(node.coords.cx));
 
 		// Internal/root node. Draw children first
-		drawAGeneTree(svg, geneTree, treename, node.children[0], speciesTree, geneTreeNum, rootCallback, styles)
-		drawAGeneTree(svg, geneTree, treename, node.children[1], speciesTree, geneTreeNum, rootCallback, styles)
+		drawAGeneTree(svg, geneTree, treename, node.children[0], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
+		drawAGeneTree(svg, geneTree, treename, node.children[1], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
 
 	}
 
@@ -959,14 +959,18 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 		var y1 = node.coords.y[i];
 		var y2 = node.coords.y[i+1];
 		
-		var strokeWidth = geneTree.linewidth_fn(node, mappedToSpeciesNode);
+		var strokeWidth = geneTree.linewidth_fn(node, mappedToSpeciesNode, 1/zoomScale);
 		var col = geneTree.bgcolour_fn(node, mappedToSpeciesNode);
+
+
+		//console.log("zoomScale", zoomScale, strokeWidth, geneTree.linewidth_fn(node, mappedToSpeciesNode, 1))
 		
 		drawSVGobj(svg, "line", {class: "genebranch", id: id + "_B" + i, 
 									x1: speciesTree.scaleX_fn(x1), 
 									y1: speciesTree.scaleY_fn(y1), 
 									x2: speciesTree.scaleX_fn(x2),
 									y2: speciesTree.scaleY_fn(y2), 
+									w0: strokeWidth,
 									gNum: geneTreeNum,
 									branchfornode: id,
 									style: "opacity: " + styles.opacity / 100 + ";stroke:" + col + "; stroke-width:" + strokeWidth + ";stroke-linecap:round"});
@@ -977,11 +981,14 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 	
 	
 	
+	var r = geneTree.noderadius_fn(node, node.speciesNodeMap, 1/zoomScale);
+
 	// The circle
-	drawSVGobj(svg, "circle", {class: "genenode", id: id, 
+	drawSVGobj(svg, "circle", {class: "node genenode", id: id, 
 								cx: speciesTree.scaleX_fn(node.coords.cx), 
 								cy: speciesTree.scaleY_fn(node.coords.cy), 
-								r: geneTree.noderadius_fn(node, node.speciesNodeMap),
+								r: r,
+								r0: r,
 								gNum: geneTreeNum,
 								name: (node.children.length == 0 ? node.id + "," + node.label : node.id),
 								fill: geneTree.bgcolour_fn(node, node.speciesNodeMap),
@@ -1001,7 +1008,7 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 
 
 // Animates a pre-rendered gene tree
-function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, animation_time = 1000, rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY}) {
+function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, animation_time = 1000, zoomScale = 1,  rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY}) {
 
 
 	var id = treename + "_" + node.id;
@@ -1015,8 +1022,9 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 	for (var i = 0; i < node.coords.x.length-1; i ++){
 		
 
-		var strokeWidth = geneTree.linewidth_fn(node, mappedToSpeciesNode);
+		var strokeWidth = geneTree.linewidth_fn(node, mappedToSpeciesNode, 1/zoomScale);
 		var col = geneTree.bgcolour_fn(node, mappedToSpeciesNode);
+
 
 		animateGeneBranch(svg, i, speciesTree, node, geneTreeNum, col, strokeWidth, animation_time, function() { }, styles.opacity);
 		
@@ -1036,7 +1044,7 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 	}
 	
 	
-	var radius = geneTree.noderadius_fn(node, node.speciesNodeMap);
+	var radius = geneTree.noderadius_fn(node, node.speciesNodeMap, 1/zoomScale);
 	var col = geneTree.bgcolour_fn(node, node.speciesNodeMap);
 	var cb = node.parent == null ? rootCallback : function() { };
 	animateGeneBranch(svg, -1, speciesTree, node, geneTreeNum, col, radius, animation_time, cb, styles.opacity);
@@ -1044,7 +1052,7 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 	
 	// Animate children
 	for (var c = 0; c < node.children.length; c++){
-		animateAGeneTree(svg, geneTree, treename, node.children[c], speciesTree, geneTreeNum, animation_time, rootCallback, styles);
+		animateAGeneTree(svg, geneTree, treename, node.children[c], speciesTree, geneTreeNum, animation_time, zoomScale = 1, rootCallback, styles);
 	}
 
 	
@@ -1054,7 +1062,7 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 
 
 
-function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size, duration = 1000,  callback = function() { }, opacity) {
+function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size, duration = 1000, callback = function() { }, opacity) {
 
 
 
@@ -1076,6 +1084,7 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 								cx: cx, 
 								cy: cy, 
 								r: r,
+								r0: r,
 								gNum: gNum,
 								name: (node.children.length == 0 ? node.id + "," + node.label : node.id),
 								fill: fill}, "", true);
@@ -1093,7 +1102,7 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 		}
 		
 				
-
+		ele.attr("r0", r);
 		
 	
 		
@@ -1120,6 +1129,7 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 				y1: y1, 
 				x2: x2,
 				y2: y2, 
+				w0: strokeWidth,
 				gNum: gNum,
 				branchfornode: node.htmlID,
 				style: "stroke:" + stroke + "; stroke-width:" + strokeWidth + ";stroke-linecap:round"});
@@ -1140,6 +1150,9 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 			ele.css("stroke", stroke);
 
 		}
+
+
+		ele.attr("w0", strokeWidth);
 
 	
 	}

@@ -976,6 +976,8 @@ function initialiseZoom(){
 
 	var svg = $("#tree");
 	svg.find("g").attr("transform", "scale(1,1)");
+
+
 	EASYPZ = new EasyPZ(document.getElementById("tree"), function(transform) {
 
 		if (START_PLAYING) {
@@ -989,6 +991,27 @@ function initialiseZoom(){
 		unhover();
 		ZOOM_SCALE = transform.scale;
 		$(".labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
+
+
+
+		if (ZOOM_SCALE != 1) svg.addClass("candrag");
+		else svg.removeClass("candrag");
+
+
+		var geneBranches = svg.find(".genebranch");
+		for (var i = 0; i < geneBranches.length; i ++) {
+			var element = $(geneBranches[i]);
+			var baseWidth = parseFloat(element.attr("w0"));
+			element.css("stroke-width", baseWidth / ZOOM_SCALE + "px");
+
+		}
+
+		var geneNodes = svg.find(".genenode");
+		for (var i = 0; i < geneNodes.length; i ++) {
+			var element = $(geneNodes[i]);
+			var baseRadius = parseFloat(element.attr("r0"));
+			element.attr("r", baseRadius / ZOOM_SCALE + "px");
+		}
 
 
 

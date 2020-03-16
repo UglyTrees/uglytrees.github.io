@@ -144,9 +144,10 @@
 				$(".speciesAnnotationDiscrete").hide(0);
 				$(".speciesAnnotationNumerical").hide(0);
 				$("#currentGeneTreeNameContainer").hide(0);
-
+				$(".displayOnRender").hide(0);
 
 				$("#hoverAnnotationDiv").draggable();
+
 
 
 			}
@@ -555,9 +556,9 @@
 
 				// Get the maximum pixel length of a species label
 				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
-				console.log("maxTextSize", MAX_TEXT_SIZE);
+				//console.log("maxTextSize", MAX_TEXT_SIZE);
 
-				console.log("SPECIES_TREE", SPECIES_TREE);
+				//console.log("SPECIES_TREE", SPECIES_TREE);
 			
 			
 				// Count number of displayed gene trees
@@ -597,7 +598,6 @@
 						var geneNode = gene_tree.nodeList[i];
 						geneNode.coords = { cx: -1, cy: -1, x: [], y: [], strokeWidths: [] };
 						geneNode.coordsStored = JSON.parse(JSON.stringify(geneNode.coords));
-
 					}
 
 
@@ -612,7 +612,7 @@
 					gene_tree.bgcolour_fn = planColour(gene_tree, GENE_BRANCH_BGCOL_ANNOTATION, getGeneTreeColour(g), true);
 			
 
-					console.log("newGeneTreeAnnotations", newGeneTreeAnnotations);
+					//console.log("newGeneTreeAnnotations", newGeneTreeAnnotations);
 					
 
 				}
@@ -667,7 +667,7 @@
 
 						svg.height(SVG_HEIGHT);
 						svg.width(SVG_WIDTH);
-					
+						$(".displayOnRender").show(0);
 					}
 					
 				
@@ -731,8 +731,8 @@
 						continue;
 					}
 					
-					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, function() { });
-					else animateAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME, function() { });
+					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, ZOOM_SCALE, function() { });
+					else animateAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME, ZOOM_SCALE, function() { });
 
 					
 				}
@@ -797,15 +797,19 @@
 				//if (styles.fill != null) newObj.setAttribute("fill", styles.fill);
 				if (styles.stroke != null) newObj.setAttribute("stroke", styles.stroke);
 				if (styles["stroke-width"] != null) newObj.setAttribute("stroke-width", styles["stroke-width"]);
-				if (isNode) newObj.setAttribute("class", "node");
 				//console.log(styles["stroke-width"]);
 
 				//window.requestAnimationFrame(function() {
 				svg.append(newObj);
 				$(newObj).hide().fadeIn(CURRENT_FADE_TIME);	
 				if (isNode && attr.id != null){
-					$("#" + attr.id).click(function(e) { hoverNode(attr.id, e) });
+					$(newObj).contextmenu(function(e) {
+						 hoverNode(attr.id, e) 
+						 return false;
+					});
 				}
+
+				if (isNode) $(newObj).addClass("node");
 				
 			
 				//});
@@ -1248,7 +1252,7 @@
 		<div id="hoverAnnotationDiv" style="display:none">
 
 			<div>
-				<table cellpadding="5">
+				<table cellpadding="5" style="font-size:85%">
 					<tr id="hoverAnnotationTitle">
 						<td><b>Node information</b></td>
 					</tr>
@@ -1781,6 +1785,9 @@
 			</div>
 
 
+
+
+
 			<div id="footer" >
 
 
@@ -1860,10 +1867,21 @@
 						</td>
 
 
-						<td style="width:40%; text-align:left" class="whitefont" >
+						<td style="width:40%; text-align:left" >
 								<div  title="The name of the currently displayed gene tree  (corresponding to the up/down arrows). Gene tree displays can be further refined using the 'Gene trees' top menu. " id="currentGeneTreeNameContainer" class="whitefont" style="font-size:120%">Current gene tree: &nbsp;&nbsp; <span class="cranberry" id="currentGeneTreeName" style="width:2em; font-size:100%"></span>
 							</div>
-							
+
+							<div class="displayOnRender" style="float:right; text-align: right;  margin-right:1em">
+								<!--
+								<span id="zoomoutBtn" title="Zoom out (Hotkey: &minus;)" class="arrow" onclick="zoom(false)">&minus;</span>
+								<span id="zoominBtn" title="Zoom in (Hotkey: &plus;)" class="arrow" onclick="zoom(true)">&plus;</span> <br>
+							-->
+								<div style="font-size:80%; text-shadow:none; color:white" >
+									Right click on a node for more information <br>
+									Use the mousewheel to zoom <br>
+									Drag when zoomed to pan <br>
+								</div>
+							</div>
 
 						</td>
 
