@@ -361,22 +361,26 @@ input[type=number] {
 }
 
 .mainheader{
-	text-size-adjust: 500%;
+	text-size-adjust: 350%;
 	width:40%;  
-	font-size:580%; 
+	font-size:420%; 
 	line-height:120%;
 }
 
 
 .subheader{
 	text-size-adjust: 200%;
-	margin-top:-0.65em;
-	font-size:23%;
+	margin-top:-0.5em;
+	font-size:26%;
 	line-height:1.7em;
 }
 
+
+
+
+
 .topbuttondiv{
-	margin-top:5em;
+	margin-top:4em;
 	text-size-adjust: 200%;
 }
 
@@ -397,10 +401,15 @@ input[type=number] {
 }
 
 
+.whitefont {
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	color:white;
+}
+
+
 #footer{
 	z-index:1;
 	text-align:center;
-	line-height:3em;
 	background-color:#DB5079;
 	font-size:100%;
 	color:white;
@@ -482,7 +491,7 @@ input[type=number] {
 }
 
 #treeNumContainer{
-	font-size:140%;
+	font-size:120%;
 }
  
 .icon{
@@ -493,21 +502,41 @@ input[type=number] {
 
 }
 
+#remoteTable {
+	margin:auto;
+	margin-top: -1em;
+	margin-bottom: -1em;
+
+}
+
+
+#remoteTable tr td{
+	text-align:center;
+
+}
+
+
+
 .arrow{
-	position:relative;
+	%position:relative;
 	bottom: 0px;
 	font-size:300%;
-	%line-height:0.1em;
+	line-height:0.3em;
 	%padding: 5;
 	margin-left:5px;
 	margin-right:5px;
 	padding:0;
-	margin-bottom:0px;
+	%margin-bottom:0px;
 	cursor:pointer;
 	color:white;
+	text-align:center;
 }
 
 .arrow:hover{
+	color:black;
+}
+
+.arrow.flashing{
 	color:black;
 }
 
@@ -631,7 +660,7 @@ input[type=number] {
 
 
 .thicklines {
-	line-height:3em;
+	line-height:1.8em;
 
 }
 

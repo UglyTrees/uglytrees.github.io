@@ -41,7 +41,14 @@ function initVisualSettings(){
 				"#000000", "#606060", "#707070", "#A0A0A0", "#BEBEBE", "#d3d3d3", "#E0E0E0", "#FFFFFF"];
 	GENE_TREE_COLOURS = [];
 	setInitialGeneTreeColours();
+
+
+	// Only 1 of the below two display settings used at a time
+	ONLY_ONE_GENE_TREE = false;
+	CURRENT_GENE_TREE_DISPLAY = 0;
 	GENE_TREE_DISPLAYS = {};
+
+
 	START_PLAYING = false;
 	
 	DONT_HOVER = false;
@@ -89,6 +96,7 @@ function initVisualSettings(){
 
 
 	FIRST_ANNOTATION_PASS = true;
+
 
 	setInterfaceFromVisualParams();
 	
@@ -288,11 +296,25 @@ function setVisualParams(){
 	SHOW_X_AXIS = $("#SHOW_X_AXIS").is(":checked");
 	SHOW_Y_AXIS = $("#SHOW_Y_AXIS").is(":checked");
 	
-	for (var g = 0; g < GENE_TREES_ALL.length; g ++){
-		if (GENE_TREES_ALL[g] == null) continue;
-		GENE_TREE_DISPLAYS[g] = $("#selectGeneTree" + g).is(":checked");
+
+	if (ONLY_ONE_GENE_TREE){
+
+		for (var g = 0; g < GENE_TREES_ALL.length; g ++){
+			var toRender = toRenderGeneTree(g);
+			GENE_TREE_DISPLAYS[g] = toRender;
+			if (toRender) $("#selectGeneTree" + g).prop('checked', true);
+			else $("#selectGeneTree" + g).prop('checked', false);
+		}
+
 	}
-	
+
+	else {
+		for (var g = 0; g < GENE_TREES_ALL.length; g ++){
+			if (GENE_TREES_ALL[g] == null) continue;
+			GENE_TREE_DISPLAYS[g] = $("#selectGeneTree" + g).is(":checked");
+		}
+	}
+
 
 	if (parseFloat($("#Y_RANGE_INPUT").val()) <= 0)  $("#Y_RANGE_INPUT").val(0.01);
 	if (parseFloat($("#X_RANGE_INPUT").val()) <= 0)  $("#X_RANGE_INPUT").val(0.01);
@@ -375,7 +397,7 @@ function renderGeneTreeColourSettings(){
 		<tr id="visualSettingsRow` + i + `" class="sideNavSetting">
 			<td>
 				<label title="Toggle gene tree display" class="checkbox-container small">
-					<input class="genetreecheckbox" onchange="setVisualParams();" id="selectGeneTree` + i + `" type="checkbox" checked="checked">
+					<input class="genetreecheckbox" onchange="useGeneTreeList(); setVisualParams();" id="selectGeneTree` + i + `" type="checkbox" checked="checked">
 					<span class="checkmark"></span>
 				</label>
 			</td>
@@ -399,6 +421,38 @@ function renderGeneTreeColourSettings(){
 
 
 
+// Togge to using all of the gene trees specified instead of just the one down the bottom of the screen
+function useGeneTreeList() {
+	ONLY_ONE_GENE_TREE = false;
+	$("#currentGeneTreeNameContainer").hide(300);
+	setVisualParams();
+}
+
+// Togge to using just the one gene tree at the bottom of the screen instead of what the list says
+function useJustOneGeneTree() {
+	ONLY_ONE_GENE_TREE = true;
+	$(".genetreecheckbox").prop('checked', false);
+	$("#currentGeneTreeNameContainer").show(0);
+	console.log(GENE_UPLOADED_FILES, CURRENT_GENE_TREE_DISPLAY, GENE_UPLOADED_FILES[CURRENT_GENE_TREE_DISPLAY])
+	$("#currentGeneTreeName").html(GENE_UPLOADED_FILES[CURRENT_GENE_TREE_DISPLAY].filename);
+	setVisualParams();
+}
+
+
+
+// Returns true or false to determine whether or not this gene tree should be rendered
+function toRenderGeneTree(g) {
+
+	if (ONLY_ONE_GENE_TREE){
+		return g == CURRENT_GENE_TREE_DISPLAY;
+	}else{
+		return GENE_TREE_DISPLAYS[g] == null || GENE_TREE_DISPLAYS[g] == true;
+	}
+
+
+}
+
+
 
 // Tick / untick all gene tree visualisation boxes
 function selectAllGeneTrees(){
@@ -409,9 +463,8 @@ function selectAllGeneTrees(){
 	else{
 		$(".genetreecheckbox").prop('checked', false);
 	}
-	
-	
-	setVisualParams();
+
+	useGeneTreeList();
 	
 }
 

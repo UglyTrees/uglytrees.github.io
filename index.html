@@ -137,11 +137,13 @@
 
 				$("#treeNum").val(0);
 				resizable(document.getElementById("treeNum"));
+
+
 				//$(".showAfterTreeUpload").hide(0);
 				$(".showOnSpeciesAnnotationSelect").hide(0);
 				$(".speciesAnnotationDiscrete").hide(0);
 				$(".speciesAnnotationNumerical").hide(0);
-
+				$("#currentGeneTreeNameContainer").hide(0);
 
 
 				$("#hoverAnnotationDiv").draggable();
@@ -274,6 +276,47 @@
 			}
 
 
+			function prevGeneTree() {
+
+				if (!READY_TO_DRAW) return;
+
+				CURRENT_GENE_TREE_DISPLAY --;
+				CURRENT_GENE_TREE_DISPLAY = CURRENT_GENE_TREE_DISPLAY % GENE_TREES.length;
+				if (CURRENT_GENE_TREE_DISPLAY < 0) CURRENT_GENE_TREE_DISPLAY = GENE_TREES.length - 1;
+				while (GENE_TREES[CURRENT_GENE_TREE_DISPLAY] == null) {
+					CURRENT_GENE_TREE_DISPLAY --;
+					CURRENT_GENE_TREE_DISPLAY = CURRENT_GENE_TREE_DISPLAY % GENE_TREES.length;
+					if (CURRENT_GENE_TREE_DISPLAY < 0) CURRENT_GENE_TREE_DISPLAY = GENE_TREES.length - 1;
+				}
+				
+				
+
+				useJustOneGeneTree();
+
+
+			}
+
+
+
+			function nextGeneTree() {
+
+				if (!READY_TO_DRAW) return;
+
+				CURRENT_GENE_TREE_DISPLAY ++;
+				CURRENT_GENE_TREE_DISPLAY = CURRENT_GENE_TREE_DISPLAY % GENE_TREES.length;
+				if (CURRENT_GENE_TREE_DISPLAY < 0) CURRENT_GENE_TREE_DISPLAY = GENE_TREES.length - 1;
+				while (GENE_TREES[CURRENT_GENE_TREE_DISPLAY] == null) {
+					CURRENT_GENE_TREE_DISPLAY ++;
+					CURRENT_GENE_TREE_DISPLAY = CURRENT_GENE_TREE_DISPLAY % GENE_TREES.length;
+					if (CURRENT_GENE_TREE_DISPLAY < 0) CURRENT_GENE_TREE_DISPLAY = GENE_TREES.length - 1;
+				}
+
+
+				useJustOneGeneTree();
+
+
+			}
+
 
 			function setTree(callback = function() { }, progress = function() { }){
 
@@ -289,6 +332,8 @@
 				renderTrees(null, animate);
 
 			}
+
+
 
 
 			
@@ -354,7 +399,7 @@
 				var allTreesToRender = [SPECIES_TREE];
 				for (var g = 0; g < GENE_TREES.length; g++){
 					if (gene_tree == null) continue;
-					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) continue;
+					if (!toRenderGeneTree(g)) continue;
 					allTreesToRender.push(GENE_TREES[g]);
 				}
 				getAnnotationMinAndMax(allTreesToRender);
@@ -424,6 +469,8 @@
 
 				$("#treeNum").val(TREE_NUM);
 				resizeInput($("#treeNum"));
+
+
 
 
 
@@ -517,7 +564,7 @@
 				var numToDisplay = 0;
 				for (var g = 0; g < GENE_TREES.length; g++){
 					if (GENE_TREES[g] == null) continue;
-					if (GENE_TREE_DISPLAYS[g] == null || GENE_TREE_DISPLAYS[g] == true) numToDisplay++;
+					if (toRenderGeneTree(g)) numToDisplay++;
 				}
 			
 			
@@ -525,7 +572,7 @@
 				var numVisibleTreesCumulative = 0;
 				for (var g = 0;  g < GENE_TREES.length; g ++){
 					if (GENE_TREES[g] == null) continue;
-					if (GENE_TREE_DISPLAYS[g] == null || GENE_TREE_DISPLAYS[g] == true) {
+					if (toRenderGeneTree(g)) {
 						GENE_TREES[g].offsetIndex = numVisibleTreesCumulative;
 						numVisibleTreesCumulative++;
 					}
@@ -541,8 +588,8 @@
 					var gene_tree = GENE_TREES[g];
 					if (gene_tree == null) continue;
 					
-					// Do not render if unchecked
-					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) continue;
+					// Check whether this is to be rendered
+					if (!toRenderGeneTree(g)) continue;
 					
 		
 					// Reset nodes
@@ -679,7 +726,7 @@
 					
 					
 					// Do not render if unchecked
-					if (GENE_TREE_DISPLAYS[g] != null && GENE_TREE_DISPLAYS[g] == false) {
+					if (!toRenderGeneTree(g)) {
 						$(`[gNum="` + g + `"]`).fadeOut(CURRENT_FADE_TIME, function() { $(this).remove(); });
 						continue;
 					}
@@ -941,16 +988,36 @@
 				var key = e.keyCode ? e.keyCode : e.which;
 
 				if (key == 39) { // Right arrow
-					if (e.ctrlKey) nextTree(true); // Ctrl + right = last tree
-					else nextTree();
-				
-				
+					if (e.ctrlKey) {
+						flashArrow("doublerightarrow");	
+						nextTree(true); // Ctrl + right = last tree
+					}
+					else {
+						flashArrow("rightarrow");		
+						nextTree();
+					}
 				}
 				
 				else if (key == 37) { // Left arrow
-					if (e.ctrlKey) prevTree(true); // Ctrl + left = first tree
-					else prevTree();
-				
+					if (e.ctrlKey) {
+						flashArrow("doubleleftarrow");	
+						prevTree(true); // Ctrl + left = first tree
+					}
+					else {
+						flashArrow("leftarrow");
+						prevTree();
+					}
+				}
+
+				else if (key == 40) { // Down arrow
+					flashArrow("downarrow");
+					nextGeneTree();
+				}
+
+
+				else if (key == 38) { // Up arrow
+					flashArrow("uparrow");
+					prevGeneTree();
 				}
 				
 				else if (key == 27){ // Escape
@@ -959,6 +1026,16 @@
 
 
 			   
+			}
+
+
+			function flashArrow(id) {
+
+				$("#" + id).addClass("flashing");
+				setTimeout(function() {
+					$("#" + id).removeClass("flashing");
+				}, 150);
+
 			}
 
 
@@ -1641,7 +1718,7 @@
 						
 						<li class="flex-item mainheader">
 							UglyTrees
-							<div class="subheader">A multispecies coalescent tree visualiser </div>	
+							<div class="subheader">A multispecies coalescent visualiser </div>	
 						</li>
 						
 						
@@ -1707,22 +1784,98 @@
 			<div id="footer" >
 
 
+
+				<table style="text-align:center; width: 100%; margin:auto" >
+					
+					<tr>
+
+						<td  style="width:40%; text-align:right" title="The state number of the currently displayed set of trees  (corresponding to the left/right arrows).">
+
+							<span id="treeNumContainer" class="whitefont">State number: <input class="numberinput cranberry" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span>
+
+							
+						</td>
+
+						<td  style="width:20%"> 
+
+
+							<table id="remoteTable" >
+								<tr>
+									<td>
+									</td>
+
+									<td style="text-align: center;">
+										<div id="uparrow" title="Go to previous gene tree (Hotkey: &uarr;)" class="arrow" style="margin-bottom:0.4em" onclick="prevGeneTree()">&#x2038;</div> 
+									</td>
+
+									<td>
+									</td>
+
+								</tr>
+
+
+								<tr>
+									<td style="text-align: right;">
+										<div>
+											<span id="doubleleftarrow" title="Skip backwards several states (Hotkey:  ctrl + &larr;)" class="arrow" onclick="prevTree(true)">&#xab;</span> 
+											<span id="leftarrow" title="Go to previous state (Hotkey: &larr;)" class="arrow" onclick="prevTree()">&#x2039;</span> 
+										</div>
+
+									</td>
+
+									<td style="text-align: center;">
+										<div >
+											<span title="Play" id="playBtn" class="arrow" style="font-size:150%" onclick="play()">&#9654;</span> 
+											<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; display:none" onclick="stop()">&#9632;</span> 
+											
+										</div>
+									</td>
+
+									<td style="text-align: left;">
+										<div>
+											<span id="rightarrow" title="Go to next state (Hotkey: &rarr;)" class="arrow" onclick="nextTree()">&#x203A;</span>
+											<span id="doublerightarrow" title="Skip forward several states (Hotkey: ctrl + &rarr;)" class="arrow" onclick="nextTree(true)">&#xbb;</span> 
+										</div>
+									</td>
+
+								</tr>
+
+								<tr>
+									<td>
+									</td>
+
+									<td style="text-align: center;">
+										<div id="downarrow" title="Go to next gene tree (Hotkey: &darr;)" class="arrow rotate180" style="margin-top:0.45em" onclick="nextGeneTree()">&#x2038;</div> 
+									</td>
+
+									<td>
+									</td>
+
+								</tr>
+
+							</table>
+
+
+							
+						</td>
+
+
+						<td style="width:40%; text-align:left" class="whitefont" >
+								<div  title="The name of the currently displayed gene tree  (corresponding to the up/down arrows). Gene tree displays can be further refined using the 'Gene trees' top menu. " id="currentGeneTreeNameContainer" class="whitefont" style="font-size:120%">Current gene tree: &nbsp;&nbsp; <span class="cranberry" id="currentGeneTreeName" style="width:2em; font-size:100%"></span>
+							</div>
+							
+
+						</td>
+
+					
+					</tr>
+
+				</table>
+
+
 				
- 				
-
-				<span title="Skip backwards (ctrl + &larr;)" class="arrow" onclick="prevTree(true)">&#xab;</span> 
-				<span title="Go to previous tree (&larr;)" class="arrow" onclick="prevTree()">&#x2039;</span> 
-				<span id="treeNumContainer">Tree number: <input class="numberinput cranberry" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span>
-				<span title="Go to next tree (&rarr;)" class="arrow" onclick="nextTree()">&#x203A;</span>
-				<span title="Skip forward (ctrl + &rarr;)" class="arrow" onclick="nextTree(true)">&#xbb;</span> 
-
-				<span title="Play" id="playBtn" class="arrow" style="font-size:150%" onclick="play()">&#9654;</span> 
-				<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; display:none" onclick="stop()">&#9632;</span> 
-
-
-				<!--<span title="Record" id="recordBtn" class="arrow" style="font-size:200%" onclick="record()">&#9679;</span>-->
-
-
+		
+			
 
 
 				
