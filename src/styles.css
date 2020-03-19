@@ -64,7 +64,7 @@ line.svg-selected {
 circle.svg-selected {
     %-webkit-filter: invert(100%);
     %filter: invert(100%);
-	fill: orange; !important;
+	fill: orange !important;
 }
 
 polygon.svg-selected {

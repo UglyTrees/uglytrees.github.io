@@ -40,16 +40,22 @@ function initTemplates(){
 	if (urlParams.length > 0){
 
 		var JSONurl = JSON.parse('{"' + decodeURI(urlParams).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
-		if (JSONurl.w != null || JSONurl.g != null) {
+		if (JSONurl.w != null || JSONurl.g != null || JSONurl.u != null) {
 			console.log("JSONurl", JSONurl);
 
-			var URL, isHTTP;
+			var URL, isHTTP, fromDir,
 			if (JSONurl.g == null) {
 				URL = JSONurl.w;
 				isHTTP = true;
+				fromDir = false;
 			}else{
 				URL = JSONurl.g;
 				isHTTP = false;
+				fromDir = false;
+			}else{
+				URL = JSONurl.u;
+				isHTTP = true;
+				fromDir = true;
 			}
 			
 			var util_file = {id: -2, filename: URL, message: "", uploadedAs: "template"};
@@ -66,7 +72,7 @@ function initTemplates(){
 				}
 				else {
 					var content = session.content.content;
-					TEMPLATE_SCRAPE_URL = {url: URL, isHTTP: isHTTP};
+					TEMPLATE_SCRAPE_URL = {url: URL, isHTTP: isHTTP, fromDir: fromDir};
 					parseTemplateFile({target: {result: content}}, util_file);
 				}
 			}

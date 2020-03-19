@@ -417,6 +417,7 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 						
 		drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 										points: points.join(" "), 
+										w0: strokeWidth,
 										fill: fill,
 										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth}, "", true);		
 		
@@ -445,6 +446,7 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 					
 	drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: id + "_P", 
 									points: points.join(" "), 
+									w0: strokeWidth,
 									fill: fill,
 									style: "opacity: " + styles.opacity / 100 + "; stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth}, "", true);		
 
@@ -533,6 +535,7 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 		//ele.css("stroke-width", strokeWidth);
 		ele.css("fill", fill);
 		ele.css("opacity", styles.opacity / 100);
+		ele.attr("w0", strokeWidth);
 
 
 	}

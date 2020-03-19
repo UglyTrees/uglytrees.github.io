@@ -995,9 +995,10 @@ function initialiseZoom(){
 		
 		unhover();
 		ZOOM_SCALE = transform.scale;
+
+		// Zoom in on labels
 		$(".speciesText.labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
 		$(".geneText.labelText").css("font-size", GENE_LABEL_FONT_SIZE / ZOOM_SCALE);
-
 		
 
 
@@ -1006,6 +1007,16 @@ function initialiseZoom(){
 		else svg.removeClass("candrag");
 
 
+		// Zoom in on species nodes
+		var speciesnodes = svg.find(".specieshoverbranch");
+		for (var i = 0; i < speciesnodes.length; i ++) {
+			var element = $(speciesnodes[i]);
+			var baseWidth = parseFloat(element.attr("w0"));
+			element.css("stroke-width", baseWidth / ZOOM_SCALE + "px");
+
+		}
+
+		// Zoom in on gene branches
 		var geneBranches = svg.find(".genebranch");
 		for (var i = 0; i < geneBranches.length; i ++) {
 			var element = $(geneBranches[i]);
@@ -1014,6 +1025,7 @@ function initialiseZoom(){
 
 		}
 
+		// Zoom in on gene nodes
 		var geneNodes = svg.find(".genenode");
 		for (var i = 0; i < geneNodes.length; i ++) {
 			var element = $(geneNodes[i]);
@@ -1031,7 +1043,7 @@ function initialiseZoom(){
 		}, 50);
 
 
-	}, { "minScale": 1, "maxScale": 50, "bounds": { "top": 0, "right": 0, "bottom": 0, "left": 0 }},
+	}, { "minScale": 1, "maxScale": 100, "bounds": { "top": 0, "right": 0, "bottom": 0, "left": 0 }},
 		["SIMPLE_PAN", "HOLD_ZOOM_IN", "CLICK_HOLD_ZOOM_OUT", "WHEEL_ZOOM", "PINCH_ZOOM"],
 		function() {}, function() {}, function() {}, function() {}, ".svgG");
 
