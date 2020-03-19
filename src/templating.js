@@ -343,7 +343,7 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 // Upload template from string
 function loadSessionFromString(text, resolve = function() { }) {
 
-
+	$("#exampleSessions").hide(0);
 	var parser = new DOMParser();
 
 	try {
@@ -477,7 +477,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 				console.log("display", intro.getAttribute("display"), display, main, body)
 				closeDialogs();
 				$("#innerBody").css("opacity", 0.5);
-				$("body").append(getdialogTemplate(main, body, "The views expressed in the above message are not affiliated with and are not endorsed by UglyTrees."));
+				//$("body").append(getdialogTemplate(main, body, "The views expressed in the above message are not affiliated with and are not endorsed by UglyTrees."));
 				openDialog();
 			}
 

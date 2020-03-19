@@ -108,7 +108,7 @@
 	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
 	<intro display="true">
 		<main string="Simulated data" />
-		<body string="This test dataset was simulated using BEAST2. There are 10 species, 50 taxa, and 100 gene trees." />
+		<body string="This test dataset was simulated using BEAST2. There are 10 species, 50 taxa, and 100 gene trees. Press 'Draw trees' below to begin." />
 	</intro>
 	<view SHOW_X_AXIS="false" SHOW_Y_AXIS="true" X_RANGE="treemax" Y_RANGE="treemax" X_RANGE_INPUT="1.0" Y_RANGE_INPUT="1.0">
 		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">

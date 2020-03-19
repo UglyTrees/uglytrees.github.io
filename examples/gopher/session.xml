@@ -11,7 +11,7 @@
 	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
 	<intro display="true">
 		<main string="Gopher dataset" />
-		<body string="This multispecies coalescent model consists of 8 species, 27 taxa, and 3 gene trees, using the Gopher data from Belfiore et al. 2008. There are 361 species/gene tree samples from the posterior distribution." />
+		<body string="This multispecies coalescent model consists of 8 species, 27 taxa, and 3 gene trees, using the Gopher data from Belfiore et al. 2008. There are 361 species/gene tree samples from the posterior distribution. Press 'Draw trees' below to begin." />
 	</intro>
 	<view SHOW_X_AXIS="false" SHOW_Y_AXIS="true">
 		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="false">
