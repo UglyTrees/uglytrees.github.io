@@ -595,6 +595,9 @@
 
 				// Get the maximum pixel length of a species label
 				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
+
+
+
 				//console.log("maxTextSize", MAX_TEXT_SIZE);
 
 				//console.log("SPECIES_TREE", SPECIES_TREE);
@@ -652,6 +655,8 @@
 			
 
 					//console.log("newGeneTreeAnnotations", newGeneTreeAnnotations);
+					MAX_TEXT_SIZE = Math.max(MAX_TEXT_SIZE, getMaximumLabelTextSizeOfTree(gene_tree.root, GENE_LABEL_FONT_SIZE / ZOOM_SCALE));
+					
 					
 
 				}
@@ -778,8 +783,8 @@
 					}
 					
 
-					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, ZOOM_SCALE, function() { });
-					else animateAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME, ZOOM_SCALE, function() { });
+					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, textGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, ZOOM_SCALE, function() { });
+					else animateAGeneTree(geneGroup, textGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME, ZOOM_SCALE, function() { });
 
 					
 				}
@@ -1665,13 +1670,23 @@
 
 
 
+
+
 			
 			<div class="sideNavSetting" id="geneOpacityDiv">
 				<input id="GENE_TREE_OPACITY" class="slider" onchange="setVisualParams();" type="range" min="0" max="100" value="0" step="1">
 				Opacity (<span></span>%)
 			</div>
-			
 			<hr>
+
+
+
+			<div class="sideNavSetting">
+				<input id="GENE_LABEL_FONT_SIZE" class="slider" onchange="setVisualParams();" type="range" min="0" max="60" value="0" step="0.5">
+				Label font size (<span></span> px)
+			</div>
+			<hr>
+
 			
 			<div class="sideNavSetting" title="Group gene tree nodes by genes or taxa">
 				<div><b> Group gene trees by </b></div>

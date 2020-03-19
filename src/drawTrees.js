@@ -394,7 +394,7 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 		// Label
 		var labelX = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
 		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + 5;
-		drawSVGobj(textGroup, "text", {class: "labelText", id: id + "_L", 
+		drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: id + "_L", 
 					x: labelX, 
 					y: labelY, 
 					transform: "rotate(90, " + labelX + ", " + labelY + ")",
@@ -928,7 +928,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 
 // Draws a gene tree onto the svg
-function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, zoomScale = 1, rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY}) {
+function drawAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, geneTreeNum, zoomScale = 1, rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY, fontSize: GENE_LABEL_FONT_SIZE}) {
 	
 	
 	
@@ -943,8 +943,26 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 		//console.log("Drawing", node.coords, speciesTree.scaleX_fn(node.coords.cx));
 
 		// Internal/root node. Draw children first
-		drawAGeneTree(svg, geneTree, treename, node.children[0], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
-		drawAGeneTree(svg, geneTree, treename, node.children[1], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
+		drawAGeneTree(svg, textGroup, geneTree, treename, node.children[0], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
+		drawAGeneTree(svg, textGroup, geneTree, treename, node.children[1], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
+
+	}
+
+
+
+	if (node.label != null) {
+
+
+		// Label
+		var labelX = speciesTree.scaleX_fn(node.coords.cx);
+		var labelY = speciesTree.scaleY_fn(node.coords.cy) + 3;
+		drawSVGobj(textGroup, "text", {class: "labelText geneText", id: node.htmlID + "_T", 
+					x: labelX, 
+					y: labelY, 
+					gNum: geneTreeNum,
+					transform: "rotate(70, " + labelX + ", " + labelY + ")",
+					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize + ";fill:" + geneTree.bgcolour_fn(node, node.speciesNodeMap)}, 
+					node.label);
 
 	}
 
@@ -1008,7 +1026,7 @@ function drawAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, 
 
 
 // Animates a pre-rendered gene tree
-function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNum, animation_time = 1000, zoomScale = 1,  rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY}) {
+function animateAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, geneTreeNum, animation_time = 1000, zoomScale = 1,  rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY, fontSize: GENE_LABEL_FONT_SIZE}) {
 
 
 	var id = treename + "_" + node.id;
@@ -1026,7 +1044,7 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 		var col = geneTree.bgcolour_fn(node, mappedToSpeciesNode);
 
 
-		animateGeneBranch(svg, i, speciesTree, node, geneTreeNum, col, strokeWidth, animation_time, function() { }, styles.opacity);
+		animateGeneBranch(svg, textGroup, i, speciesTree, node, geneTreeNum, col, strokeWidth, animation_time, function() { }, styles.opacity);
 		
 		
 			
@@ -1047,14 +1065,19 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 	var radius = geneTree.noderadius_fn(node, node.speciesNodeMap, 1/zoomScale);
 	var col = geneTree.bgcolour_fn(node, node.speciesNodeMap);
 	var cb = node.parent == null ? rootCallback : function() { };
-	animateGeneBranch(svg, -1, speciesTree, node, geneTreeNum, col, radius, animation_time, cb, styles.opacity);
+	animateGeneBranch(svg, textGroup, -1, speciesTree, node, geneTreeNum, col, radius, animation_time, cb, styles.opacity);
 	
 	
 	// Animate children
 	for (var c = 0; c < node.children.length; c++){
-		animateAGeneTree(svg, geneTree, treename, node.children[c], speciesTree, geneTreeNum, animation_time, zoomScale = 1, rootCallback, styles);
+		animateAGeneTree(svg, textGroup, geneTree, treename, node.children[c], speciesTree, geneTreeNum, animation_time, zoomScale = 1, rootCallback, styles);
 	}
 
+
+	// Animate label
+	if (node.label != null) {
+		animateGeneBranch(svg, textGroup, "T", speciesTree, node, geneTreeNum, col, radius, animation_time, cb, styles.opacity, styles.fontSize);
+	}
 	
 }
 
@@ -1062,7 +1085,7 @@ function animateAGeneTree(svg, geneTree, treename, node, speciesTree, geneTreeNu
 
 
 
-function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size, duration = 1000, callback = function() { }, opacity) {
+function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum, col, size, duration = 1000, callback = function() { }, opacity, fontSize = 0) {
 
 
 
@@ -1105,6 +1128,46 @@ function animateGeneBranch(svg, branchNumber, speciestree, node, gNum, col, size
 		ele.attr("r0", r);
 		
 	
+		
+	}
+
+
+
+	// Move a label
+		// Move label
+	else if(branchNumber == "T"){
+		
+
+		var ele = textGroup.find("#" + node.htmlID + "_T");
+
+		console.log("ELEMENT", ele, node.htmlID + "_T");
+
+		var labelX = speciestree.scaleX_fn(node.coords.cx);
+		var labelY = speciestree.scaleY_fn(node.coords.cy) + 3;
+
+		if (ele.length == 0) {
+			
+				drawSVGobj(textGroup, "text", {class: "labelText geneText", id: node.htmlID + "_T", 
+					x: labelX, 
+					y: labelY, 
+					gNum: gNum,
+					transform: "rotate(70, " + labelX + ", " + labelY + ")",
+					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + fontSize + ";fill:" + col}, node.label);
+
+
+		} 
+		
+		// Animate it
+		else {
+
+			
+			ele.velocity( {x: labelX, y: labelY, transform: "rotate(70, " + labelX + ", " + labelY + ")"}, duration );
+			ele.css("font-size", fontSize);
+			ele.css("fill", col);
+			
+		}
+
+
 		
 	}
 	

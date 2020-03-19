@@ -298,8 +298,11 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 		saveXML.writeStartElement('genetrees');
 
 		saveXML.writeAttributeString('GENE_TREE_OPACITY', GENE_TREE_OPACITY);
+		saveXML.writeAttributeString('GENE_LABEL_FONT_SIZE', GENE_LABEL_FONT_SIZE);
 
 		saveXML.writeAttributeString('GROUP_GENES_BY_TAXA', GROUP_GENES_BY_TAXA);
+
+		
 
 		saveXML.writeAttributeString('GENE_NODE_MULTIPLIER', GENE_NODE_MULTIPLIER);
 		saveXML.writeAttributeString('GENE_NODE_SIZE', GENE_NODE_SIZE);
@@ -452,7 +455,8 @@ function loadSessionFromString(text, resolve = function() { }) {
 
 
 
-			GENE_TREE_OPACITY = getValFloat(speciestree.getAttribute("v"), GENE_TREE_OPACITY);
+			GENE_TREE_OPACITY = getValFloat(genetree.getAttribute("GENE_LABEL_FONT_SIZE"), GENE_TREE_OPACITY);
+			GENE_LABEL_FONT_SIZE = getValFloat(genetree.getAttribute("GENE_LABEL_FONT_SIZE"), GENE_LABEL_FONT_SIZE);
 			GROUP_GENES_BY_TAXA = genetree.getAttribute("GROUP_GENES_BY_TAXA") === "true";
 			GENE_NODE_MULTIPLIER = getVal(genetree.getAttribute("GENE_NODE_MULTIPLIER"), "_none");
 			GENE_BRANCH_BGCOL_ANNOTATION = getVal(genetree.getAttribute("GENE_BRANCH_BGCOL_ANNOTATION"), "_none");
