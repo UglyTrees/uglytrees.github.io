@@ -53,17 +53,24 @@ svg {
 }
 
 line.svg-selected {
-	filter: invert(100%) !important;
+   % -webkit-filter: invert(1)  !important;
+    %-moz-filter: invert(100%)  !important;
+   % -ms-filter: invert(100%)  !important;
+   % -o-filter: invert(100%)  !important;
+   % filter: invert(100%)  !important;
+    stroke: orange !important;
 }
 
 circle.svg-selected {
-	filter: invert(100%) !important;
-	stroke: black; !important;
+    %-webkit-filter: invert(100%);
+    %filter: invert(100%);
+	fill: orange; !important;
 }
 
 polygon.svg-selected {
-	filter: invert(50%) !important;
-	stroke: white; !important;
+   % -webkit-filter: invert(100%);
+   % filter: invert(100%);
+	%stroke: white; !important;
 }
 
 

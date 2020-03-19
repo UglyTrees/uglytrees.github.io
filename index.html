@@ -856,9 +856,19 @@
 				$(newObj).hide().fadeIn(CURRENT_FADE_TIME);	
 				if (isNode && attr.id != null){
 					$(newObj).contextmenu(function(e) {
-						 hoverNode(attr.id, e) 
+						 openNodeMenu(attr.id, e) 
 						 return false;
 					});
+
+
+					if (type != "polygon") {
+						$(newObj).mousemove(function(e) {
+							 hoverNode(attr.id, e) 
+							 return false;
+						});
+					}
+
+
 				}
 
 				if (isNode) $(newObj).addClass("node");
@@ -902,7 +912,8 @@
 			}
 
 
-			function hoverNode(id, event){
+			// Opens the menu of a node
+			function openNodeMenu(id, event){
 
 				if (DONT_HOVER) return;
 				$(".svg-selected").removeClass("svg-selected");
@@ -975,7 +986,7 @@
 					
 					
 				}else{
-					$("#" + node.htmlID + "_P").addClass("svg-selected");
+					//$("#" + node.htmlID + "_P").addClass("svg-selected");
 				}
 
 
@@ -1016,7 +1027,46 @@
 				$("#hoverAnnotationDiv").show(0);
 
 
-				
+
+			}
+
+
+			// Alters the css of a node
+			function hoverNode(id, event){
+
+				if (DONT_HOVER) return;
+				$(".svg-selected").removeClass("svg-selected");
+
+				var treeName = id.split("_")[0];
+				var tree = treeName == "speciestree" ? SPECIES_TREE : GENE_TREES[parseFloat(treeName.split("gene")[1])];
+				var nodeID = parseFloat(id.split("_")[1]);
+
+				// Get the node
+				var node = null;
+				for (var i = 0; i < tree.nodeList.length; i ++) {
+					if (tree.nodeList[i].id == nodeID) {
+						node = tree.nodeList[i];
+						break;
+					}
+				}
+				if (node == null) return;
+
+
+				// Hover over incident branches if gene tree
+				if (treeName != "speciestree"){
+					$("#" + node.htmlID).addClass("svg-selected");
+					$(`[branchfornode="` + node.htmlID + `"]`).addClass("svg-selected");
+					if (node.children.length != 0) {
+						$(`[branchfornode="` + node.children[0].htmlID + `"]`).addClass("svg-selected");
+						$(`[branchfornode="` + node.children[1].htmlID + `"]`).addClass("svg-selected");
+					}
+					
+					
+				}else{
+					//$("#" + node.htmlID + "_P").addClass("svg-selected");
+				}
+
+
 
 			}
 
