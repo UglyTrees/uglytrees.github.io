@@ -426,6 +426,7 @@ function uploadNewFiles(){
 	
 	$("#fileUploading").show(0);
 	$(".displayOnRender").hide(0);
+	$("#exampleSessions").show(0);
 	unhover();
 	//$(".showAfterTreeUpload").hide(300);
 				
