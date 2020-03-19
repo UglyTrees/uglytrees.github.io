@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<uglytrees datetime="20March2020-9:11:46" TREE_NUM="0">
+	<trees>
+		<!-- The file names below may be edited to point to a url. If the UglyTrees session is uploaded from GitHub, these files will
+		be read relative to the template directory on GitHub. Otherwise, the files will not be read at all. -->
+		<species filename="simulated.species.trees" />
+		<gene filename="simulated.gene1.trees" />
+		<gene filename="simulated.gene2.trees" />
+		<gene filename="simulated.gene3.trees" />
+		<gene filename="simulated.gene4.trees" />
+		<gene filename="simulated.gene5.trees" />
+		<gene filename="simulated.gene6.trees" />
+		<gene filename="simulated.gene7.trees" />
+		<gene filename="simulated.gene8.trees" />
+		<gene filename="simulated.gene9.trees" />
+		<gene filename="simulated.gene10.trees" />
+		<gene filename="simulated.gene11.trees" />
+		<gene filename="simulated.gene12.trees" />
+		<gene filename="simulated.gene13.trees" />
+		<gene filename="simulated.gene14.trees" />
+		<gene filename="simulated.gene15.trees" />
+		<gene filename="simulated.gene16.trees" />
+		<gene filename="simulated.gene17.trees" />
+		<gene filename="simulated.gene18.trees" />
+		<gene filename="simulated.gene19.trees" />
+		<gene filename="simulated.gene20.trees" />
+		<gene filename="simulated.gene21.trees" />
+		<gene filename="simulated.gene22.trees" />
+		<gene filename="simulated.gene23.trees" />
+		<gene filename="simulated.gene24.trees" />
+		<gene filename="simulated.gene25.trees" />
+		<gene filename="simulated.gene26.trees" />
+		<gene filename="simulated.gene27.trees" />
+		<gene filename="simulated.gene28.trees" />
+		<gene filename="simulated.gene29.trees" />
+		<gene filename="simulated.gene30.trees" />
+		<gene filename="simulated.gene31.trees" />
+		<gene filename="simulated.gene32.trees" />
+		<gene filename="simulated.gene33.trees" />
+		<gene filename="simulated.gene34.trees" />
+		<gene filename="simulated.gene35.trees" />
+		<gene filename="simulated.gene36.trees" />
+		<gene filename="simulated.gene37.trees" />
+		<gene filename="simulated.gene38.trees" />
+		<gene filename="simulated.gene39.trees" />
+		<gene filename="simulated.gene40.trees" />
+		<gene filename="simulated.gene41.trees" />
+		<gene filename="simulated.gene42.trees" />
+		<gene filename="simulated.gene43.trees" />
+		<gene filename="simulated.gene44.trees" />
+		<gene filename="simulated.gene45.trees" />
+		<gene filename="simulated.gene46.trees" />
+		<gene filename="simulated.gene47.trees" />
+		<gene filename="simulated.gene48.trees" />
+		<gene filename="simulated.gene49.trees" />
+		<gene filename="simulated.gene50.trees" />
+		<gene filename="simulated.gene51.trees" />
+		<gene filename="simulated.gene52.trees" />
+		<gene filename="simulated.gene53.trees" />
+		<gene filename="simulated.gene54.trees" />
+		<gene filename="simulated.gene55.trees" />
+		<gene filename="simulated.gene56.trees" />
+		<gene filename="simulated.gene57.trees" />
+		<gene filename="simulated.gene58.trees" />
+		<gene filename="simulated.gene59.trees" />
+		<gene filename="simulated.gene60.trees" />
+		<gene filename="simulated.gene61.trees" />
+		<gene filename="simulated.gene62.trees" />
+		<gene filename="simulated.gene63.trees" />
+		<gene filename="simulated.gene64.trees" />
+		<gene filename="simulated.gene65.trees" />
+		<gene filename="simulated.gene66.trees" />
+		<gene filename="simulated.gene67.trees" />
+		<gene filename="simulated.gene68.trees" />
+		<gene filename="simulated.gene69.trees" />
+		<gene filename="simulated.gene70.trees" />
+		<gene filename="simulated.gene71.trees" />
+		<gene filename="simulated.gene72.trees" />
+		<gene filename="simulated.gene73.trees" />
+		<gene filename="simulated.gene74.trees" />
+		<gene filename="simulated.gene75.trees" />
+		<gene filename="simulated.gene76.trees" />
+		<gene filename="simulated.gene77.trees" />
+		<gene filename="simulated.gene78.trees" />
+		<gene filename="simulated.gene79.trees" />
+		<gene filename="simulated.gene80.trees" />
+		<gene filename="simulated.gene81.trees" />
+		<gene filename="simulated.gene82.trees" />
+		<gene filename="simulated.gene83.trees" />
+		<gene filename="simulated.gene84.trees" />
+		<gene filename="simulated.gene85.trees" />
+		<gene filename="simulated.gene86.trees" />
+		<gene filename="simulated.gene87.trees" />
+		<gene filename="simulated.gene88.trees" />
+		<gene filename="simulated.gene89.trees" />
+		<gene filename="simulated.gene90.trees" />
+		<gene filename="simulated.gene91.trees" />
+		<gene filename="simulated.gene92.trees" />
+		<gene filename="simulated.gene93.trees" />
+		<gene filename="simulated.gene94.trees" />
+		<gene filename="simulated.gene95.trees" />
+		<gene filename="simulated.gene96.trees" />
+		<gene filename="simulated.gene97.trees" />
+		<gene filename="simulated.gene98.trees" />
+		<gene filename="simulated.gene99.trees" />
+		<gene filename="simulated.gene100.trees" />
+	</trees>
+	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
+	<intro display="true">
+		<main string="Simulated data" />
+		<body string="This test dataset was simulated using BEAST2. There are 10 species, 50 taxa, and 100 gene trees." />
+	</intro>
+	<view SHOW_X_AXIS="false" SHOW_Y_AXIS="true" X_RANGE="treemax" Y_RANGE="treemax" X_RANGE_INPUT="1.0" Y_RANGE_INPUT="1.0">
+		<annotation name="Label" format="nominal" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
+			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
+			<class value="A" col="#50b2db" />
+			<class value="J" col="#50db79" />
+			<class value="B" col="#db506d" />
+			<class value="C" col="#7950DB" />
+			<class value="D" col="#b2db50" />
+			<class value="E" col="#db7950" />
+			<class value="H" col="#4e8791" />
+			<class value="F" col="#ff1919" />
+			<class value="I" col="#228B22" />
+			<class value="G" col="#91584e" />
+			<class value="A_1" col="#50b2db" />
+			<class value="A_11" col="#50db79" />
+			<class value="A_5" col="#db506d" />
+			<class value="A_10" col="#7950DB" />
+			<class value="A_4" col="#b2db50" />
+			<class value="A_7" col="#db7950" />
+			<class value="A_6" col="#4e8791" />
+			<class value="A_9" col="#ff1919" />
+			<class value="A_2" col="#228B22" />
+			<class value="A_8" col="#91584e" />
+			<class value="A_3" col="#584e91" />
+			<class value="J_1" col="#009fe1" />
+			<class value="J_6" col="#ffff1a" />
+			<class value="J_3" col="#ff8d1a" />
+			<class value="J_5" col="#DB5079" />
+			<class value="J_2" col="#000000" />
+			<class value="J_7" col="#606060" />
+			<class value="J_4" col="#707070" />
+			<class value="J_8" col="#A0A0A0" />
+			<class value="J_9" col="#BEBEBE" />
+			<class value="B_1" col="#d3d3d3" />
+			<class value="C_1" col="#E0E0E0" />
+			<class value="C_2" col="#FFFFFF" />
+			<class value="C_3" col="#50b2db" />
+			<class value="D_1" col="#50db79" />
+			<class value="D_3" col="#db506d" />
+			<class value="D_4" col="#7950DB" />
+			<class value="D_2" col="#b2db50" />
+			<class value="E_1" col="#db7950" />
+			<class value="E_9" col="#4e8791" />
+			<class value="E_16" col="#ff1919" />
+			<class value="E_2" col="#228B22" />
+			<class value="E_3" col="#91584e" />
+			<class value="E_11" col="#584e91" />
+			<class value="E_4" col="#009fe1" />
+			<class value="E_12" col="#ffff1a" />
+			<class value="E_15" col="#ff8d1a" />
+			<class value="E_6" col="#DB5079" />
+			<class value="E_7" col="#000000" />
+			<class value="E_13" col="#606060" />
+			<class value="E_5" col="#707070" />
+			<class value="E_8" col="#A0A0A0" />
+			<class value="E_10" col="#BEBEBE" />
+			<class value="E_14" col="#d3d3d3" />
+			<class value="H_1" col="#E0E0E0" />
+			<class value="H_2" col="#FFFFFF" />
+			<class value="F_1" col="#50b2db" />
+			<class value="I_1" col="#50db79" />
+			<class value="G_1" col="#db506d" />
+			<class value="G_2" col="#7950DB" />
+		</annotation>
+		<annotation name="pop" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
+			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
+		</annotation>
+		<annotation name="quantileRates.Species" format="numerical" gradientMin="#ffff1a" gradientMax="#7950DB" ncols="20" speciesTree="true">
+			<legend showLegend="false" width="20" height="100" x="0.95" y="0.05" />
+		</annotation>
+	</view>
+	<speciestree SPECIES_TREE_OPACITY="100" SPECIES_LABEL_FONT_SIZE="17" SPECIES_WIDTH_ANNOTATION_TOP="pop" SPECIES_WIDTH_ANNOTATION_BOTTOM="pop" SUBTREE_SPACER="0.2" SPECIES_BRANCH_MULTIPLIER="_none" SPECIES_BRANCH_WIDTH="1" SPECIES_BRANCH_BORDER_ANNOTATION="_none" SPECIES_TREE_BORDER_COL="#000000" SPECIES_BRANCH_BGCOL_ANNOTATION="_none" SPECIES_TREE_BG_COL="#FFFFFF" />
+	<genetrees GENE_TREE_OPACITY="100" GROUP_GENES_BY_TAXA="false" GENE_NODE_MULTIPLIER="_none" GENE_NODE_SIZE="4" GENE_BRANCH_MULTIPLIER="_none" GENE_BRANCH_WIDTH="1" GENE_BRANCH_BGCOL_ANNOTATION="_none">
+		<gene display="true" col="#50b2db" />
+		<gene display="false" col="#50db79" />
+		<gene display="false" col="#db506d" />
+		<gene display="false" col="#7950DB" />
+		<gene display="false" col="#b2db50" />
+		<gene display="false" col="#db7950" />
+		<gene display="false" col="#4e8791" />
+		<gene display="false" col="#ff1919" />
+		<gene display="false" col="#228B22" />
+		<gene display="false" col="#91584e" />
+		<gene display="false" col="#584e91" />
+		<gene display="false" col="#009fe1" />
+		<gene display="false" col="#ffff1a" />
+		<gene display="false" col="#ff8d1a" />
+		<gene display="false" col="#DB5079" />
+		<gene display="false" col="#000000" />
+		<gene display="false" col="#606060" />
+		<gene display="false" col="#707070" />
+		<gene display="false" col="#A0A0A0" />
+		<gene display="false" col="#BEBEBE" />
+		<gene display="false" col="#d3d3d3" />
+		<gene display="false" col="#E0E0E0" />
+		<gene display="false" col="#FFFFFF" />
+		<gene display="false" col="#50b2db" />
+		<gene display="false" col="#50db79" />
+		<gene display="false" col="#db506d" />
+		<gene display="false" col="#7950DB" />
+		<gene display="false" col="#b2db50" />
+		<gene display="false" col="#db7950" />
+		<gene display="false" col="#4e8791" />
+		<gene display="false" col="#ff1919" />
+		<gene display="false" col="#228B22" />
+		<gene display="false" col="#91584e" />
+		<gene display="false" col="#584e91" />
+		<gene display="false" col="#009fe1" />
+		<gene display="false" col="#ffff1a" />
+		<gene display="false" col="#ff8d1a" />
+		<gene display="false" col="#DB5079" />
+		<gene display="false" col="#000000" />
+		<gene display="false" col="#606060" />
+		<gene display="false" col="#707070" />
+		<gene display="false" col="#A0A0A0" />
+		<gene display="false" col="#BEBEBE" />
+		<gene display="false" col="#d3d3d3" />
+		<gene display="false" col="#E0E0E0" />
+		<gene display="false" col="#FFFFFF" />
+		<gene display="false" col="#50b2db" />
+		<gene display="false" col="#50db79" />
+		<gene display="false" col="#db506d" />
+		<gene display="false" col="#7950DB" />
+		<gene display="false" col="#b2db50" />
+		<gene display="false" col="#db7950" />
+		<gene display="false" col="#4e8791" />
+		<gene display="false" col="#ff1919" />
+		<gene display="false" col="#228B22" />
+		<gene display="false" col="#91584e" />
+		<gene display="false" col="#584e91" />
+		<gene display="false" col="#009fe1" />
+		<gene display="false" col="#ffff1a" />
+		<gene display="false" col="#ff8d1a" />
+		<gene display="false" col="#DB5079" />
+		<gene display="false" col="#000000" />
+		<gene display="false" col="#606060" />
+		<gene display="false" col="#707070" />
+		<gene display="false" col="#A0A0A0" />
+		<gene display="false" col="#BEBEBE" />
+		<gene display="false" col="#d3d3d3" />
+		<gene display="false" col="#E0E0E0" />
+		<gene display="false" col="#FFFFFF" />
+		<gene display="false" col="#50b2db" />
+		<gene display="false" col="#50db79" />
+		<gene display="false" col="#db506d" />
+		<gene display="false" col="#7950DB" />
+		<gene display="false" col="#b2db50" />
+		<gene display="false" col="#db7950" />
+		<gene display="false" col="#4e8791" />
+		<gene display="false" col="#ff1919" />
+		<gene display="false" col="#228B22" />
+		<gene display="false" col="#91584e" />
+		<gene display="false" col="#584e91" />
+		<gene display="false" col="#009fe1" />
+		<gene display="false" col="#ffff1a" />
+		<gene display="false" col="#ff8d1a" />
+		<gene display="false" col="#DB5079" />
+		<gene display="false" col="#000000" />
+		<gene display="false" col="#606060" />
+		<gene display="false" col="#707070" />
+		<gene display="false" col="#A0A0A0" />
+		<gene display="false" col="#BEBEBE" />
+		<gene display="false" col="#d3d3d3" />
+		<gene display="false" col="#E0E0E0" />
+		<gene display="false" col="#FFFFFF" />
+		<gene display="false" col="#50b2db" />
+		<gene display="false" col="#50db79" />
+		<gene display="false" col="#db506d" />
+		<gene display="false" col="#7950DB" />
+		<gene display="false" col="#b2db50" />
+		<gene display="false" col="#db7950" />
+		<gene display="false" col="#4e8791" />
+		<gene display="false" col="#ff1919" />
+	</genetrees>
+</uglytrees>

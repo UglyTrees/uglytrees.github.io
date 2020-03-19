@@ -162,6 +162,7 @@ line {
 	cursor:pointer;-webkit-user-select: none; /* Chrome/Safari */        
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+ */
+	color:black;
 
 	/* Rules below not implemented in browsers yet */
 	-o-user-select: none;
@@ -396,6 +397,7 @@ input[type=number] {
 	margin-top:4em;
 	text-size-adjust: 200%;
 }
+
 
 
 @media only screen and (max-width: 1200px) and (orientation:landscape) {
@@ -1348,6 +1350,30 @@ div.code{
 	width: 80%; 
 	display:none;
 }
+
+
+#exampleSessions{
+
+	width:80%;
+	min-width:1000px;
+	margin-left:10%;
+	%text-align:center;
+
+}
+
+.exampleDiv{
+	%margin-top:1em;
+	padding:1em;
+	line-height:1.1em;
+	text-size-adjust: 200%;
+	border-style:solid;
+	border-radius:0.3em;
+	border-width:0.05em;
+	text-align:left;
+	%border-color:#DB5079;
+	background-color:white;
+}
+
 
 
 

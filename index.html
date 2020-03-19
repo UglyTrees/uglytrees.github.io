@@ -695,7 +695,8 @@
 
 
 					
-					
+					if (BIG_SESSION) animate = false;
+
 					if (!animate) {
 						svg.html(getEmptySvg());
 						svg.height(0);
@@ -775,6 +776,7 @@
 						continue;
 					}
 					
+
 					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, ZOOM_SCALE, function() { });
 					else animateAGeneTree(geneGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME, ZOOM_SCALE, function() { });
 
@@ -786,13 +788,11 @@
 				if (!animate) drawASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, callback, progress);
 				else animateASpeciesTree(speciesGroup, textGroup, SPECIES_TREE, "speciestree", SPECIES_TREE.root, CURRENT_ANIMATION_TIME, callback, progress);
 
-				
 
 
 				$("#renderLoader").html("");
 
 				//callback();
-
 
 			}
 
@@ -1830,6 +1830,64 @@
 					<svg id="tree" height=0 width=0 ></svg>
 				</div>
 
+			</div>
+
+
+
+			<div id="exampleSessions">
+							
+
+					<br><b>OR</b> select an example session <br>
+
+					<ul class="flex-container thicklines">
+				
+						<li class="flex-item" style="width:30%; max-width:300px; padding: 1em">
+						
+							<div class="exampleDiv">
+						
+								<b>Gophers:</b> a multispecies coalescent model consisting of 8 species, 27 taxa, and 3 gene trees, using the Gopher data from Belfiore et al. 2008. There are 361 species/gene tree samples from the posterior distribution.<br><br>
+
+								<div style="text-align:center">
+
+									<a style="text-decoration:none" href="http://www.uglytrees.nz/?w=http://uglytrees.nz/examples/gopher/session.xml"><span id="renderTreesBtn" class="button">Launch</span></a>
+
+									<a style="text-decoration:none" href="https://github.com/UglyTrees/uglytrees.github.io/tree/master/examples/gopher"><span id="renderTreesBtn" class="button">View files</span></a>
+								</div> <br>
+
+								<div style="font-size:80%">
+									Belfiore, N. M., Liu, L., and Moritz, C. (2008). Multilocus phylogenetics of a rapid radiation in the genus thomomys (rodentia: Geomyidae). Systematic Biology, 57(2), 294–310.
+								</div>
+
+							</div>
+						
+						</li>
+
+
+						<li class="flex-item" style="width:30%; max-width:300px; padding: 1em">
+						
+							<div class="exampleDiv">
+						
+								<b>Simulated:</b> a moderate sized test session simulated using BEAST2. This multispecies coalescent model consists of 10 species, 50 taxa, and 100 gene trees. <br><br>
+
+								<div style="text-align:center">
+
+									<a style="text-decoration:none" href="http://www.uglytrees.nz/?w=http://uglytrees.nz/examples/simulated/session.xml"><span id="renderTreesBtn" class="button">Launch</span></a>
+
+									<a style="text-decoration:none" href="https://github.com/UglyTrees/uglytrees.github.io/tree/master/examples/simulated"><span id="renderTreesBtn" class="button">View files</span></a>
+								</div> <br>
+
+								<div style="font-size:80%">
+									Bouckaert, Remco, et al. "BEAST 2.5: An advanced software platform for Bayesian evolutionary analysis." PLoS computational biology 15.4 (2019): e1006650.
+								</div>
+
+							</div>
+						
+						</li>
+
+
+					</ul>
+
+				
 			</div>
 
 
