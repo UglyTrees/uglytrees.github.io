@@ -24,9 +24,13 @@
 
 */
 
+
+
+
 function initTemplates(){
 
 
+	SESSION_FROM_TEMPLATE = false;
 	TEMPLATE_SCRAPE_URL = null;
 	ANNOTATIONS_UPLOADED_FROM_XML = false;
 
@@ -566,7 +570,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 		}
 
 		
-
+		SESSION_FROM_TEMPLATE = true;
 		setInterfaceFromVisualParams();
 
 
@@ -595,8 +599,8 @@ function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 		}
 		else {
 			var content = trees.content.content;
-			if (isSpeciesTree) parseSpeciesTree({target: {result: content}}, util_file);
-			else parseGeneTree({target: {result: content}}, util_file);
+			if (isSpeciesTree) parseSpeciesTree({target: {result: content}}, util_file, true);
+			else parseGeneTree({target: {result: content}}, util_file, true);
 		}
 	}
 

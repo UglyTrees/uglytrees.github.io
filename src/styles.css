@@ -23,10 +23,15 @@ svg {
 	border: 0.5em solid white; 
 	border-top: 0.5em solid #DB5079; 
 	border-radius: 50%;
-	width: 0.4em;
-	height: 0.4em;
+	width: 0.5em;
+	height: 0.5em;
 	animation: spin 2s linear infinite;
 
+}
+
+.loader.dark {
+	border: 0.5em solid #DB5079; 
+	border-top: 0.5em solid white; 
 }
 
 
@@ -1328,7 +1333,21 @@ div.code{
 
 
 
-
+#bigSessionWarningFlasher {
+	border-style:solid;
+	border-width:0.5px;
+	border-radius:5px;
+	border-color:#DB5079;
+	background-color:white;
+	position:fixed;
+	z-index:100;
+	padding:0.5em;
+	text-align:center; 
+	font-size:90%; 
+	margin-left:10%;
+	width: 80%; 
+	display:none;
+}
 
 
 

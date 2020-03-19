@@ -379,11 +379,9 @@ function renderGeneTreeColourSettings(){
 					<span class="checkmark"></span>
 				</label>
 			</td>
-			<td>
-				
-			</td>
-			<td>
-				
+			
+			<td colspan=2>
+				<div class="bigSessionWarning" style="display:none; font-size:80%">Display fewer trees to improve performance</div>
 			</td>
 		</tr>`;
 	$("#geneTreeColours").html(headerHTML);

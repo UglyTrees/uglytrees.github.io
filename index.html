@@ -112,6 +112,8 @@
 				SVG_WIDTH = 0;
 				GAP_BETWEEN_SUBTREES = 0;
 
+				BIG_SESSION = true; // Are there many gene trees?
+
 				var svg = $("#tree");
 				svg.html("");
 				svg.height(SVG_HEIGHT);
@@ -140,6 +142,7 @@
 
 
 				//$(".showAfterTreeUpload").hide(0);
+				$(".bigSessionWarning").hide(0);
 				$(".showOnSpeciesAnnotationSelect").hide(0);
 				$(".speciesAnnotationDiscrete").hide(0);
 				$(".speciesAnnotationNumerical").hide(0);
@@ -147,6 +150,9 @@
 				$(".displayOnRender").hide(0);
 
 				$("#hoverAnnotationDiv").draggable();
+
+
+				
 
 
 
@@ -360,9 +366,41 @@
 
 			
 			function userSaysDraw(){
+
+				if (READY_TO_DRAW) return;
+
 				READY_TO_DRAW = true;
-				planTrees();
-				renderTrees();
+				addLoaderDark($("#renderLoader"));
+
+
+
+
+				// Decide whether to show all the trees or just a subset
+				if (!SESSION_FROM_TEMPLATE) {
+					BIG_SESSION = GENE_TREES_ALL.length > 10;
+					
+
+					if (BIG_SESSION) {
+						$(".bigSessionWarning").show(0);
+						$("#bigSessionWarningFlasher").fadeIn(1000).delay(5000).fadeOut();
+						useJustOneGeneTree();
+					}
+					else {
+						$(".bigSessionWarning").hide(0);
+						$("#bigSessionWarningFlasher").hide(0);
+						useGeneTreeList();
+					}
+
+
+				}
+
+				// Asynchronous to enable loader to be added first
+				setTimeout(function(){
+					planTrees();
+					renderTrees();
+				}, 10);
+
+				
 			}
 
 
@@ -643,8 +681,9 @@
 			function renderTrees(options = null, animate = false, callback = function() { }, progress = function() { }) {
 
 
-
 				if (SPECIES_TREES_ALL.length == 0 || !READY_TO_DRAW || !SPECIES_TREE.successfullyMapped) return;
+
+
 
 				
 
@@ -653,6 +692,8 @@
 				if (options == null) {
 
 					svg = $("#tree");
+
+
 					
 					
 					if (!animate) {
@@ -668,6 +709,9 @@
 						svg.height(SVG_HEIGHT);
 						svg.width(SVG_WIDTH);
 						$(".displayOnRender").show(0);
+
+						addLoader("#tree", id = "svgloader");
+
 					}
 					
 				
@@ -744,6 +788,8 @@
 
 				
 
+
+				$("#renderLoader").html("");
 
 				//callback();
 
@@ -1223,7 +1269,7 @@
 
 			// https://codepen.io/rgfx/pen/qxyGyy
 			function resizable (el) {
-				function resize() {el.style.width = ((el.value.length+1) * 0.5) + "em"};
+				function resize() {el.style.width = ((el.value.length+5) * 0.5) + "em"};
 				var e = 'keyup,keypress,focus,blur,change'.split(',');
 				for (var i in e) el.addEventListener(e[i],resize,false);
 				resize();
@@ -1764,7 +1810,9 @@
 							</div>
 
 							<br><br>
-							<span id="renderTreesBtn" onclick="userSaysDraw();" class="button large disabled">Draw trees</span>
+							<span id="renderTreesBtn" onclick="userSaysDraw();" class="button large disabled">Draw trees</span> <br><br>
+							<span id="renderLoader"> </span>
+
 						</td>
 
 						<td  class="uploaderTd">
@@ -1785,7 +1833,9 @@
 			</div>
 
 
-
+			<div id="bigSessionWarningFlasher" >
+				A large number of gene trees have been detected. Use the up/down arrows below to cycle through gene trees. Open the 'Gene trees' top menu for advanced options.
+			</div>
 
 
 			<div id="footer" >
@@ -1868,10 +1918,15 @@
 
 
 						<td style="width:40%; text-align:left" >
-								<div  title="The name of the currently displayed gene tree  (corresponding to the up/down arrows). Gene tree displays can be further refined using the 'Gene trees' top menu. " id="currentGeneTreeNameContainer" class="whitefont" style="font-size:120%">Current gene tree: &nbsp;&nbsp; <span class="cranberry" id="currentGeneTreeName" style="width:2em; font-size:100%"></span>
-							</div>
 
-							<div class="displayOnRender" style="float:right; text-align: right;  margin-right:1em">
+
+
+							<span title="The name of the currently displayed gene tree  (corresponding to the up/down arrows). Gene tree displays can be further refined using the 'Gene trees' top menu. " id="currentGeneTreeNameContainer" class="whitefont" style="font-size:120%">
+								Current gene tree: &nbsp;&nbsp; <span class="cranberry" id="currentGeneTreeName" style="width:2em; font-size:100%"></span> 
+
+							</span>
+
+							<span class="displayOnRender" style="float:right; text-align: right;  margin-right:1em">
 								<!--
 								<span id="zoomoutBtn" title="Zoom out (Hotkey: &minus;)" class="arrow" onclick="zoom(false)">&minus;</span>
 								<span id="zoominBtn" title="Zoom in (Hotkey: &plus;)" class="arrow" onclick="zoom(true)">&plus;</span> <br>
@@ -1881,7 +1936,7 @@
 									Use the mousewheel to zoom <br>
 									Drag when zoomed to pan <br>
 								</div>
-							</div>
+							</span>
 
 						</td>
 

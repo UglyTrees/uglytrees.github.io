@@ -118,7 +118,10 @@ function initUtil(){
 
 
 // Parse a species tree from string and update DOM
-function parseSpeciesTree(e, util_file){
+function parseSpeciesTree(e, util_file, fromTemplate = false){
+
+
+
 
 	try {
 
@@ -142,6 +145,8 @@ function parseSpeciesTree(e, util_file){
 			SPECIES_TREES_ALL[0].successfullyMapped = mapAllGeneTreesToSpeciesTree(speciesLeaves, geneTrees)
 		}
 
+		if (!fromTemplate) SESSION_FROM_TEMPLATE = false;
+
 	} 
 	catch(err){
 		$("#fileUpload_" + util_file.id + " .userMsg").html("<b>Error parsing file:</b>  " + err.message);
@@ -163,9 +168,10 @@ function parseSpeciesTree(e, util_file){
 
 
 // Parse a gene tree from string and update DOM
-function parseGeneTree(e, util_file){
+function parseGeneTree(e, util_file, fromTemplate = false){
 
 
+	
 	var g = util_file.id;
 
 	try{
@@ -188,6 +194,9 @@ function parseGeneTree(e, util_file){
 				return;
 			}
 		}
+
+
+		if (!fromTemplate) SESSION_FROM_TEMPLATE = false;
 		
 
 		
@@ -329,6 +338,10 @@ function getFileUploadTemplate(fileID, fileName){
 
 function addLoader(eleAddTo, id = "loader"){
 	$(eleAddTo).append(`<div id="` + id + `" title="Loading file..." class="loader" style="margin:auto"></div>`);
+}
+
+function addLoaderDark(eleAddTo, id = "loader"){
+	$(eleAddTo).append(`<div id="` + id + `" title="Loading file..." class="loader dark" style="margin:auto"></div>`);
 }
 
 
