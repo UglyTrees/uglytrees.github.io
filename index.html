@@ -1868,7 +1868,7 @@
 						
 							<div class="exampleDiv">
 						
-								<b>Simulated:</b> a moderate sized test session simulated using BEAST2. This multispecies coalescent model consists of 10 species, 50 taxa, and 100 gene trees. <br><br>
+								<b>Simulated:</b> a moderate sized test session simulated using BEAST2. This multispecies coalescent model consists of 20 species, 60 taxa, and 100 gene trees. <br><br>
 
 								<div style="text-align:center">
 
@@ -1905,9 +1905,22 @@
 					
 					<tr>
 
-						<td  style="width:40%; text-align:right" title="The state number of the currently displayed set of trees  (corresponding to the left/right arrows).">
+						<td  style="width:40%; text-align:right">
 
-							<span id="treeNumContainer" class="whitefont">State number: <input class="numberinput cranberry" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span>
+
+
+
+							<span class="displayOnRender" style="float:left; text-align: left;  margin-left:1em">
+
+								<div style="font-size:80%; text-shadow:none; color:white" >
+									Right click on a node for more information <br>
+									Use the mousewheel to zoom <br>
+									Drag when zoomed to pan <br>
+								</div>
+							</span>
+
+
+							
 
 							
 						</td>
@@ -1980,22 +1993,14 @@
 
 
 
+							<span  title="The state number of the currently displayed set of trees  (corresponding to the left/right arrows)." id="treeNumContainer" class="whitefont">Sample number: <input class="numberinput cranberry" type="number" id="treeNum" style="width:2em; font-size:100%" onchange="setTree()"  value=0></input></span> <br>
+
+
 							<span title="The name of the currently displayed gene tree  (corresponding to the up/down arrows). Gene tree displays can be further refined using the 'Gene trees' top menu. " id="currentGeneTreeNameContainer" class="whitefont" style="font-size:120%">
 								Current gene tree: &nbsp;&nbsp; <span class="cranberry" id="currentGeneTreeName" style="width:2em; font-size:100%"></span> 
 
 							</span>
 
-							<span class="displayOnRender" style="float:right; text-align: right;  margin-right:1em">
-								<!--
-								<span id="zoomoutBtn" title="Zoom out (Hotkey: &minus;)" class="arrow" onclick="zoom(false)">&minus;</span>
-								<span id="zoominBtn" title="Zoom in (Hotkey: &plus;)" class="arrow" onclick="zoom(true)">&plus;</span> <br>
-							-->
-								<div style="font-size:80%; text-shadow:none; color:white" >
-									Right click on a node for more information <br>
-									Use the mousewheel to zoom <br>
-									Drag when zoomed to pan <br>
-								</div>
-							</span>
 
 						</td>
 

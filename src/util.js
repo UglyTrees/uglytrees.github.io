@@ -326,9 +326,9 @@ function getFileUploadTemplate(fileID, fileName){
 	//console.log("Uploading", fileID, fileName);
 	return ` <tr style="height:2em" id="fileUpload_` + fileID + `">
 			<td style="min-width:20px"> <div title="Loading file..." class="loader" style="margin:auto"></div> </td>
-			<td style="width:30%; text-align:right; word-break: break-all;"><i>` + fileName + `</i>:</td>
+			<td style="width:50%; text-align:right; word-break: break-all;"><i>` + fileName + `</i>:</td>
 			<td style="min-width:20px;"></td>
-			<td class="userMsg" style="width:60%; text-align:justified"">Uploading</td>
+			<td class="userMsg" style="width:40%; text-align:justified; word-break: break-all;">Uploading</td>
 			<td style="cursor:pointer; min-width:20px; font-size:200%;" title="Remove file" onclick="removeFile(` + fileID + `)">&times;</td>
 		 </tr>`;
 

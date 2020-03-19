@@ -9,7 +9,7 @@
 		<gene filename="gopher.gene47.trees" />
 	</trees>
 	<!-- By setting 'display' below to 'true', the following introductory message will appear in a dialog when the template is first loaded. -->
-	<intro display="true">
+	<intro display="false">
 		<main string="Gopher dataset" />
 		<body string="This multispecies coalescent model consists of 8 species, 27 taxa, and 3 gene trees, using the Gopher data from Belfiore et al. 2008. There are 361 species/gene tree samples from the posterior distribution." />
 	</intro>
