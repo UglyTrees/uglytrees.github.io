@@ -620,8 +620,10 @@ function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 	}
 
 
-	requestFromGitHub([URLobj], callback, errorFn);
-
+	setTimeout(function () {
+		requestFromGitHub([URLobj], callback, errorFn);
+	}, 10);
+	
 
 }
 
