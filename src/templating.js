@@ -105,7 +105,7 @@ function requestFromGitHub(githubURLs, callback = function(response) {}, errorFn
 
 	var scriptUrl = "https://script.google.com/macros/s/AKfycbyGQQja01ho2Rm2vrNzX8F-NcgG5uEaFDA4Z_sFOcdpyur1YTQ/exec";
 	var url = scriptUrl + "?urls=" + JSON.stringify(githubURLs) + "&callback=?";
-	//console.log("Requesting", url);
+	console.log("Requesting", url);
 
 	$.ajax({
 		url: url,
@@ -615,7 +615,7 @@ function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 		console.log("Unable to access scripts", err);
 		closeDialogs();
 		$("#innerBody").css("opacity", 0.5);
-		$("body").append(getdialogTemplate("Error: cannot access template", err.message));
+		$("body").append(getdialogTemplate("Error: cannot access template " + util_file.id, err.message));
 		openDialog();
 	}
 
