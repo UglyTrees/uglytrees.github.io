@@ -622,7 +622,7 @@ function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 
 	setTimeout(function () {
 		requestFromGitHub([URLobj], callback, errorFn);
-	}, Math.random() * 50);
+	}, Math.random() * 300);
 	
 
 }
