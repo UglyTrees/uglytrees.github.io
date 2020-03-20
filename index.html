@@ -246,8 +246,8 @@
 					TREE_NUM = Math.min(TREE_NUM, NTREES-1);
 				}
 				else {
-					if (TREE_NUM >= NTREES-1) return;
-					TREE_NUM++;
+					if (TREE_NUM >= NTREES-1) TREE_NUM = 0;
+					else TREE_NUM++;
 				}
 				
 				var animate = resetZoom();
@@ -272,8 +272,8 @@
 					TREE_NUM = Math.max(TREE_NUM, 0);
 				}
 				else {
-					if (TREE_NUM <= 0) return;
-					TREE_NUM--;
+					if (TREE_NUM <= 0) TREE_NUM = NTREES - 1;
+					else TREE_NUM--;
 				}
 				
 				var animate = resetZoom();
@@ -1915,9 +1915,9 @@
 
 								<div style="text-align:center">
 
-									<a style="text-decoration:none" href="http://www.uglytrees.nz/?w=http://uglytrees.nz/examples/gopher/session.xml"><span id="renderTreesBtn" class="button">Launch</span></a>
+									<a style="text-decoration:none" href="http://www.uglytrees.nz/?w=http://uglytrees.nz/examples/gopher/session.xml"><span class="button">Launch</span></a>
 
-									<a style="text-decoration:none" href="https://github.com/UglyTrees/uglytrees.github.io/tree/master/examples/gopher"><span id="renderTreesBtn" class="button">View files</span></a>
+									<a style="text-decoration:none" href="https://github.com/UglyTrees/uglytrees.github.io/tree/master/examples/gopher"><span class="button">View files</span></a>
 								</div> <br>
 
 								<div style="font-size:80%">
@@ -1937,9 +1937,9 @@
 
 								<div style="text-align:center">
 
-									<a style="text-decoration:none" href="http://www.uglytrees.nz/?w=http://uglytrees.nz/examples/simulated/session.xml"><span id="renderTreesBtn" class="button">Launch</span></a>
+									<a style="text-decoration:none" href="http://www.uglytrees.nz/?w=http://uglytrees.nz/examples/simulated/session.xml"><span class="button">Launch</span></a>
 
-									<a style="text-decoration:none" href="https://github.com/UglyTrees/uglytrees.github.io/tree/master/examples/simulated"><span id="renderTreesBtn" class="button">View files</span></a>
+									<a style="text-decoration:none" href="https://github.com/UglyTrees/uglytrees.github.io/tree/master/examples/simulated"><span class="button">View files</span></a>
 								</div> <br>
 
 								<div style="font-size:80%">
@@ -2019,8 +2019,8 @@
 
 									<td style="text-align: center;">
 										<div >
-											<span title="Play" id="playBtn" class="arrow" style="font-size:150%" onclick="play()">&#9654;</span> 
-											<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; display:none" onclick="stop()">&#9632;</span> 
+											<span title="Play" id="playBtn" class="arrow" style="font-size:150%; margin-left:0.3em" onclick="play()">&#9654;</span> 
+											<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; margin-left:0.3em; display:none" onclick="stop()">&#9632;</span> 
 											
 										</div>
 									</td>

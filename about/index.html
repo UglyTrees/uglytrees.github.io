@@ -126,40 +126,161 @@
 
 						<div>
 								
-							UglyTrees is a browser-based multispecies coalescent tree visualiser. This tutorial details some of its advanced features.
+							UglyTrees (UT) is a browser-based multispecies coalescent tree visualiser. This tutorial details some of its basic and advanced features. <br>
+							<b>Author:</b> Jordan Douglas, School of Computer Science, University of Auckland
 
+							<!--
+							<h3>The multispecies coalescent model</h3>
+
+							In phylogenetics, shared evolutionary history inferred from the genetic sequences of related individuals.  The multispecies coalescent (MSC) is a 
+						-->
 
 						</div>
 
+
+
+
+
 						<div class="aboutsection inner" id="webscraping">
 
-							<h2>1) Web scraping</h2>
+							<h2>1) Getting started</h2>
 
 							<div>
 								
-								Any changes made to the visual settings of UglyTrees can be downloaded as a template (in .xml format). To do this, select
-								'Save As' from the main program. The settings can be restored by uploading the template from the 'Open' menu. <br><br>
+								<div style="line-height: 2em">
+									Upload a species tree file and optionally one or more gene tree files. These should be specified in <a href="https://en.wikipedia.org/wiki/Newick_format">Newick</a> or <a href="https://en.wikipedia.org/wiki/Nexus_file">NEXUS</a> format. For some examples, see the main page <a href="https://www.uglytrees.nz">uglytrees.nz</a>. When ready, press <span id="renderTreesBtn"  class="button">Draw trees</span> to begin! <br><br>
 
-								Alternatively, UglyTrees can load a template file by scraping the web if the location of the template is provided in the URL. This is achieved two 
-								ways: by using either the 'w' (web) or the 'g' (GitHub) URL parameter. 
+
+									UT requires that the species and gene trees are rooted binary trees. The height of a node is assumed to be its time $t$ (with the present day $t=0$ nodes being at the bottom of the graph). In a conventional multispecies coalescent depiction, the x-axis corresponds to effective population sizes in the species tree. 
+
+								</div>
 
 									<div class="aboutsection inner">
 
-										<h3>1.1) General case (w)</h3>
+										<h3>1.1) Navigation</h3>
 
 										<div>
-											Use the following URL: 
-											<div class="code">
-												www.uglytrees.nz/?<b style="color:#DB5079;">w</b>=http://website.com/template.xml
-											</div>
-											where <span class="code">http://website.com/template.xml</span> is a web-location of an UglyTrees template.
+
+
+											A multispecies coalescent model can be complicated, especially for large trees or multiple gene trees. Navigation through the model is easier with the arrow keys! <br> <br>
+											
+												<div style="text-align:center">
+													<img src="../images/arrows.png" style="width:10em;"/>
+												</div><br> 
+
+											If there is more than one species/gene state uploaded (eg. a posterior distribution), the horizontal arrows (hotkeys: &larr; and &rarr;) navigate through the states, while the double horizontal arrows (hotkeys: ctrl + &larr; and ctrl + &rarr;) skip forward many states. The play button will animate through the list of states. <br><br>
+
+
+											If there is more than one gene tree, the vertical arrows (hotkeys: &uarr; and &darr;) cycle through the list of gene trees. It is also possible to display more than one gene tree at a time using the <span class="mockMenuBtn">Gene trees</span> menu at the top. However, this may not look good for a large number of gene trees! <br><br>
+
+
+											By mouse-scrolling (or pinching if mobile) and mouse-dragging (or panning if mobile), the graph can be zoomed in on and further navigated. <br><br>
+
+
+
+											Alternatively, to focus on an area consider adjusting the x-axis and y-axis ranges (located in the <span class="mockMenuBtn">View</span> top menu). 
+
+							
 											
 
 										</div>
 
 
 
-										<h3>1.2) GitHub (g)</h3>
+									</div>
+
+
+
+									<div class="aboutsection inner">
+
+										<h3>1.2) Downloading the figure</h3>
+
+										<div>
+											The figure can be downloaded as an SVG by opening the <span class="mockMenuBtn">Save As</span> dialog at the top of the main page.   <br> <br>
+
+										</div>
+
+									</div>
+
+
+
+									<div class="aboutsection inner">
+
+										<h3>1.3) Configuring visual settings </h3>
+
+										<div>
+
+											
+
+
+											Use the <span class="mockMenuBtn">View</span> top menu to configure axis and annotation settings:
+
+
+
+
+											<div style="text-align:center">
+													<img src="../images/annotations.png" style="width:18em;"/>
+													<img src="../images/annotations2.png" style="width:18em;"/>
+												</div><br> 
+
+											 <b>Annotations</b> are read in from the input tree files and are automatically classified as numerical or discrete. Numerical settings are associated 2 colours: 
+											 a palette min and a palette max. These default to the colour-blind friendly purple/yellow palette. Whereas, each value of a discrete annotation receives its own colour.     <br> <br>
+
+
+
+											 Use the <span class="mockMenuBtn">Species tree</span> and <span class="mockMenuBtn">Gene trees</span> top menus to configure visual settings of the respective trees. Shape sizes, line widths, and colourings can be set manually, or automatically set to the value of a meta-annotation. For example, the width of a line in the species tree could be proportional to the substitution rate of that branch under a clock model. Or, the colour of a gene tree leaf could be associated with some observed trait (eye colour: discrete; body mass: numeric; etc.) of the individual.     <br> <br>
+
+
+											
+
+										</div>
+
+									</div>
+
+
+
+
+							</div>
+
+
+
+						</div>
+
+
+
+
+
+
+
+						<div class="aboutsection inner" id="webscraping">
+
+							<h2>2) Web scraping</h2>
+
+							<div>
+								
+								Any changes made to the visual settings of UT can be downloaded as a template (in .xml format). To do this, select
+								<span class="mockMenuBtn">Save As</span> from the main program. The settings can be restored by uploading the template from the <span class="mockMenuBtn">Open</span> menu. <br><br>
+
+								Alternatively, UT can load a template file by scraping the web if the location of the template is provided in the URL. This is achieved two 
+								ways: by using either the 'w' (web) or the 'g' (GitHub) URL parameter. 
+
+									<div class="aboutsection inner">
+
+										<h3>2.1) General case (w)</h3>
+
+										<div>
+											Use the following URL: 
+											<div class="code">
+												www.uglytrees.nz/?<b style="color:#DB5079;">w</b>=http://website.com/template.xml
+											</div>
+											where <span class="code">http://website.com/template.xml</span> is a web-location of an UT template.
+											
+
+										</div>
+
+
+
+										<h3>2.2) GitHub (g)</h3>
 
 										<div>
 											Use the following URL: 
@@ -190,7 +311,7 @@
 									</div>
 
 
-									In this example, one species and two gene tree files will be loaded into UglyTrees.
+									In this example, one species and two gene tree files will be loaded into UT.
 									The second gene tree is scraped directly from the specified URL (http/https must be specified),
 									whereas, the species tree and the other gene are scraped from the relative directory (relative to
 									the template file specified by <b style="color:#DB5079;">w</b> or <b style="color:#DB5079;">g</b>).  
@@ -200,16 +321,17 @@
 
 									<div class="aboutsection inner">
 
-										<h3>1.3) Examples</h3>
+										<h3>2.3) Examples</h3>
 
 										<div>
 
-											<a href="http://www.uglytrees.nz/?w=http://uglytrees.nz/trees/session.xml">
-												http://www.uglytrees.nz/?<b>w</b>=http://uglytrees.nz/trees/session.xml
+											<a href="https://uglytrees.nz/?w=http://uglytrees.nz/examples/gopher/session.xml">
+												http://www.uglytrees.nz/?<b>w</b>=http://uglytrees.nz/examples/gopher/session.xml
+
 											</a> <br><br>
 
-											<a href="http://www.uglytrees.nz/?g=uglytrees/uglytrees.github.io/trees/session.xml">
-												http://www.uglytrees.nz/?<b>g</b>=uglytrees/uglytrees.github.io/trees/session.xml
+											<a href="http://www.uglytrees.nz/?g=uglytrees/uglytrees.github.io/examples/simulated/session.xml">
+												http://www.uglytrees.nz/?<b>g</b>=uglytrees/uglytrees.github.io/examples/simulated/session.xml
 											</a>
 
 										</div>
@@ -238,11 +360,11 @@
 
 						<div class="aboutsection inner" id="mapping">
 
-							<h2>2) Species to gene node mapping</h2>
+							<h2>3) Species to gene node mapping</h2>
 
 							<div>
 								In order to embed one (or more) gene trees inside a species tree, a mapping function between species leaves and gene leaves is required.
-								This function is automatically detected by UglyTrees by comparing species and gene leaf labels. The mapping algorithm attempts to map each gene leaf 								to exactly one species. This is achieved by substring comparison, and if that fails, the labels are
+								This function is automatically detected by UT by comparing species and gene leaf labels. The mapping algorithm attempts to map each gene leaf 								to exactly one species. This is achieved by substring comparison, and if that fails, the labels are
 								split using a range of delimiters (<span class="code">_</span>, <span class="code">-</span>, and <span class="code">.</span>). If a mapping cannot
 								be found, the user is notified. Consider the following (simulated) nexus files:
 
@@ -304,7 +426,7 @@
 								<span class="code">horse</span>, <span class="code">seahorse_1</span> and <span class="code">seahorse_7</span>
 								are mapped to <span class="code">seahorse</span>, etc. The use of <span class="code">_</span> delimiters ensures that
 								each gene is mapped to exactly 1 species, by preventing  <span class="code">horse_1</span> from being mapped to <span class="code">seahorse</span>.
-								<br><br>If UglyTrees is unable to find a mapping, consider changing the gene/species labels to something like the above example.
+								<br><br>If UT is unable to find a mapping, consider changing the gene/species labels to something like the above example.
 
 
 
