@@ -43,7 +43,7 @@ function initTemplates(){
 		if (JSONurl.w != null || JSONurl.g != null || JSONurl.u != null) {
 			console.log("JSONurl", JSONurl);
 
-			var URL, isHTTP, fromDir,
+			var URL, isHTTP, fromDir;
 			if (JSONurl.g == null) {
 				URL = JSONurl.w;
 				isHTTP = true;
@@ -52,10 +52,6 @@ function initTemplates(){
 				URL = JSONurl.g;
 				isHTTP = false;
 				fromDir = false;
-			}else{
-				URL = JSONurl.u;
-				isHTTP = true;
-				fromDir = true;
 			}
 			
 			var util_file = {id: -2, filename: URL, message: "", uploadedAs: "template"};
