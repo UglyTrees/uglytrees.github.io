@@ -564,7 +564,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 					else GENE_UPLOADED_FILES[g] = util_file;
 
 					// Download each tree one at a time
-					treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree, gene.length > 3 ? 10*(g+2) : 0);
+					treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree, genes.length > 3 ? 10*(g+2) : 0);
 					
 
 
