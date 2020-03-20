@@ -564,7 +564,10 @@ function loadSessionFromString(text, resolve = function() { }) {
 					else GENE_UPLOADED_FILES[g] = util_file;
 
 					// Download each tree one at a time
-					treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree);
+						setTimeout(function () {
+							treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree);
+						}, 10 * (g+2));
+					
 
 
 					
@@ -620,9 +623,8 @@ function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 	}
 
 
-	setTimeout(function () {
-		requestFromGitHub([URLobj], callback, errorFn);
-	}, Math.random() * 300);
+
+	requestFromGitHub([URLobj], callback, errorFn);
 	
 
 }
