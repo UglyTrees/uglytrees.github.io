@@ -112,7 +112,7 @@
 				SVG_WIDTH = 0;
 				GAP_BETWEEN_SUBTREES = 0;
 
-				BIG_SESSION = true; // Are there many gene trees?
+				BIG_SESSION = false; // Are there many gene trees?
 
 				var svg = $("#tree");
 				svg.html("");
@@ -377,10 +377,9 @@
 
 
 				// Decide whether to show all the trees or just a subset
+				BIG_SESSION = GENE_TREES_ALL.length > 10;
 				if (!SESSION_FROM_TEMPLATE) {
-					BIG_SESSION = GENE_TREES_ALL.length > 10;
 					
-
 					if (BIG_SESSION) {
 						$(".bigSessionWarning").show(0);
 						$("#bigSessionWarningFlasher").fadeIn(1000).delay(5000).fadeOut();
