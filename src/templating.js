@@ -601,7 +601,7 @@ function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 
 		var trees = returnValue[URLobj.name];
 		if (trees.err != null) {
-			errorFn(trees.err);
+			errorFn(trees.err, util_file);
 		}
 		else {
 			var content = trees.content.content;
@@ -610,7 +610,7 @@ function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 		}
 	}
 
-	var errorFn = function(err){
+	var errorFn = function(err, util_file){
 		removeFile(util_file.id);
 		console.log("Unable to access scripts", err);
 		closeDialogs();
