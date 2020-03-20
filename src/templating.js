@@ -564,9 +564,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 					else GENE_UPLOADED_FILES[g] = util_file;
 
 					// Download each tree one at a time
-						setTimeout(function () {
-							treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree);
-						}, 10 * (g+2));
+					treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree, gene.length > 3 ? 10*(g+2) : 0);
 					
 
 
@@ -594,7 +592,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 
 
 // Access the backend to download a tree, and then parse its contents on the frontend
-function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
+function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree, waitTime){
 
 	
 	var callback = function(returnValue){
@@ -623,8 +621,10 @@ function treeDownloadFromExternalSource(URLobj, util_file, isSpeciesTree){
 	}
 
 
-
-	requestFromGitHub([URLobj], callback, errorFn);
+	setTimeout(function () {
+			requestFromGitHub([URLobj], callback, errorFn);
+	}, waitTime);
+	
 	
 
 }
