@@ -86,7 +86,7 @@ function initVisualSettings(){
 	
 	FADE_TIME = 500;
 	ANIMATION_TIME = 500; // Remember to also update CSS sheet: path { transition: fill 0.5s ease;}
-	PLAY_TIME = 800;
+	PLAY_TIME = 1200;
 
 	CURRENT_ANIMATION_TIME = ANIMATION_TIME;
 	CURRENT_FADE_TIME = FADE_TIME;

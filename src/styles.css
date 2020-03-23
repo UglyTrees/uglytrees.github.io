@@ -241,10 +241,11 @@ line {
 	text-size-adjust:350%;
 	z-index:1000;
 	position:fixed;
+	max-height:80%;
 	width:50%;
 	text-align:center;
 	margin-left:25%;
-	top:20vh; 
+	top:10vh; 
 	%min-height:200px;
 	text-align:center;
 	background-color:#708090; 
@@ -279,7 +280,8 @@ line {
 	padding: 1em 1.5em; 
 	text-align:center; 
 	font-size:15; 
-	overflow-y:auto
+	overflow-y:auto;
+	
 }
 
 
@@ -1378,6 +1380,7 @@ div.code{
 	border-width:0.05em;
 	text-align:left;
 	%border-color:#DB5079;
+	%border-color:#DB5079;
 	background-color:white;
 }
 
@@ -1391,8 +1394,46 @@ div.code{
 
 }
 
+#geneSpeciesMapperTable{
+	margin-left:10%;
+	width:80%;
+	text-align:left;
+	font-size:80%;
+}
 
 
+.geneDraggable {
+	cursor: move; /* fallback if grab cursor is unsupported */
+	cursor: grab;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
+	padding-left: 0.25em;
+}
+
+.geneDraggable.ui-draggable-dragging {
+	
+	background-color:white;
+	color:black;
+	border-style:solid;
+	border-color:#DB5079;
+	border-width:0.05em;
+	z-index:10000;s
+}
+
+.geneDroppable{
+	border-bottom-width: 0.05em;
+	border-bottom-style: solid;
+	
+	border-top-width: 0.05em;
+	border-top-style: solid;
+}
+
+
+
+.geneDroppable.ui-droppable-hover {
+	background-color:#DB5079;
+	color:white;
+}
 
 
 

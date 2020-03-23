@@ -143,7 +143,7 @@ function saveSession(){
 	toCall().then((str) => {
 
 		console.log("datetime", datetime);
-		download("UglyTrees-" + datetime + ".xml", str);
+		download("UT-" + datetime + ".xml", str);
 
 
 	});
@@ -331,7 +331,36 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 		
 
 
-
+		// Mapping settings
+		saveXML.writeStartElement('map');
+		
+			// Maps
+			for (var speciesLabel in SPECIES_TO_GENE_MAPPER){
+				
+				saveXML.writeStartElement('species');
+				saveXML.writeAttributeString('name', speciesLabel);
+				
+				var geneLabels = SPECIES_TO_GENE_MAPPER[speciesLabel];
+				for (var i = 0; i < geneLabels.length; i ++){
+						
+					// Open gene
+					saveXML.writeStartElement('gene');
+					saveXML.writeAttributeString('name', geneLabels[i]);
+					
+					// Close gene
+					saveXML.writeEndElement();
+					
+				}
+				
+				// Close species
+				saveXML.writeEndElement();
+				
+			}
+		
+		
+		// End mapping settings
+		saveXML.writeEndElement();
+		
 
 
 	saveXML.writeEndElement();
@@ -348,6 +377,8 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 // Upload template from string
 function loadSessionFromString(text, resolve = function() { }) {
 
+
+	resetSpeciesToGeneMapper();
 	$("#exampleSessions").hide(0);
 	var parser = new DOMParser();
 
@@ -488,7 +519,46 @@ function loadSessionFromString(text, resolve = function() { }) {
 			}
 
 		}
-
+		
+		
+		// Mapping settings
+		var mapTag = uglytrees.getElementsByTagName("map");
+		if (mapTag.length > 0) {
+			mapTag = mapTag[0];
+			
+			var speciesLabelTags = mapTag.getElementsByTagName("species");
+			
+			// Reset
+			if (speciesLabelTags.length > 0) {
+				SPECIES_TO_GENE_MAPPER = {};
+				UNMAPPED_GENE_LABELS = [];
+			}
+			
+			
+			
+			for (var i = 0; i < speciesLabelTags.length; i ++){
+				
+				// Get species label
+				var speciesLabel = getVal(speciesLabelTags[i].getAttribute("name"), "");
+				if (speciesLabel == "") continue;
+				SPECIES_TO_GENE_MAPPER[speciesLabel] = [];
+				
+				// Get genes
+				var geneLabelTags = speciesLabelTags[i].getElementsByTagName("gene");
+				for (var j = 0; j < geneLabelTags.length; j ++){
+					
+					var geneLabel = getVal(geneLabelTags[j].getAttribute("name"), ""); 
+					if (geneLabel == "") continue;
+					SPECIES_TO_GENE_MAPPER[speciesLabel].push(geneLabel);
+					
+					
+				}
+				
+				
+			}
+			
+			
+		}
 
 		// Trees
 		var treesXML = uglytrees.getElementsByTagName("trees");

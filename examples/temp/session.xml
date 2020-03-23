@@ -68,48 +68,4 @@
 		<gene display="true" col="#50db79" />
 		<gene display="true" col="#db506d" />
 	</genetrees>
-	<map>
-		<species name="townsendii">
-			<gene name="Thomomys_townsendii_relictus" />
-			<gene name="Thomomys_townsendii_townsendii" />
-		</species>
-		<species name="talpoides">
-			<gene name="Thomomys_talpoides_bridgeri" />
-			<gene name="Thomomys_talpoides_ocius" />
-			<gene name="Thomomys_talpoides_yakimensis" />
-		</species>
-		<species name="idahoensis">
-			<gene name="Thomomys_idahoensis_pygmaeus_a" />
-			<gene name="Thomomys_idahoensis_pygmaeus_b" />
-		</species>
-		<species name="umbrinus">
-			<gene name="Thomomys_umbrinus_atroavarius" />
-			<gene name="Thomomys_umbrinus_chihuahuae" />
-		</species>
-		<species name="monticola">
-			<gene name="Thomomys_monticola_a" />
-			<gene name="Thomomys_monticola_b" />
-		</species>
-		<species name="bottae">
-			<gene name="Thomomys_bottae_albatus" />
-			<gene name="Thomomys_bottae_alpinus" />
-			<gene name="Thomomys_bottae_awahnee_a" />
-			<gene name="Thomomys_bottae_awahnee_b" />
-			<gene name="Thomomys_bottae_bottae" />
-			<gene name="Thomomys_bottae_cactophilus" />
-			<gene name="Thomomys_bottae_laticeps" />
-			<gene name="Thomomys_bottae_mewa" />
-			<gene name="Thomomys_bottae_riparius" />
-			<gene name="Thomomys_bottae_ruidosae" />
-			<gene name="Thomomys_bottae_saxatilis" />
-			<gene name="Thomomys_bottae_xerophilus" />
-		</species>
-		<species name="heterodus">
-			<gene name="Orthogeomys_heterodus" />
-		</species>
-		<species name="mazama">
-			<gene name="Thomomys_mazama_mazama" />
-			<gene name="Thomomys_mazama_nasicus" />
-		</species>
-	</map>
 </uglytrees>

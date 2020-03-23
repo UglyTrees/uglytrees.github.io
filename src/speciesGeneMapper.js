@@ -29,7 +29,8 @@
 
 function initMapper(){
 
-
+	SPECIES_TO_GENE_MAPPER = null;
+	UNMAPPED_GENE_LABELS = [];
 
 
 	var splitBy = function(speciesLabel, geneLabel, index, delimiter) {
@@ -65,22 +66,192 @@ function initMapper(){
 }
 
 
+function resetSpeciesToGeneMapper(){
+	SPECIES_TO_GENE_MAPPER = null;
+	UNMAPPED_GENE_LABELS = [];
+}
 
 
-// Attempts to map a gene tree to a species tree, or returns an error message
+
+
+// Builds a map
 function mapGeneTreeToSpeciesTree(g, geneLeaves, speciesLeaves){
 	
+	
+	// If the mapper is empty, automatically detect one
+	var success = false;
+	if (SPECIES_TO_GENE_MAPPER == null) {
+		success = automaticallyDetectMapping(g, geneLeaves, speciesLeaves);
+	}
+	
+	
+	// Otherwise, try to map from the existing mappings
+	if (!success) {
+		UNMAPPED_GENE_LABELS = checkIfMappingApplies(SPECIES_TO_GENE_MAPPER, UNMAPPED_GENE_LABELS, g, geneLeaves);
+		if (UNMAPPED_GENE_LABELS.length == 0) success = true;
+	}
+	
+	
+	// If this has failed, prompt the user
+	if (!success) {
+		openMapperDialog(SPECIES_TO_GENE_MAPPER, UNMAPPED_GENE_LABELS);
+	}
+	
+
+	return success;
+	
+}
 
 
+// Apply the current mapping to the species and gene tree nodes
+function applyTheMapping(speciesLeaves, geneTrees) {
+	
+	
 	// Reset mappings
 	for (var i = 0; i < speciesLeaves.length; i ++){
 		var species_leaf = speciesLeaves[i];
 		species_leaf.branchToGeneNodeMap[g] = {};
 		species_leaf.nodeToGeneBranchMap[g] = {};
 	}
+
+	for (var g = 0; g < geneTrees.length; g ++){
+			
+		var geneTree = geneTrees[g];
+		for (var j = 0; j < geneTree.nodeList.length; j ++){
+			var node = geneTree.nodeList[j];
+			node.speciesNodeMap = null;
+		}
+	}
+	
+	
+	for (var speciesLabel in SPECIES_TO_GENE_MAPPER){
+		
+		
+		// Get the species leaf object
+		var species_leaf = null;
+		for (var i = 0; i < speciesLeaves.length; i ++){
+			if (speciesLeaves[i].label == speciesLabel) {
+				species_leaf = speciesLeaves[i];
+				break;
+			}
+		}
+		
+		
+		var geneLabels = SPECIES_TO_GENE_MAPPER[speciesLabel];
+		
+		// For each gene tree
+		for (var g = 0; g < geneTrees.length; g ++){
+			
+			var geneTree = geneTrees[g];
+			species_leaf.branchToGeneNodeMap[g] = [];
+			species_leaf.nodeToGeneBranchMap[g] = [];
+			
+			// For each leaf mapped to this species
+			for (var i = 0; i < geneLabels.length; i ++){
+				var geneLabel = geneLabels[i];
+				
+				
+				// Get the gene leaf object
+				var gene_leaf = null;
+				for (var j = 0; j < geneTree.nodeList.length; j ++){
+					var node = geneTree.nodeList[j];
+					if (node.children.length != 0) continue;
+					if (node.label == geneLabel){
+						gene_leaf = node;
+						break;
+					}
+					
+				}
+				
+				// Apply
+				if (gene_leaf != null) {
+					gene_leaf.speciesNodeMap = species_leaf;
+					species_leaf.branchToGeneNodeMap[g][gene_leaf.id] = gene_leaf;
+					species_leaf.nodeToGeneBranchMap[g][gene_leaf.id] = gene_leaf;
+					
+					
+					
+				}
+
+				
+				
+			}
+			
+						
+
+			
+		
+	
+		}
+
+	}
+	
+	return true;
+}
+
+
+// Checks if the gene to species tree mapper is valid
+// returns a list of gene leaves which can not be mapped
+function checkIfMappingApplies(mapper, unmappedGeneLabels, g, geneLeaves){
+	
+
+	
+	// Ensure that each gene leaf maps to exactly one species list
 	for (var j = 0; j < geneLeaves.length; j ++) {
 		var gene_leaf = geneLeaves[j];
-		gene_leaf.speciesNodeMap = null;
+
+
+		// How many species is this mapped to?
+		var numMapped = 0;
+		for (var speciesLabel in SPECIES_TO_GENE_MAPPER){
+
+			var geneLabels = SPECIES_TO_GENE_MAPPER[speciesLabel];
+			for (var i = 0; i < geneLabels.length; i ++){
+				var geneLabel = geneLabels[i];
+				if (geneLabel == gene_leaf.label) {
+					numMapped ++;
+					break;
+				}
+			}
+			
+			if (numMapped > 1) break;
+
+		}
+		
+		if (numMapped == 0) {
+			unmappedGeneLabels.push(gene_leaf.label);
+			//console.log(gene_leaf.label + " is unmapped");
+		}
+		if (numMapped > 1) console.log("Error:", gene_leaf.label, "is mapped to more than one species");
+		
+		
+	}
+	
+	unmappedGeneLabels.sort();
+	unmappedGeneLabels.unique();
+	return unmappedGeneLabels;
+	
+	
+}
+
+
+
+Array.prototype.unique = function() {
+  return this.filter(function (value, index, self) { 
+    return self.indexOf(value) === index;
+  });
+}
+
+
+// Attempts to map a gene tree to a species tree, or returns an error message
+function automaticallyDetectMapping(g, geneLeaves, speciesLeaves){
+	
+
+
+	// Reset mappings
+	SPECIES_TO_GENE_MAPPER = {};
+	for (var i = 0; i < speciesLeaves.length; i ++){
+		SPECIES_TO_GENE_MAPPER[speciesLeaves[i].label] = [];
 	}
 
 
@@ -141,12 +312,15 @@ function mapGeneTreeToSpeciesTree(g, geneLeaves, speciesLeaves){
 				// Check that this gene taxon can be mapped to 1 and only 1 species taxon
 				if (geneMappedTo.length == 1){
 
-					//console.log(gene_leaf.label, "mapped to", species_leaf.label);
 					var species_leaf = geneMappedTo[0];
+					/*
 					species_leaf.branchToGeneNodeMap[g][gene_leaf.id] = gene_leaf;
 					species_leaf.nodeToGeneBranchMap[g][gene_leaf.id] = gene_leaf;
 					gene_leaf.speciesNodeMap = species_leaf;
-
+					*/
+					SPECIES_TO_GENE_MAPPER[species_leaf.label].push(gene_leaf.label);
+					
+					
 
 				}else{
 
@@ -187,6 +361,10 @@ function mapGeneTreeToSpeciesTree(g, geneLeaves, speciesLeaves){
 	}
 
 
+	return mappedSuccessfully;
+
+
+	/*
 	if (mappedSuccessfully) {
 		return "";
 
@@ -194,7 +372,7 @@ function mapGeneTreeToSpeciesTree(g, geneLeaves, speciesLeaves){
 		return `<b>Unable to automatically map tree to the species tree.</b>  Please ensure that the species labels substrings of the gene labels, (perhaps also delimited by '_', '-', or '.'), and ensure that each gene taxon maps to only one species taxon. See <a style="color:black" href="about/#mapping">example</a>.`;
 		
 	}
-
+	*/
 
 }
 

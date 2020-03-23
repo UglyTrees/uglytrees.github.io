@@ -185,13 +185,13 @@ function parseGeneTree(e, util_file, fromTemplate = false){
 		// Mapping
 		if (SPECIES_TREES_ALL != null && SPECIES_TREES_ALL.length > 0) {
 			var speciesLeaves = getLeaves(SPECIES_TREES_ALL[0]);
-			var mappingErrorMessage = mapGeneTreeToSpeciesTree(g, getLeaves(trees[0]), speciesLeaves);
-			if (mappingErrorMessage != ""){
-				$("#renderTreesBtn").addClass("disabled");
-				$("#fileUpload_" + g + " .userMsg").html("<b>Error:</b> " + mappingErrorMessage);
+			var mappingSuccess = mapGeneTreeToSpeciesTree(g, getLeaves(trees[0]), speciesLeaves);
+			if (!mappingSuccess){
+				//$("#renderTreesBtn").addClass("disabled");
+				$("#fileUpload_" + g + " .userMsg").html("Could not find an automatic mapping. User attention needed.");
 				$("#fileUpload_" + g + " .userMsg").addClass("noMapError");
 				$("#fileUpload_" + g + " .loader").remove();
-				return;
+				//return;
 			}
 		}
 
@@ -254,25 +254,25 @@ function mapAllGeneTreesToSpeciesTree(speciesLeaves, geneTrees){
 		var leaves = getLeaves(geneTree);
 
 		// Map the leaves to species leaves
-		var mappingErrorMessage = mapGeneTreeToSpeciesTree(g, leaves, speciesLeaves);
-		if (mappingErrorMessage != "") {
-			$("#fileUpload_" + g + " .userMsg").html("<b>Error:</b> " + mappingErrorMessage);
+		var mappingSuccess = mapGeneTreeToSpeciesTree(g, leaves, speciesLeaves);
+		if (!mappingSuccess) {
+			$("#fileUpload_" + g + " .userMsg").html("Could not find an automatic mapping. User attention needed");
 			$("#fileUpload_" + g + " .userMsg").addClass("noMapError");
 			successful = false;
-			$("#renderTreesBtn").addClass("disabled");
+			//$("#renderTreesBtn").addClass("disabled");
 		}else{
 			$("#fileUpload_" + g + " .noMapError").html("File successfully parsed");
 			$("#fileUpload_" + g + " .noMapError").removeClass("noMapError");
 		}
 
 	}
-
-
+	
+	
 	if (successful) $("#renderTreesBtn").removeClass("disabled");
 	else uploadNewFiles();
-
+	
 	return successful;
-
+	
 }
 
 
@@ -291,6 +291,8 @@ function removeFile(g){
 		console.log("Removing", $(".noMapError"). html());
 		$(".noMapError").html("File successfully parsed");
 		$(".noMapError").removeClass("noMapError");
+		
+		resetSpeciesToGeneMapper();
 
 	}
 	else if (g == -2){
@@ -366,7 +368,201 @@ function getLeaves(tree) {
 		}
 	}
 	return leaves;
+
 }
+
+
+
+function openMapperDialog(mapper = SPECIES_TO_GENE_MAPPER, unmapped = UNMAPPED_GENE_LABELS) {
+	
+		
+	// Do not open it twice
+	//if ($("#geneSpeciesMapperTable").length > 0) return;
+	
+	//unmapped.unique();
+
+		
+		
+	closeDialogs();
+	$("#innerBody").css("opacity", 0.5);
+		
+
+	
+	var html = `<div style="overflow-y:scroll; max-height: 500px">
+					
+						<table id="geneSpeciesMapperTable">
+							<tr>
+								<th>Species</th>
+								<th>Individual</th>
+							</tr>
+		
+						</table>
+						
+						
+						
+
+				</div>
+				<div>
+				
+					<br><div id="mapperMessage"></div>
+					Drag and drop gene tree taxa to change the mapping. When you are satisfied press Save.
+				</div>`;
+			
+			
+	//$("body").append(getdialogTemplate("Save As", html));
+	var node = createElementFromHTML(getdialogTemplate("Gene to Species Node Mapping", html, "Save", '"finishMapping()"'));      
+	document.body.appendChild(node);
+	verifyMappingGUI(unmapped.length);
+	
+	openDialog();
+	
+	
+	
+	// Unclassified species
+	if (unmapped.length > 0) {
+		
+		
+
+		var row = `
+			<tr id="speciesUnclassifiedRow">
+				<td style="vertical-align:middle; display:table-cell;">
+					<i> Unclassified &#x274C; </i>
+				</td>
+				<td class="geneTD">`;
+				
+		for (var i = 0; i < unmapped.length; i ++){
+			row += `<div class="geneDraggable" label="` + unmapped[i] + `">` + unmapped[i] + `</div>`;
+		}
+		
+		
+		row += `</td></tr>`;	
+		$("#geneSpeciesMapperTable").append(row);
+		
+
+	}		
+	
+	
+	// Classified species
+	for (var speciesLabel in mapper) {
+
+		var geneLabels = mapper[speciesLabel];
+		var row = `
+			<tr class="geneDroppable" species="` + speciesLabel + `">
+				<td style="vertical-align:middle; display:table-cell;">
+					` + speciesLabel + `
+				</td>
+				<td class="geneTD">`;
+				
+		for (var i = 0; i < geneLabels.length; i ++){
+			row += `<div class="geneDraggable" label="` + geneLabels[i] + `">` + geneLabels[i] + `</div>`;
+		}
+		
+		
+		row += `</td></tr>`;	
+		$("#geneSpeciesMapperTable").append(row);
+		
+
+	}		
+	
+	
+
+	$(".geneDraggable").draggable({
+		containment: '#geneSpeciesMapperTable', 
+		stop: function (event, ui) {
+		
+				$(this).removeClass("ui-draggable-dragging");
+		
+				if ($(this).hasClass("relocated")) {
+					$(this).removeClass("relocated");
+					return;
+				}
+				
+				
+				// The user lost it. 
+				$(this).css({top: "", left: ""});
+				dragged.hide(0);
+				dragged.fadeIn(200);
+				
+			
+			}
+		
+	});
+	
+	$('.geneDroppable').droppable({
+		drop: function (event, ui) {
+			var parenttd  = $(this).attr('id');
+			var dragged = $(ui.draggable);
+			if (dragged.attr("label") == null) return;
+			dragged.css({top: "", left: ""});
+			dragged.removeClass("ui-draggable-dragging");
+			dragged.addClass("relocated");
+			$(this).find(".geneTD").append(dragged);
+			dragged.hide(0);
+			dragged.fadeIn(200);
+			
+			
+			// Recount the number of drops
+			verifyMappingGUI();
+		}
+
+	});
+	
+	
+	
+}
+
+
+function verifyMappingGUI(numUnmapped = null) {
+	
+	// Count
+	if (numUnmapped == null) {
+		numUnmapped = $("#speciesUnclassifiedRow").find(".geneTD").children().length; 
+	}
+	var msg = numUnmapped == 0 ? "Each gene tree leaf is successfully mapped to exactly one species leaf &#9989;" :
+									 "There are " + numUnmapped + " gene taxa which require your attention 	&#x274C;";
+	$("#mapperMessage").html(msg);
+	
+	
+	if (numUnmapped == 0) $("#dialogBtn").removeClass("disabled");
+	else $("#dialogBtn").addClass("disabled");
+	
+}
+
+// Read species to gene mapping from GUI and parse it
+function finishMapping() {
+	
+	var numUnmapped = $("#speciesUnclassifiedRow").find(".geneTD").children().length; 
+	if (numUnmapped > 0) return;
+	
+	
+	
+	
+	var geneDivs = $(".geneDraggable");
+	for (var i = 0; i < geneDivs.length; i ++){
+		
+		var ele = $(geneDivs[i]);
+		var geneLabel = ele.attr("label");
+		var speciesLabel = ele.parent().parent().attr("species");
+		
+		//console.log(geneLabel, speciesLabel);
+		var alreadyMapped = false;
+		for (var geneMapped in SPECIES_TO_GENE_MAPPER[speciesLabel]){
+			if (geneMapped == geneLabel) {
+				alreadyMapped = true;
+				break;
+			}
+		}
+		
+		if (!alreadyMapped) SPECIES_TO_GENE_MAPPER[speciesLabel].push(geneLabel);
+		
+	}
+	
+	UNMAPPED_GENE_LABELS = [];
+	closeDialogs();
+	$("#renderTreesBtn").removeClass("disabled");
+	
+}
+
 
 
 
@@ -409,6 +605,7 @@ function openDownloadDialog(){
 	var node = createElementFromHTML(getdialogTemplate("Save As", html));      
 	document.body.appendChild(node);
 	openDialog();
+	
 }
 
 
@@ -454,6 +651,8 @@ function openDialog(){
 		//$(".dialog_inner").trigger("create");
 		//$(".numberinput").trigger("create");
 		
+		$(".dialog").draggable();
+		
 		$(".dialog_inner").click(function(event){
 			//console.log("THE PROPAGATION HAS BEEN SEVERED");
 			event.stopPropagation();
@@ -488,7 +687,7 @@ function closeDialogs(){
 	
 
 
-function getdialogTemplate(title, desc, disclaimer = ""){
+function getdialogTemplate(title, desc, buttonName = "OK", resolve = '"closeDialogs()"' ){
 	return `
 			<div id="operatorDialog" class="dialog">
 				<div class="dialog_inner">
@@ -497,8 +696,7 @@ function getdialogTemplate(title, desc, disclaimer = ""){
 					<div class="dialogDesc">` + desc + `</div><br>
 					
 					
-					<span class="button" style="float:right" onclick="closeDialogs()">OK</span><br>
-					<span class="disclaimerDesc">` + disclaimer + `</span>
+					<span id="dialogBtn" class="button" style="float:right" onclick=` + resolve + `>` + buttonName + `</span><br>
 				</div>
 			</div>
 
@@ -527,7 +725,7 @@ function downloadTree(){
 			case "svg":
 				console.log("Downloading as svg with w=", width, ", h=", height);
 
-				saveSvg(document.getElementById("downloadSVG"), "UglyTrees.svg")
+				saveSvg(document.getElementById("downloadSVG"), "UT.svg")
 			
 				break;
 				
@@ -540,7 +738,7 @@ function downloadTree(){
 				break;
 
 				svg.toBlob(function(blob) {
-					saveAs(blob, "UglyTrees.png");
+					saveAs(blob, "UT.png");
 				}, "image/png");
 			
 				break;

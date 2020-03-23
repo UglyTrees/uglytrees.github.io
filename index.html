@@ -367,6 +367,12 @@
 			
 			function userSaysDraw(){
 
+
+				if (UNMAPPED_GENE_LABELS.length > 0) {
+					openMapperDialog(); 
+					return;
+				}
+
 				if (READY_TO_DRAW) return;
 
 				READY_TO_DRAW = true;
@@ -490,10 +496,13 @@
 
 
 
-				SPECIES_TREE.successfullyMapped = mapAllGeneTreesToSpeciesTree(SPECIES_LEAVES, GENE_TREES);
+				SPECIES_TREE.successfullyMapped = applyTheMapping(SPECIES_LEAVES, GENE_TREES);
 				if (!SPECIES_TREE.successfullyMapped){
+					uploadNewFiles();
 					return;
 				}
+
+				console.log("mapped", SPECIES_TREE);
 
 
 				$("#fileUploading").hide(0);
@@ -1827,6 +1836,10 @@
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('viewNav')" title="Configure general visual settings">View</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('speciesTreeSideNav')" title="Configure species trees settings">Species tree</div>
 								<div class="textbutton left showAfterTreeUpload" onclick="openSettings('geneTreeSideNav')" title="Configure gene trees settings">Gene trees</div>
+								<div class="textbutton left showAfterTreeUpload" onclick="openMapperDialog()" title="Configure the mapping between gene and species leaves">Map</div>
+								
+								
+								
 							</div>
 						
 						</li>
@@ -2018,8 +2031,8 @@
 
 									<td style="text-align: center;">
 										<div >
-											<span title="Play" id="playBtn" class="arrow" style="font-size:150%; margin-left:0.3em" onclick="play()">&#9654;</span> 
-											<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; margin-left:0.3em; display:none" onclick="stop()">&#9632;</span> 
+											<span title="Play" id="playBtn" class="arrow" style="font-size:150%; margin-left:0.3em;" onclick="play()">&#9654;</span> 
+											<span title="Stop" id="stopBtn" class="arrow" style="font-size:180%; margin-left:0.15em;  display:none" onclick="stop()">&#9632;</span> 
 											
 										</div>
 									</td>

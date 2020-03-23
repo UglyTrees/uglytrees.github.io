@@ -193,20 +193,7 @@
 
 									<div class="aboutsection inner">
 
-										<h3>1.2) Downloading the figure</h3>
-
-										<div>
-											The figure can be downloaded as an SVG by opening the <span class="mockMenuBtn">Save As</span> dialog at the top of the main page.   <br> <br>
-
-										</div>
-
-									</div>
-
-
-
-									<div class="aboutsection inner">
-
-										<h3>1.3) Configuring visual settings </h3>
+										<h3>1.2) Configuring visual settings </h3>
 
 										<div>
 
@@ -236,6 +223,20 @@
 										</div>
 
 									</div>
+									
+									
+									
+									<div class="aboutsection inner">
+
+										<h3>1.3) Downloading the figure</h3>
+
+										<div>
+											The figure can be downloaded as an SVG by opening the <span class="mockMenuBtn">Save As</span> dialog at the top of the main page.   <br> <br>
+
+										</div>
+
+									</div>
+
 
 
 
@@ -366,7 +367,7 @@
 								In order to embed one (or more) gene trees inside a species tree, a mapping function between species leaves and gene leaves is required.
 								This function is automatically detected by UT by comparing species and gene leaf labels. The mapping algorithm attempts to map each gene leaf 								to exactly one species. This is achieved by substring comparison, and if that fails, the labels are
 								split using a range of delimiters (<span class="code">_</span>, <span class="code">-</span>, and <span class="code">.</span>). If a mapping cannot
-								be found, the user is notified. Consider the following (simulated) nexus files:
+								be found, the user is prompted to provide one. Mappings can also be tweaked by selecting <span class="mockMenuBtn">Map</span> from the top menu. Consider the following (simulated) nexus files:
 
 
 								
@@ -426,7 +427,11 @@
 								<span class="code">horse</span>, <span class="code">seahorse_1</span> and <span class="code">seahorse_7</span>
 								are mapped to <span class="code">seahorse</span>, etc. The use of <span class="code">_</span> delimiters ensures that
 								each gene is mapped to exactly 1 species, by preventing  <span class="code">horse_1</span> from being mapped to <span class="code">seahorse</span>.
-								<br><br>If UT is unable to find a mapping, consider changing the gene/species labels to something like the above example.
+								<br><br>
+								
+								
+								If UT is unable to find an automatic mapping, consider changing the gene/species labels to something like the above example. This will make 
+								subsequent file uploads easier for you.
 
 
 
