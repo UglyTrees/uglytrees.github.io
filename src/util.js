@@ -534,7 +534,9 @@ function finishMapping() {
 	var numUnmapped = $("#speciesUnclassifiedRow").find(".geneTD").children().length; 
 	if (numUnmapped > 0) return;
 	
-	
+	for (var speciesLabel in SPECIES_TO_GENE_MAPPER){
+		SPECIES_TO_GENE_MAPPER[speciesLabel] = [];
+	}
 	
 	
 	var geneDivs = $(".geneDraggable");
@@ -544,16 +546,7 @@ function finishMapping() {
 		var geneLabel = ele.attr("label");
 		var speciesLabel = ele.parent().parent().attr("species");
 		
-		//console.log(geneLabel, speciesLabel);
-		var alreadyMapped = false;
-		for (var geneMapped in SPECIES_TO_GENE_MAPPER[speciesLabel]){
-			if (geneMapped == geneLabel) {
-				alreadyMapped = true;
-				break;
-			}
-		}
-		
-		if (!alreadyMapped) SPECIES_TO_GENE_MAPPER[speciesLabel].push(geneLabel);
+		SPECIES_TO_GENE_MAPPER[speciesLabel].push(geneLabel);
 		
 	}
 	
