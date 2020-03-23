@@ -117,6 +117,7 @@ function applyTheMapping(speciesLeaves, geneTrees) {
 	for (var g = 0; g < geneTrees.length; g ++){
 			
 		var geneTree = geneTrees[g];
+		if (geneTree == null) continue;
 		for (var j = 0; j < geneTree.nodeList.length; j ++){
 			var node = geneTree.nodeList[j];
 			node.speciesNodeMap = null;
@@ -143,6 +144,7 @@ function applyTheMapping(speciesLeaves, geneTrees) {
 		for (var g = 0; g < geneTrees.length; g ++){
 			
 			var geneTree = geneTrees[g];
+			if (geneTree == null) continue;
 			species_leaf.branchToGeneNodeMap[g] = [];
 			species_leaf.nodeToGeneBranchMap[g] = [];
 			
