@@ -554,6 +554,7 @@ function finishMapping() {
 	closeDialogs();
 	$("#renderTreesBtn").removeClass("disabled");
 	
+	
 }
 
 
