@@ -138,6 +138,8 @@ function applyTheMapping(speciesLeaves, geneTrees) {
 		}
 		
 		
+		if (species_leaf == null) continue;
+		
 		var geneLabels = SPECIES_TO_GENE_MAPPER[speciesLabel];
 		
 		// For each gene tree

@@ -285,7 +285,7 @@ function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 	if (node.children.length == 0){
 
 		var cx = 0;
-		var cy = 0;
+		var cy = node.height;
 
 		var Ntop = node.populationsizeTop;
 		var Nbottom = node.populationsizeBottom;
@@ -481,7 +481,7 @@ function animateASpeciesTree(speciesGroup, textGroup, tree, treename, node, anim
 	var callback = node.parent == null ? rootCallback : function() { };
 	var progress = node.parent == null ? rootProgress : function() { };
 	animateSpeciesBranch(speciesGroup, tree, node, "P", styles, callback, progress, animation_time);
-	animateSpeciesBranch(textGroup, tree, node, "L", styles,  function() { },  function() { }, animation_time);
+	if (node.label != null) animateSpeciesBranch(textGroup, tree, node, "L", styles,  function() { },  function() { }, animation_time);
 	
 	
 }
@@ -495,7 +495,7 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 
 	var ele = svg.find("#" + node.htmlID + "_" + branchLetter);
 	
-	if (ele.length == 0) return;
+	
 	
 
 	// Move branch parallelogram
@@ -515,27 +515,44 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 		
 		//console.log("fill", fill, node, node.annotation.pop);
 		
+		// Build it if it does not exist
+		if (ele.length == 0){
+			
+			drawSVGobj(svg, "polygon", {class: "specieshoverbranch", id: node.htmlID + "_P", 
+				points: points.join(" "), 
+				w0: strokeWidth,
+				fill: fill,
+				style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth}, "", true);		
 
 
-		ele.velocity("finish");
-		
-		var properties = {duration: duration, complete: callback, progress: progress};
-		//if (RECORDING) properties.easing = [30];
-		if (parseFloat(strokeWidth) == 0 || parseFloat(ele.css("stroke-width")) == strokeWidth) {
-			ele.velocity( {points: points.join(" ")}, properties );
-			ele.css("stroke-width", strokeWidth);
+			
 		}
-		else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, properties );
+
+		// Animate it
+		else {
+
+			ele.velocity("finish");
+			
+			var properties = {duration: duration, complete: callback, progress: progress};
+			//if (RECORDING) properties.easing = [30];
+			if (parseFloat(strokeWidth) == 0 || parseFloat(ele.css("stroke-width")) == strokeWidth) {
+				ele.velocity( {points: points.join(" ")}, properties );
+				ele.css("stroke-width", strokeWidth);
+			}
+			else ele.velocity( {points: points.join(" "), strokeWidth: strokeWidth}, properties );
 
 
+			
+			//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
+			//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
+			ele.css("stroke", stroke);
+			//ele.css("stroke-width", strokeWidth);
+			ele.css("fill", fill);
+			ele.css("opacity", styles.opacity / 100);
+			ele.attr("w0", strokeWidth);
+			
 		
-		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, stroke: stroke, strokeWidth: strokeWidth + "px" }, duration );
-		//ele.velocity( {x1: x1, x2: x2, y1: y1, y2: y2, strokeWidth: strokeWidth + "px"}, duration );
-		ele.css("stroke", stroke);
-		//ele.css("stroke-width", strokeWidth);
-		ele.css("fill", fill);
-		ele.css("opacity", styles.opacity / 100);
-		ele.attr("w0", strokeWidth);
+		}
 
 
 	}
@@ -548,12 +565,31 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + 5;
 
 		//ele.attr("transform", "rotate(90, " + labelX + ", " + labelY + ")");
+		
+		// Build it if it does not exist
+		if (ele.length == 0){
+			
+			drawSVGobj(svg, "text", {class: "labelText speciesText", id: node.htmlID + "_L", 
+					x: labelX, 
+					y: labelY, 
+					transform: "rotate(90, " + labelX + ", " + labelY + ")",
+					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, node.label);
 
-		ele.velocity( {x: labelX, y: labelY, transform: "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
-		ele.css("font-size", styles.fontSize);
+			
+		}
+		
+		// Animate it
+		else {
 
+			ele.velocity( {x: labelX, y: labelY, transform: "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
+			ele.css("font-size", styles.fontSize);
+
+
+		}
 		
 	}
+	
+	ele.removeClass("flagged");
 	
 
 
@@ -694,7 +730,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 		
 		
 		var cx = xIndex * widthScale + speciesNode.coords.bottomLeft.x;
-		var cy = 0;
+		var cy = node.height;
 		
 		//console.log("Mapped", node.id, "to", mappedPos, widthScale, (mappedPos.index + 0.5) * widthScale);
 
@@ -1082,6 +1118,9 @@ function animateAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree,
 		animateGeneBranch(svg, textGroup, "T", speciesTree, node, geneTreeNum, col, radius, animation_time, cb, styles.opacity, styles.fontSize);
 	}
 	
+	
+
+	
 }
 
 
@@ -1223,7 +1262,7 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 	
 	}
 
-
+	ele.removeClass("flagged");
 	ele.css("opacity", opacity / 100);
 
 
