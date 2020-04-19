@@ -602,7 +602,7 @@
 
 
 				// Get the maximum pixel length of a species label
-				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
+				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE, SPECIES_TIP_LABEL);
 
 
 
@@ -1622,6 +1622,35 @@
 				<input id="SPECIES_LABEL_FONT_SIZE" class="slider" onchange="setVisualParams();" type="range" min="0" max="60" value="0" step="0.5">
 				Label font size (<span></span> px)
 			</div>
+			
+			
+			<div class="sideNavSetting" title="Species tree internal node labels">
+				Tip labels
+				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_TIP_LABEL" onchange="setVisualParams();" title="Tree annotation to print on leaf nodes.">
+						<option value="_none">None</option>
+						<option value="Label">Label</option>
+						
+				</select>
+
+			</div>
+			
+			
+			<div class="sideNavSetting" title="Species tree internal node labels">
+				Internal node labels
+				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_INTERNAL_LABEL" onchange="setVisualParams();" title="Tree annotation to print on internal nodes.">
+						<option value="_none">None</option>
+						<option value="Label">Label</option>
+						
+				</select>
+
+			</div>
+			
+			<div class="sideNavSetting" title="Number of significant figures to round numeric text labels to">
+				Round numbers to
+				<input type="number" step="1" min="1" class="numberinput cranberry" onclick="$(this).select()" id="LABEL_ROUNDING_SF" style="width:5em;" value="1" onchange="setVisualParams();"> sf
+			</div>
+			
+
 
 			<hr>
 			

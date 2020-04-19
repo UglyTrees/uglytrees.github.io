@@ -115,6 +115,35 @@ function scaleTreeRanges(tree, t_minX, t_minY, t_maxX, t_maxY, xMax = null, yMax
 	
 }
 
+
+// Node text
+function whatToWrite(node) {
+	
+	// Leaf or internal?
+	var attr = node.children.length == 0 ? SPECIES_TIP_LABEL : SPECIES_INTERNAL_LABEL;
+	
+
+	if (attr == "_none") return "";
+	if (attr == "Label") return node.label;
+	
+	
+	var val = node.annotation[attr];
+	var annotation = getAnnotation(val);
+	
+	if (annotation ==null ) return "";
+
+	// Discrete
+	if (annotation.format == "nominal") return val;
+	
+	// Numerical. Round it
+	return roundToSF(val, LABEL_ROUNDING_SF-1); 
+	
+	
+
+	
+	
+}
+
 // Returns a function for calculating the line width of a branch
 function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false, isRadius = false){
 	
@@ -241,16 +270,22 @@ function planColour(tree, annotation_name, backgroundCol, isGeneTree = false){
 
 
 // Iterates through a tree and gets the maximum size of a label, given the font 
-function getMaximumLabelTextSizeOfTree(node, fontSize){
+function getMaximumLabelTextSizeOfTree(node, fontSize, attr){
 
 	
+	if (fontSize == 0 || attr == "_none") return 0;
+	
+	//console.log("attr", attr);
+	
 	if (node.children.length == 0){
-		return getSizeOfText(node.label, fontSize);
+		
+		if (attr == "Label") return getSizeOfText(node.label, fontSize);
+		else return getSizeOfText(node.annotation[attr], fontSize);
 	}
 
 	var maxTextSize = getSizeOfText(node.label, fontSize);
-	maxTextSize = Math.max(maxTextSize,  getMaximumLabelTextSizeOfTree(node.children[0], fontSize));
-	maxTextSize = Math.max(maxTextSize,  getMaximumLabelTextSizeOfTree(node.children[1], fontSize));
+	maxTextSize = Math.max(maxTextSize,  getMaximumLabelTextSizeOfTree(node.children[0], fontSize, attr));
+	maxTextSize = Math.max(maxTextSize,  getMaximumLabelTextSizeOfTree(node.children[1], fontSize, attr));
 	return maxTextSize;
 
 
@@ -387,18 +422,26 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 
 
 
-
-	if (node.label != null) {
+	var toWrite = whatToWrite(node);
+	if (toWrite != "" && toWrite != null) {
 
 
 		// Label
 		var labelX = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
-		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + 5;
-		drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: id + "_L", 
+		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + (node.children.length == 0 ? 5 : -10);
+		
+		if (node.children.length == 0) {
+			drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: id + "_L", 
 					x: labelX, 
 					y: labelY, 
 					transform: "rotate(90, " + labelX + ", " + labelY + ")",
-					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, node.label);
+					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, toWrite);
+		}else{
+			drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: id + "_L", 
+					x: labelX, 
+					y: labelY, 
+					style: "text-anchor:middle; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, toWrite);
+		}
 
 	}
 	
@@ -481,7 +524,7 @@ function animateASpeciesTree(speciesGroup, textGroup, tree, treename, node, anim
 	var callback = node.parent == null ? rootCallback : function() { };
 	var progress = node.parent == null ? rootProgress : function() { };
 	animateSpeciesBranch(speciesGroup, tree, node, "P", styles, callback, progress, animation_time);
-	if (node.label != null) animateSpeciesBranch(textGroup, tree, node, "L", styles,  function() { },  function() { }, animation_time);
+	animateSpeciesBranch(textGroup, tree, node, "L", styles,  function() { },  function() { }, animation_time);
 	
 	
 }
@@ -562,29 +605,44 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 		
 
 		var labelX = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
-		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + 5;
+		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + (node.children.length == 0 ? 5 : -10);
 
 		//ele.attr("transform", "rotate(90, " + labelX + ", " + labelY + ")");
 		
 		// Build it if it does not exist
-		if (ele.length == 0){
-			
-			drawSVGobj(svg, "text", {class: "labelText speciesText", id: node.htmlID + "_L", 
-					x: labelX, 
-					y: labelY, 
-					transform: "rotate(90, " + labelX + ", " + labelY + ")",
-					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, node.label);
+		var toWrite = whatToWrite(node);
+		if (toWrite != "" && toWrite != null) {
+			if (ele.length == 0){
+				
 
-			
-		}
+
+				if (node.children.length == 0) {
+					drawSVGobj(svg, "text", {class: "labelText speciesText", id: node.htmlID + "_L", 
+							x: labelX, 
+							y: labelY, 
+							transform: "rotate(90, " + labelX + ", " + labelY + ")",
+							style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, toWrite);
+				} else {
+					drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: id + "_L", 
+						x: labelX, 
+						y: labelY, 
+						style: "text-anchor:middle; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, toWrite);
+				}
+			}
+
+			// Animate it
+			else {
+
+					ele.velocity( {x: labelX, y: labelY, transform: "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
+					ele.css("font-size", styles.fontSize);
+					ele.html(toWrite);
+					console.log("Writing", toWrite);
+
+				}
+			}
 		
-		// Animate it
-		else {
-
-			ele.velocity( {x: labelX, y: labelY, transform: "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
-			ele.css("font-size", styles.fontSize);
-
-
+		else{
+				ele.remove();
 		}
 		
 	}
