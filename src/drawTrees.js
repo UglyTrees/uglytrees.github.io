@@ -428,7 +428,7 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 
 		// Label
 		var labelX = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
-		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + (node.children.length == 0 ? 5 : -10);
+		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + (node.children.length == 0 ? 5 : -5);
 		
 		if (node.children.length == 0) {
 			drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: id + "_L", 
@@ -605,7 +605,7 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 		
 
 		var labelX = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
-		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + (node.children.length == 0 ? 5 : -10);
+		var labelY = tree.scaleY_fn(node.coords.bottomRight.y) + (node.children.length == 0 ? 5 : -5);
 
 		//ele.attr("transform", "rotate(90, " + labelX + ", " + labelY + ")");
 		
