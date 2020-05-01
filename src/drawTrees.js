@@ -128,12 +128,15 @@ function whatToWrite(node) {
 	
 	
 	var val = node.annotation[attr];
-	var annotation = getAnnotation(val);
+	var annotation = getAnnotation(attr);
+
+	if (annotation == null ) return "";
 	
-	if (annotation ==null ) return "";
+	var discrete = annotation.format == "nominal";
+	//console.log("discrete?", annotation, discrete, attr, node, val);
 
 	// Discrete
-	if (annotation.format == "nominal") return val;
+	if (discrete) return val;
 	
 	// Numerical. Round it
 	return roundToSF(val, LABEL_ROUNDING_SF-1); 
@@ -612,10 +615,8 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 		// Build it if it does not exist
 		var toWrite = whatToWrite(node);
 		if (toWrite != "" && toWrite != null) {
-			if (ele.length == 0){
-				
-
-
+			if (true || ele.length == 0){
+				ele.remove();
 				if (node.children.length == 0) {
 					drawSVGobj(svg, "text", {class: "labelText speciesText", id: node.htmlID + "_L", 
 							x: labelX, 
@@ -623,26 +624,31 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 							transform: "rotate(90, " + labelX + ", " + labelY + ")",
 							style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, toWrite);
 				} else {
-					drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: id + "_L", 
+					drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: node.htmlID + "_L", 
 						x: labelX, 
 						y: labelY, 
 						style: "text-anchor:middle; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, toWrite);
 				}
+				
+
+				
 			}
 
 			// Animate it
 			else {
 
-					ele.velocity( {x: labelX, y: labelY, transform: "rotate(90, " + labelX + ", " + labelY + ")"}, duration );
+					ele.velocity("finish");
+					ele.velocity( {x: labelX }, duration );
 					ele.css("font-size", styles.fontSize);
 					ele.html(toWrite);
-					console.log("Writing", toWrite);
+					
 
-				}
+
+
 			}
 		
-		else{
-				ele.remove();
+		}else{
+			ele.remove();
 		}
 		
 	}

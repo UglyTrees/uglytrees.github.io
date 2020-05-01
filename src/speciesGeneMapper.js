@@ -416,7 +416,7 @@ function getTreeAnnotations(tree, speciesTree = true){
 		var isNumerical = true;
 		var allInteger = true;
 		
-		console.log(ann_name);
+		//console.log(ann_name);
 		
 		for (var i = 0; i < tree.nodeList.length; i ++){
 			

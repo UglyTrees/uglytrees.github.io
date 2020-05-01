@@ -489,21 +489,22 @@ function selectAllGeneTrees(){
 
 
 // Open the colour picker container under a gene tree setting
-function openColourPicker(geneTreeNum){
-	
+function openColourPicker(geneTreeNum, annot = null){
+	if (annot == "null") annot = null;
 
-	var currentCol = getGeneTreeColour(geneTreeNum).toUpperCase();
+	var currentCol = getGeneTreeColour(geneTreeNum, annot).toUpperCase();
+	console.log("currentCol", currentCol);
 
 	
-	if ($("#colourpickerrow_" + geneTreeNum).length > 0) {
-		$("#colourpickerrow_" + geneTreeNum).hide(300, function(){
+	if ($(`.colourpickerrow[g="` + (annot == null ? geneTreeNum : annot) + `"]`).length > 0) {
+		$(`.colourpickerrow[g="` + (annot == null ? geneTreeNum : annot) + `"]`).hide(300, function(){
 			$(this).remove();
 		});
 		return;
 	}
 		
 	var colourPickHtml = `
-		<tr id="colourpickerrow_` + geneTreeNum + `" style="display:none" class="colourpickerrow">
+		<tr g="` + (annot == null ? geneTreeNum : annot) + `" style="display:none" class="colourpickerrow">
 			<td colspan=3>
 				<ul class="flex-container thicklines" style="font-size:100%;">`;			
 				
@@ -524,7 +525,7 @@ function openColourPicker(geneTreeNum){
 		if (col == "TRANSPARENT") addClass += " dashed";
 		colourPickHtml += `
 				<li class="flex-item">
-					<span class="colourbox ` + addClass + `" title="` + col + `" onclick="selectColour(this, '` + geneTreeNum + `');" style="background-color:` + col + `"></span>
+					<span class="colourbox ` + addClass + `" title="` + col + `" onclick="selectColour(this, '` + geneTreeNum + `', '` + annot + `');" style="background-color:` + col + `"></span>
 				</li>`;
 		
 	}		
@@ -532,7 +533,7 @@ function openColourPicker(geneTreeNum){
 	// Custom hex codes
 	colourPickHtml += `
 				<li class="flex-item" style="margin-left:10px" title="Enter hex code">
-					Hex code: <input id="geneColHexCode` + geneTreeNum + `" class="numberinput" onchange="selectColour(this, '` + geneTreeNum + `');" style="width:6em" value="#">
+					Hex code: <input id="geneColHexCode` + geneTreeNum + `" class="numberinput" onchange="selectColour(this, '` + geneTreeNum + `', '` + annot + ` ');" style="width:6em" value="#">
 				</li>`;
 	
 	colourPickHtml += `</ul></td></tr>`;
@@ -542,8 +543,9 @@ function openColourPicker(geneTreeNum){
 		$("#visualSettingsRow" + geneTreeNum).after(colourPickHtml);
 	}
 	else {
-		console.log(geneTreeNum, $("#" + geneTreeNum));
-		$("#" + geneTreeNum).after(colourPickHtml);
+		//console.log(geneTreeNum, $("#" + geneTreeNum));
+		//$("#" + geneTreeNum).after(colourPickHtml);
+		$(`.colourboxDiscrete[annotation="` + annot + `"]`).after(colourPickHtml);
 	}
 	
 	// If the current colour is not in the grid, then put it in text box
@@ -551,13 +553,16 @@ function openColourPicker(geneTreeNum){
 		$("#geneColHexCode" + geneTreeNum).val(currentCol);
 	}
 	
-	$("#colourpickerrow_" + geneTreeNum).show(300);
+	$(`.colourpickerrow[g="` + (annot == null ? geneTreeNum : annot) + `"]`).show(300);
 	
 	
 }
 
 
-function selectColour(col_ele, geneTreeNum){
+function selectColour(col_ele, geneTreeNum, annot = null){
+	
+	
+	if (annot == "null") annot = null;
 	
 	var col;
 	if ($(col_ele).hasClass("colourbox")){
@@ -568,9 +573,11 @@ function selectColour(col_ele, geneTreeNum){
 	
 	
 	
-	setGeneTreeColours(geneTreeNum, col);
+	setGeneTreeColours(geneTreeNum, annot, col);
 	
-	$("#colourpickerrow_" + geneTreeNum).hide(300, function(){
+	
+	
+	$(`.colourpickerrow[g="` + (annot == null ? geneTreeNum : annot) + `"]`).hide(300, function(){
 		$(this).remove();
 	});
 	
@@ -588,7 +595,7 @@ function getDefaultColour(index){
 
 
 // Get the colour of a gene tree
-function getGeneTreeColour(geneTreeNumber){
+function getGeneTreeColour(geneTreeNumber, annot = null){
 	
 	if (geneTreeNumber == parseFloat(geneTreeNumber)) {
 		var index = geneTreeNumber % GENE_TREE_COLOURS.length;
@@ -599,9 +606,8 @@ function getGeneTreeColour(geneTreeNumber){
 	else if (geneTreeNumber == "speciesBG") return rgbToHex(SPECIES_TREE_BG_COL);
 	else if (geneTreeNumber == "speciesTreeAnnotationMinCol") return rgbToHex(CURRENTLY_SELECTED_SPECIES_ANNOTATION.gradientMin);
 	else if (geneTreeNumber == "speciesTreeAnnotationMaxCol") return rgbToHex(CURRENTLY_SELECTED_SPECIES_ANNOTATION.gradientMax);
-	else if (geneTreeNumber.includes("speciesAnnotationDiscreteRow_")) {
-		var value = geneTreeNumber.split("_")[1];
-		return rgbToHex(CURRENTLY_SELECTED_SPECIES_ANNOTATION.discreteCols[value]);
+	else if (geneTreeNumber == "speciesAnnotationDiscreteRow") {
+		return rgbToHex(CURRENTLY_SELECTED_SPECIES_ANNOTATION.discreteCols[annot]);
 	}
 
 	return null;
@@ -610,7 +616,7 @@ function getGeneTreeColour(geneTreeNumber){
 
 
 // Set the colour a gene tree
-function setGeneTreeColours(geneTreeNumber, colour, updateAfter = true){
+function setGeneTreeColours(geneTreeNumber, annot, colour, updateAfter = true){
 	
 	
 	if (geneTreeNumber == parseFloat(geneTreeNumber)) {
@@ -630,11 +636,11 @@ function setGeneTreeColours(geneTreeNumber, colour, updateAfter = true){
 		updateSpeciesAnnotationPalette();
 	}
 	
-	else if (geneTreeNumber.includes("speciesAnnotationDiscreteRow_")) {
-		var value = geneTreeNumber.split("_")[1];
-		if (value != null) {
-			CURRENTLY_SELECTED_SPECIES_ANNOTATION.discreteCols[value] = colour;
-			$("#colourboxDiscrete_" + value).css("background-color", colour);
+	else if (geneTreeNumber == "speciesAnnotationDiscreteRow") {
+		
+		if (annot != null) {
+			CURRENTLY_SELECTED_SPECIES_ANNOTATION.discreteCols[annot] = colour;
+			$(`.colourboxDiscrete[annotation="` + annot + `"]`).css("background-color", colour);
 		}
 	}
 	
@@ -877,12 +883,12 @@ function selectSpeciesAnnotationSettings() {
 		// Render all nominal values
 		for (var val in annotation.discreteCols){
 			var col = rgbToHex(annotation.discreteCols[val]);
-			var html = `<tr id="speciesAnnotationDiscreteRow_` + val + `" class="sideNavSetting">
+			var html = `<tr annotation="` + val + `" class="speciesAnnotationDiscreteRow sideNavSetting">
 							<td style="width:2em">
 							</td>
 						
 							<td>
-								<span id="colourboxDiscrete_` + val + `" class="colourbox" title="Select colour" onclick='openColourPicker("speciesAnnotationDiscreteRow_` + val + `");' style="background-color:` + col + `"></span>
+								<span annotation="` + val + `" class="colourboxDiscrete colourbox" title="Select colour" onclick='openColourPicker("speciesAnnotationDiscreteRow", "` + val + `");' style="background-color:` + col + `"></span>
 							</td>
 							
 							<td>` + val + `</td>
