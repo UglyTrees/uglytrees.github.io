@@ -599,6 +599,7 @@ function getGeneTreeColour(geneTreeNumber, annot = null){
 	
 	if (geneTreeNumber == parseFloat(geneTreeNumber)) {
 		var index = geneTreeNumber % GENE_TREE_COLOURS.length;
+		
 		return rgbToHex(GENE_TREE_COLOURS[index]);
 	}
 
@@ -617,6 +618,7 @@ function getGeneTreeColour(geneTreeNumber, annot = null){
 
 // Set the colour a gene tree
 function setGeneTreeColours(geneTreeNumber, annot, colour, updateAfter = true){
+	
 	
 	
 	if (geneTreeNumber == parseFloat(geneTreeNumber)) {
@@ -658,6 +660,7 @@ function componentToHex(c) {
 
 function rgbToHex(rgb) {
 	
+
 
 	if (rgb.substring(0, 3) != "rgb") return rgb;
 	

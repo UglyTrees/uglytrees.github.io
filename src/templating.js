@@ -488,7 +488,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 			for (var g = 0; g < genes.length; g ++){
 
 				var col = getVal(genes[g].getAttribute("col"), null);
-				if (col != null) setGeneTreeColours(g, col, false);
+				if (col != null) setGeneTreeColours(g, null, col, false);
 
 				var show = genes[g].getAttribute("display") === "true";
 				GENE_TREE_DISPLAYS[g] = show;
