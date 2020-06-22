@@ -223,7 +223,7 @@ line {
 	margin-right:3px;
 	border-radius: 2px;
 	border-color: black; 
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 	cursor:pointer;
 }
@@ -316,7 +316,7 @@ line {
 	background-color:white;
 	color:black;
 	border-color:black;
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 	min-width:10px!important;
 	max-width:99.99%!important;
@@ -378,7 +378,7 @@ input[type=number] {
 	margin-bottom:5;
 	border-radius:0px 0px 20px 20px;
 	border-color:black;
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 	
 }
@@ -443,13 +443,11 @@ input[type=number] {
 	padding:0;
 	margin-top:5;
 	border-radius:20px 20px 0px 0px;
-	%border-color: white; 
-	%border-style:solid;
-	%%border-width:2px;
+
 	position:fixed;
 	bottom:-5px;
 	border-color:black;
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 	
 	vertical-align:bottom;
@@ -497,7 +495,7 @@ input[type=number] {
 	z-index: 3;
 	margin-left: 0px;
 	border-color:black;
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 	cursor:pointer;				
 	cursor:pointer;-webkit-user-select: none; /* Chrome/Safari */        
@@ -851,7 +849,7 @@ input[type=number] {
 	transition: 0.5s;
 	padding-top: 20px;
 	text-align:left;
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 }
 
@@ -863,7 +861,7 @@ input[type=number] {
 	color:white;
 	padding:5;
 	border-color:black;
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 	text-size-adjust:200%;
@@ -982,7 +980,7 @@ input {
 	-webkit-transition: .2s;
 	transition: opacity .2s;
 	border-color:black;
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 }
 
@@ -1098,7 +1096,7 @@ input {
 	background-color: white;
 	border-radius:10px;
 	border-color:black;
-	border-style:solid;
+	%border-style:solid;
 	border-width:1px;
 }
 
@@ -1160,7 +1158,7 @@ input {
 	text-align:left; 
 	font-size:100%; 
 	padding: 3; 
-	border-style:solid; 
+	%border-style:solid; 
 	background-color:#BEBEBE;
 	border-color:#BEBEBE;;
 	%border-left-color:#A9A9A9;
@@ -1195,7 +1193,7 @@ input {
 
 
 #hoverAnnotationDiv > div{
-	border-style:solid; 
+	%border-style:solid; 
 	border-color:white;
 	border-width:1px;
 	
@@ -1352,7 +1350,7 @@ div.code{
 
 
 #bigSessionWarningFlasher {
-	border-style:solid;
+	%border-style:solid;
 	border-width:0.5px;
 	border-radius:5px;
 	border-color:#58828C;
