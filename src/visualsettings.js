@@ -85,6 +85,7 @@ function initVisualSettings(){
 	GROUP_GENES_BY_TAXA = false;
 	LABEL_ROUNDING_SF = 2;
 
+
 	
 	
 	FADE_TIME = 500;
@@ -93,6 +94,7 @@ function initVisualSettings(){
 
 	CURRENT_ANIMATION_TIME = ANIMATION_TIME;
 	CURRENT_FADE_TIME = FADE_TIME;
+	ZOOM_ON_FONT = false;
 	SHOW_X_AXIS = false;
 	SHOW_Y_AXIS = true;
 	X_RANGE = "treemax";
@@ -133,6 +135,8 @@ function setInterfaceFromVisualParams(){
 	$("#SPECIES_TIP_LABEL").val(SPECIES_TIP_LABEL);
 	$("#SPECIES_INTERNAL_LABEL").val(SPECIES_INTERNAL_LABEL);
 
+
+	$("#ZOOM_ON_FONT").prop("checked", ZOOM_ON_FONT);
 
 	$("#SPECIES_BRANCH_BGCOL_ANNOTATION").val(SPECIES_BRANCH_BGCOL_ANNOTATION);
 	$("#SPECIES_BRANCH_BORDER_ANNOTATION").val(SPECIES_BRANCH_BORDER_ANNOTATION);
@@ -314,6 +318,7 @@ function setVisualParams(){
 	SPECIES_WIDTH_ANNOTATION_TOP = $("#SPECIES_WIDTH_ANNOTATION_TOP").val();
 	SPECIES_WIDTH_ANNOTATION_BOTTOM = $("#SPECIES_WIDTH_ANNOTATION_BOTTOM").val();
 	
+	ZOOM_ON_FONT = $("#ZOOM_ON_FONT").is(":checked");
 	SHOW_X_AXIS = $("#SHOW_X_AXIS").is(":checked");
 	SHOW_Y_AXIS = $("#SHOW_Y_AXIS").is(":checked");
 	
@@ -1019,10 +1024,14 @@ function initialiseZoom(){
 		unhover();
 		ZOOM_SCALE = transform.scale;
 
-		// Zoom in on labels
-		$(".speciesText.labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
-		$(".geneText.labelText").css("font-size", GENE_LABEL_FONT_SIZE / ZOOM_SCALE);
-		
+		// Zoom in on labels?
+		if (!ZOOM_ON_FONT){ 
+			$(".speciesText.labelText").css("font-size", SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE);
+			$(".geneText.labelText").css("font-size", GENE_LABEL_FONT_SIZE / ZOOM_SCALE);
+		} else {
+			$(".speciesText.labelText").css("font-size", SPECIES_LABEL_FONT_SIZE);
+			$(".geneText.labelText").css("font-size", GENE_LABEL_FONT_SIZE);
+		}
 
 
 

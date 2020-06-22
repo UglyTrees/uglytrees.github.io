@@ -1052,6 +1052,11 @@ input {
 	text-align:left;
 }
 
+.sideNavSetting .paramHelper{
+	font-size:80%;
+
+}
+
 
 .checkbox-container{
 	display: block;
@@ -1085,7 +1090,7 @@ input {
 /* Create a custom checkbox */
 .checkmark {
 	position: absolute;
-	top: -0.4em;
+	%top: -0.4em;
 	left: 0.25em;
 	height: 1em;
 	width: 1em;

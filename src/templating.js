@@ -219,6 +219,7 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 
 		// View
 		saveXML.writeStartElement('view');
+		saveXML.writeAttributeString('ZOOM_ON_FONT', ZOOM_ON_FONT);
 		saveXML.writeAttributeString('SHOW_X_AXIS', SHOW_X_AXIS);
 		saveXML.writeAttributeString('SHOW_Y_AXIS', SHOW_Y_AXIS);
 		saveXML.writeAttributeString('X_RANGE', X_RANGE);
@@ -406,6 +407,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 		if (view.length > 0) {
 
 			view = view[0];
+			ZOOM_ON_FONT = view.getAttribute("ZOOM_ON_FONT") === "true";
 			SHOW_X_AXIS = view.getAttribute("SHOW_X_AXIS") === "true";
 			SHOW_Y_AXIS = view.getAttribute("SHOW_Y_AXIS") === "true";
 			X_RANGE = getVal(view.getAttribute("X_RANGE"), "treemax");
