@@ -8,7 +8,7 @@
 }
 
 a {
-	color:#DB5079;
+	color:#58828C;
 	word-break: break-all; 
 }
 
@@ -21,7 +21,7 @@ svg {
 
 .loader {
 	border: 0.5em solid white; 
-	border-top: 0.5em solid #DB5079; 
+	border-top: 0.5em solid #58828C; 
 	border-radius: 50%;
 	width: 0.5em;
 	height: 0.5em;
@@ -30,7 +30,7 @@ svg {
 }
 
 .loader.dark {
-	border: 0.5em solid #DB5079; 
+	border: 0.5em solid #58828C; 
 	border-top: 0.5em solid white; 
 }
 
@@ -48,7 +48,7 @@ svg {
 	width: 4em;
 	height: 4em;
 	border: 1.5em solid #696969; 
-	border-top: 1.5em solid #DB5079; 
+	border-top: 1.5em solid #58828C; 
 
 }
 
@@ -195,7 +195,7 @@ line {
 
 .button:hover{
 	color:white;
-	background-color:#DB5079;
+	background-color:#58828C;
 }
 
 .button.disabled:hover {
@@ -211,7 +211,7 @@ line {
 
 .outlinedText{
 	color:white;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 
@@ -325,7 +325,7 @@ line {
 }
 
 .numberinput.cranberry{
-	background-color:#DB5079;
+	background-color:#58828C;
 	border: none;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 	color:white;
@@ -370,7 +370,7 @@ input[type=number] {
 	text-align:center;
 	font-size:450%;
 	line-height:1.3em;
-	background-color:#DB5079;
+	background-color:#58828C;
 	color:white;
 	width:99%;
 	margin-left:0.5%;
@@ -386,9 +386,9 @@ input[type=number] {
 .mainheader{
 	text-size-adjust: 350%;
 	width:40%;  
-	font-size:420%; 
+	font-size:360%; 
 	line-height:120%;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 
@@ -435,7 +435,7 @@ input[type=number] {
 #footer{
 	z-index:1;
 	text-align:center;
-	background-color:#DB5079;
+	background-color:#58828C;
 	font-size:100%;
 	color:white;
 	width:99%;
@@ -512,7 +512,7 @@ input[type=number] {
 
 .sideTab:hover{
 	color:white;
-	background-color:#DB5079;
+	background-color:#58828C;
 }
 
 #treeNumContainer{
@@ -531,7 +531,7 @@ input[type=number] {
 	margin:auto;
 	margin-top: -1em;
 	margin-bottom: -1em;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 
@@ -594,14 +594,14 @@ input[type=number] {
 
 
 .uploader.dz-drag-hover, .uploader:hover {
-	background-color:#DB5079;
+	background-color:#58828C;
 }
 
 .uploader > div {
 	text-size-adjust:200%;
 	font-size:200%;
 	margin-top: 1em;
-	color:#DB5079;
+	color:black; %#58828C;
 	padding: 10;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 
@@ -630,7 +630,7 @@ input[type=number] {
 
 .uploader.dz-drag-hover div, .uploader:hover div, .uploader.dz-drag-hover > a, .uploader:hover > a {
 	color:white;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 
@@ -648,6 +648,7 @@ input[type=number] {
 
 .uploaderTd{
 	width:35%;
+	color:black;
 }
 
 @media only screen and (max-width: 1200px) {
@@ -690,9 +691,9 @@ input[type=number] {
 }
 
 .dropdown{
-	background-color:#DB5079;
+	%background-color:#696969;
 	padding:5;
-	color:white;
+	%color:white;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
@@ -858,13 +859,13 @@ input[type=number] {
 	text-align:center;
 	font-size:150%;
 	line-height:1.3em;
-	background-color:#DB5079;
+	background-color:#58828C;
 	color:white;
 	padding:5;
 	border-color:black;
 	border-style:solid;
 	border-width:1px;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 	text-size-adjust:200%;
 }
 
@@ -873,7 +874,7 @@ input[type=number] {
 	float:right;
 	text-decoration:none;
 	color:white;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 	text-size-adjust:350%;
 }
 
@@ -883,7 +884,7 @@ input[type=number] {
 
 .sidenav .closebtn:hover {
 	color:black;
-	text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+	%text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 }
 
 /* The switch - the box around the slider */
@@ -937,15 +938,15 @@ label {
 }
 
 .notboolean{
-	background-color: #DB5079;	
+	background-color: #58828C;	
 }
 
 input:checked + .switchslider {
-	background-color: #DB5079;		
+	background-color: #58828C;		
 }
 
 input:focus + .switchslider {
-	box-shadow: 0 0 1px #DB5079;
+	box-shadow: 0 0 1px #58828C;
 }
 
 input:checked + .switchslider:before {
@@ -975,7 +976,7 @@ input {
 	width: 100%;
 	height: 15px;
 	border-radius: 20px;  
-	background: #DB5079;
+	background: #58828C;
 	outline: none;
 	%opacity: 0.7;
 	-webkit-transition: .2s;
@@ -1103,12 +1104,12 @@ input {
 
 /* On mouse-over, add a background color */
 .checkbox-container:hover input ~ .checkmark {
-	background-color: #DB5079;
+	background-color: #58828C;
 }
 
 /* When the checkbox is checked, add a cranberry background */
 .checkbox-container input:checked ~ .checkmark {
-	background-color: #DB5079;
+	background-color: #58828C;
 	
 }
 
@@ -1137,7 +1138,7 @@ input {
 	-webkit-transform: rotate(45deg);
 	-ms-transform: rotate(45deg);
 	transform: rotate(45deg);
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 					
 .speciesAnnotationsDropdown{
@@ -1278,8 +1279,8 @@ input {
 
 .aboutsection h1, .aboutsection h2, .aboutsection h3{
 	text-size-adjust: 320%;
-	%background-color:#DB5079;
-	color:#DB5079;
+	%background-color:#58828C;
+	color:#58828C;
 	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 	padding:0.2em 1em;
 	%border-style:solid;
@@ -1349,7 +1350,7 @@ div.code{
 	border-style:solid;
 	border-width:0.5px;
 	border-radius:5px;
-	border-color:#DB5079;
+	border-color:#58828C;
 	background-color:white;
 	position:fixed;
 	z-index:100;
@@ -1372,6 +1373,7 @@ div.code{
 }
 
 .exampleDiv{
+	font-size:90%;
 	%margin-top:1em;
 	padding:1em;
 	line-height:1.1em;
@@ -1380,16 +1382,22 @@ div.code{
 	border-radius:0.3em;
 	border-width:0.05em;
 	text-align:left;
-	%border-color:#DB5079;
-	%border-color:#DB5079;
+	%border-color:#58828C;
+	%border-color:#58828C;
 	background-color:white;
 }
 
+.exampleDiv.exampleRef{
+
+	font-size:90%;
+
+}
+
 .mockMenuBtn{
-	background-color:#DB5079; 
+	background-color:#58828C; 
 	padding-left: 0.3em;
 	padding-right: 0.3em;
-	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	%text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 	color:white;
 	%opacity: 80%;
 
@@ -1416,7 +1424,7 @@ div.code{
 	background-color:white;
 	color:black;
 	border-style:solid;
-	border-color:#DB5079;
+	border-color:#58828C;
 	border-width:0.05em;
 	z-index:10000;s
 }
@@ -1432,7 +1440,7 @@ div.code{
 
 
 .geneDroppable.ui-droppable-hover {
-	background-color:#DB5079;
+	background-color:#58828C;
 	color:white;
 }
 
