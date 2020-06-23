@@ -368,6 +368,9 @@
 			function userSaysDraw(){
 
 
+
+				// Check mapping
+				if (NUMBER_OF_GENE_TREES == 0) UNMAPPED_GENE_LABELS = [];
 				if (UNMAPPED_GENE_LABELS.length > 0) {
 					openMapperDialog(); 
 					return;
@@ -453,7 +456,7 @@
 
 	
 				SPECIES_TREE.geneNodeMap = {};
-				console.log("speciesTree", SPECIES_TREE);
+				//console.log("speciesTree", SPECIES_TREE);
 				var newSpeciesTreeAnnotations = getTreeAnnotations(SPECIES_TREE, true);
 				renderAnnotations(newSpeciesTreeAnnotations);
 				SPECIES_TREE.linewidth_fn = planLineWidths(SPECIES_TREE, SPECIES_BRANCH_MULTIPLIER, SPECIES_BRANCH_WIDTH);
@@ -1517,18 +1520,13 @@
 
 
 			</div>
-
-
-
-			
 			<hr>
 
 
 			<div class="sideNavSetting" title="Specify annotation properties">
 				Node annotations<br><br>
-				<select class="dropdown speciesAnnotationsDropdown geneAnnotationsDropdown" id="MODEL_ANNOTATIONS_SPECIES" onchange="selectSpeciesAnnotationSettings();" title="Species tree annotation settings">
-						<option value="_none">Select annotation...</option>
-						<option value="Label">Label</option>
+				<select class="dropdown dropdownWithLabel speciesAnnotationsDropdown geneAnnotationsDropdown" id="MODEL_ANNOTATIONS_SPECIES" onchange="selectSpeciesAnnotationSettings();" title="Species tree annotation settings">
+
 				</select>
 				
 				<div id="speciesAnnotationsMissingDataWarning" style="display:none; font-size:70%">
@@ -1650,9 +1648,8 @@
 			
 			<div class="sideNavSetting" title="Species tree internal node labels">
 				Tip labels
-				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_TIP_LABEL" onchange="setVisualParams();" title="Tree annotation to print on leaf nodes.">
-						<option value="_none">None</option>
-						<option value="Label">Label</option>
+				<select class="dropdown dropdownWithLabel speciesAnnotationsDropdown" id="SPECIES_TIP_LABEL" onchange="setVisualParams();" title="Tree annotation to print on leaf nodes.">
+
 						
 				</select>
 
@@ -1661,9 +1658,8 @@
 			
 			<div class="sideNavSetting" title="Species tree internal node labels">
 				Internal node labels
-				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_INTERNAL_LABEL" onchange="setVisualParams();" title="Tree annotation to print on internal nodes.">
-						<option value="_none">None</option>
-						<option value="Label">Label</option>
+				<select class="dropdown dropdownWithLabel speciesAnnotationsDropdown" id="SPECIES_INTERNAL_LABEL" onchange="setVisualParams();" title="Tree annotation to print on internal nodes.">
+
 						
 				</select>
 
@@ -1686,7 +1682,7 @@
 			<div class="sideNavSetting" title="Species tree x axis">
 				Species node width top
 				<select class="dropdown speciesAnnotationsDropdown numericalOnly" id="SPECIES_WIDTH_ANNOTATION_TOP" onchange="setVisualParams();" title="Tree annotation to describe node width by at the top of each branch">
-						<option value="_none">None</option>
+						
 						
 				</select>
 
@@ -1696,7 +1692,7 @@
 			<div class="sideNavSetting" title="Species tree x axis">
 				Species node width bottom
 				<select class="dropdown speciesAnnotationsDropdown numericalOnly" id="SPECIES_WIDTH_ANNOTATION_BOTTOM" onchange="setVisualParams();" title="Tree annotation to describe node width by at the bottom of each branch. If this term is not set, then it will be the same as the top width.">
-						<option value="_none">None</option>
+						
 						
 				</select>
 
@@ -1715,8 +1711,8 @@
 			
 			<div class="sideNavSetting" title="Species tree line width">
 				Line width multiplier
-				<select class="dropdown speciesAnnotationsDropdown numericalOnly" id="SPECIES_BRANCH_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to multiply species tree branch width baseline by">
-						<option value="_none">None</option>
+				<select class="dropdown dropdownWithLabel speciesAnnotationsDropdown numericalOnly" id="SPECIES_BRANCH_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to multiply species tree branch width baseline by">
+						
 				</select>
 			</div>
 			
@@ -1732,9 +1728,9 @@
 
 			<div class="sideNavSetting" title="Species tree line width">
 				Colour branch border by
-				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_BRANCH_BORDER_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branch borders by">
-						<option value="_none">None</option>
-						<option value="Label">Label</option>
+				<select class="dropdown dropdownWithLabel speciesAnnotationsDropdown" id="SPECIES_BRANCH_BORDER_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branch borders by">
+						
+						
 				</select>
 
 			</div>
@@ -1761,9 +1757,8 @@
 			
 			<div class="sideNavSetting" title="Species tree line width">
 				Colour branch background by
-				<select class="dropdown speciesAnnotationsDropdown" id="SPECIES_BRANCH_BGCOL_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branch backgrounds by">
-						<option value="_none">None</option>
-						<option value="Label">Label</option>
+				<select class="dropdown dropdownWithLabel speciesAnnotationsDropdown" id="SPECIES_BRANCH_BGCOL_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branch backgrounds by">
+
 				</select>
 
 			</div>
@@ -1840,9 +1835,8 @@
 
 			<div class="sideNavSetting" title="Gene tree line widths">
 				Node radius multiplier
-				<select class="dropdown geneAnnotationsDropdown numericalOnly" id="GENE_NODE_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe gene node radius by">
-						<option value="_none">None</option>
-						<option value="Label">Label</option>
+				<select class="dropdown dropdownWithLabel geneAnnotationsDropdown numericalOnly" id="GENE_NODE_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe gene node radius by">
+
 						
 				</select>
 
@@ -1860,8 +1854,8 @@
 
 			<div class="sideNavSetting" title="Gene tree line widths">
 				Line width multiplier
-				<select class="dropdown geneAnnotationsDropdown numericalOnly" id="GENE_BRANCH_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe branch line width by">
-						<option value="_none">None</option>
+				<select class="dropdown dropdownWithLabel geneAnnotationsDropdown numericalOnly" id="GENE_BRANCH_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe branch line width by">
+
 						
 				</select>
 
@@ -1876,9 +1870,8 @@
 
 			<div class="sideNavSetting" title="Species tree line width">
 				Colour branches by
-				<select class="dropdown geneAnnotationsDropdown" id="GENE_BRANCH_BGCOL_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branches by">
-						<option value="_none">None</option>
-						<option value="Label">Label</option>
+				<select class="dropdown dropdownWithLabel geneAnnotationsDropdown" id="GENE_BRANCH_BGCOL_ANNOTATION" onchange="setVisualParams();" title="Tree annotation to colour branches by">
+
 				</select>
 
 			</div>

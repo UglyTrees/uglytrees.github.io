@@ -146,6 +146,7 @@ function parseSpeciesTree(e, util_file, fromTemplate = false){
 		}
 
 		if (!fromTemplate) SESSION_FROM_TEMPLATE = false;
+		resetAnnotations();
 
 	} 
 	catch(err){
@@ -197,7 +198,7 @@ function parseGeneTree(e, util_file, fromTemplate = false){
 
 
 		if (!fromTemplate) SESSION_FROM_TEMPLATE = false;
-		
+		resetAnnotations();
 
 		
 	} 
@@ -381,7 +382,8 @@ function openMapperDialog(mapper = SPECIES_TO_GENE_MAPPER, unmapped = UNMAPPED_G
 	
 	//unmapped.unique();
 
-		
+	if (NUMBER_OF_GENE_TREES == 0) unmapped = [];
+	
 		
 	closeDialogs();
 	$("#innerBody").css("opacity", 0.5);

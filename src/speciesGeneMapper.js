@@ -466,6 +466,10 @@ function getTreeAnnotations(tree, speciesTree = true){
 				if (value == null) continue;
 				if (!vals.includes(value)) vals.push(value);
 			}
+
+
+			// Sort the list of values
+			vals = vals.sort();
 			
 			
 			for (var i = 0; i < vals.length; i ++){

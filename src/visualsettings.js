@@ -109,7 +109,7 @@ function initVisualSettings(){
 
 
 	initialiseZoom();
-	
+	resetAnnotations();
 	
 }
 
@@ -683,6 +683,15 @@ function rgbToHex(rgb) {
 }
 
 
+
+// Reset the list of annotations
+function resetAnnotations() {
+
+	var all_dropdown_elements = $(".geneAnnotationsDropdown,.speciesAnnotationsDropdown");
+	all_dropdown_elements.html("");
+	all_dropdown_elements.append(`<option value="_none">Select annotation...</option>`);
+	$(".dropdownWithLabel").append(`<option value="Label">Label</option>`);
+}
 
 // Populate the annotation lists (but do not replace if the elements already exist)
 function renderAnnotations(newAnnotations = []) {
