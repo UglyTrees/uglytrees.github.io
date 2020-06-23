@@ -370,13 +370,17 @@
 
 
 				// Check mapping
-				if (NUMBER_OF_GENE_TREES == 0) UNMAPPED_GENE_LABELS = [];
+				if (NUMBER_OF_GENE_TREES == 0) {
+					UNMAPPED_GENE_LABELS = [];
+				}
 				if (UNMAPPED_GENE_LABELS.length > 0) {
 					openMapperDialog(); 
 					return;
 				}
 
 				if (READY_TO_DRAW) return;
+				
+				if (SPECIES_TREES_ALL.length == 0 || !SPECIES_TREES_ALL[0].successfullyMapped) return;
 
 				READY_TO_DRAW = true;
 				addLoaderDark($("#renderLoader"));
