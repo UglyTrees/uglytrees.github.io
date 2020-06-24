@@ -1246,7 +1246,7 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 
 		var ele = textGroup.find("#" + node.htmlID + "_T");
 
-		console.log("ELEMENT", ele, node.htmlID + "_T");
+		//console.log("ELEMENT", ele, node.htmlID + "_T");
 
 		var labelX = speciestree.scaleX_fn(node.coords.cx);
 		var labelY = speciestree.scaleY_fn(node.coords.cy) + 3;

@@ -543,9 +543,15 @@ function openColourPicker(geneTreeNum, annot = null){
 	
 	colourPickHtml += `</ul></td></tr>`;
 
+
+	console.log("XXX", geneTreeNum, annot, colourPickHtml)
+
 	
 	if (geneTreeNum == parseFloat(geneTreeNum)) {
 		$("#visualSettingsRow" + geneTreeNum).after(colourPickHtml);
+	}
+	else if (annot == null){
+		$("#" + geneTreeNum).after(colourPickHtml);
 	}
 	else {
 		//console.log(geneTreeNum, $("#" + geneTreeNum));
