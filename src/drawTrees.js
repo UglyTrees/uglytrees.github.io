@@ -643,7 +643,7 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 							transform: "rotate(90, " + labelX + ", " + labelY + ")",
 							style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, toWrite);
 				} else {
-					drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: node.htmlID + "_L", 
+					drawSVGobj(svg, "text", {class: "labelText speciesText", id: node.htmlID + "_L", 
 						x: labelX, 
 						y: labelY, 
 						style: "text-anchor:middle; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, toWrite);
