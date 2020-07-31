@@ -990,7 +990,7 @@
 				$(".annotationRow").remove();
 				for (var a in node.annotation){
 					var val = node.annotation[a];
-					var roundedVal = roundToSF(val, 3);
+					var roundedVal = val; // roundToSF(val, 3);
 					if (!isNaN(roundedVal)) val = roundedVal;
 					$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>` + a + `: ` + val + `</td></tr>`);
 				}
@@ -999,11 +999,11 @@
 
 				// Branch length, time, label
 				var branchLength = 0;
-				if (node.parent != null) branchLength = roundToSF(node.parent.height - node.height, 3);
-				else if (node.parent == null && treeName == "speciestree" && MAX_TREE_HEIGHT > node.height) branchLength = roundToSF(MAX_TREE_HEIGHT - node.height, 3);
+				if (node.parent != null) branchLength = roundToSF(node.parent.height - node.height, 4);
+				else if (node.parent == null && treeName == "speciestree" && MAX_TREE_HEIGHT > node.height) branchLength = roundToSF(MAX_TREE_HEIGHT - node.height, 4);
 				
 				$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Branch length: ` + branchLength + `</td></tr>`);
-				$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Time: ` + roundToSF(node.height, 3) + `</td></tr>`);
+				$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Time: ` + roundToSF(node.height, 4) + `</td></tr>`);
 				if (node.label != null) $("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Label: ` + node.label + `</td></tr>`);
 
 
