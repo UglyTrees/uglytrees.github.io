@@ -544,7 +544,7 @@
 				// Get max tree height 
 				switch (Y_RANGE) {
 					case "treemax": {
-						MAX_TREE_HEIGHT = tallestTreeHeight == SPECIES_TREE.root.height ? tallestTreeHeight * 1.1 : tallestTreeHeight;
+						MAX_TREE_HEIGHT = tallestTreeHeight; // == SPECIES_TREE.root.height ? tallestTreeHeight * 1.1 : tallestTreeHeight;
 						effectiveMaxHeight = MAX_TREE_HEIGHT;
 						break;
 					}
@@ -562,7 +562,7 @@
 
 					default: {
 						MAX_TREE_HEIGHT = tallestTreeHeight;
-						effectiveMaxHeight = tallestTreeHeight == SPECIES_TREE.root.height ? tallestTreeHeight * 1.1 : tallestTreeHeight;
+						effectiveMaxHeight = tallestTreeHeight; //tallestTreeHeight == SPECIES_TREE.root.height ? tallestTreeHeight * 1.1 : tallestTreeHeight;
 					}
 
 				}
@@ -670,7 +670,7 @@
 			
 
 					//console.log("newGeneTreeAnnotations", newGeneTreeAnnotations);
-					MAX_TEXT_SIZE = Math.max(MAX_TEXT_SIZE, getMaximumLabelTextSizeOfTree(gene_tree.root, GENE_LABEL_FONT_SIZE / ZOOM_SCALE));
+					MAX_TEXT_SIZE = Math.max(MAX_TEXT_SIZE, getMaximumLabelTextSizeOfTree(gene_tree.root, GENE_LABEL_FONT_SIZE / ZOOM_SCALE, "Label"));
 					
 					
 
