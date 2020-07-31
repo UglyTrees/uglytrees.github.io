@@ -278,6 +278,7 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 		saveXML.writeAttributeString('SPECIES_TREE_OPACITY', SPECIES_TREE_OPACITY);
 		saveXML.writeAttributeString('SPECIES_LABEL_FONT_SIZE', SPECIES_LABEL_FONT_SIZE);
 		saveXML.writeAttributeString('SPECIES_TIP_LABEL', SPECIES_TIP_LABEL);
+		saveXML.writeAttributeString('LATIN_BINOMIAL_SPECIES_TREE', LATIN_BINOMIAL_SPECIES_TREE);
 		saveXML.writeAttributeString('SPECIES_INTERNAL_LABEL', SPECIES_INTERNAL_LABEL);
 		
 
@@ -308,6 +309,9 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 
 		saveXML.writeAttributeString('GENE_TREE_OPACITY', GENE_TREE_OPACITY);
 		saveXML.writeAttributeString('GENE_LABEL_FONT_SIZE', GENE_LABEL_FONT_SIZE);
+		saveXML.writeAttributeString('LATIN_BINOMIAL_GENE_TREE', LATIN_BINOMIAL_GENE_TREE);
+
+
 
 		saveXML.writeAttributeString('GROUP_GENES_BY_TAXA', GROUP_GENES_BY_TAXA);
 
@@ -465,6 +469,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 			SPECIES_TREE_OPACITY = getValFloat(speciestree.getAttribute("SPECIES_TREE_OPACITY"), SPECIES_TREE_OPACITY);
 			SPECIES_LABEL_FONT_SIZE = getValFloat(speciestree.getAttribute("SPECIES_LABEL_FONT_SIZE"), SPECIES_LABEL_FONT_SIZE);
 			SPECIES_TIP_LABEL = getVal(speciestree.getAttribute("SPECIES_TIP_LABEL"), "_none");
+			LATIN_BINOMIAL_SPECIES_TREE = genetree.getAttribute("LATIN_BINOMIAL_SPECIES_TREE") === "true";
 			SPECIES_INTERNAL_LABEL = getVal(speciestree.getAttribute("SPECIES_INTERNAL_LABEL"), "_none");
 			SUBTREE_SPACER = getValFloat(speciestree.getAttribute("SUBTREE_SPACER"), SUBTREE_SPACER);
 			LABEL_ROUNDING_SF = getValFloat(speciestree.getAttribute("LABEL_ROUNDING_SF"), LABEL_ROUNDING_SF);
@@ -501,6 +506,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 
 			GENE_TREE_OPACITY = getValFloat(genetree.getAttribute("GENE_TREE_OPACITY"), GENE_TREE_OPACITY);
 			GENE_LABEL_FONT_SIZE = getValFloat(genetree.getAttribute("GENE_LABEL_FONT_SIZE"), GENE_LABEL_FONT_SIZE);
+			LATIN_BINOMIAL_GENE_TREE = genetree.getAttribute("LATIN_BINOMIAL_GENE_TREE") === "true";
 			GROUP_GENES_BY_TAXA = genetree.getAttribute("GROUP_GENES_BY_TAXA") === "true";
 			GENE_NODE_MULTIPLIER = getVal(genetree.getAttribute("GENE_NODE_MULTIPLIER"), "_none");
 			GENE_BRANCH_BGCOL_ANNOTATION = getVal(genetree.getAttribute("GENE_BRANCH_BGCOL_ANNOTATION"), "_none");

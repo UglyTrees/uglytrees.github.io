@@ -29,6 +29,7 @@ svg {
 
 }
 
+
 .loader.dark {
 	border: 0.5em solid #58828C; 
 	border-top: 0.5em solid white; 
@@ -1449,3 +1450,8 @@ div.code{
 
 
 
+.binomial{
+	font-style:italic;
+
+
+}
