@@ -151,9 +151,12 @@ function toLatinBinomial(str, latinBinomial = false){
 
 	if (!latinBinomial) return str;
 
-	var str2 = str.replaceAll("_", " ");
-	str2 = str2.replaceAll(".", " ");
-	str2 = str2.replaceAll("[|]", " ");
+
+	console.log("splitting", str)
+	var str2 = str.split("_").join(" ");
+	str2 = str2.split(".").join(" ");
+	str2 = str2.split("|").join(" ");
+	console.log("splitting2", str2)
 	return str2; 
 
 }
