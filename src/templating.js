@@ -469,7 +469,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 			SPECIES_TREE_OPACITY = getValFloat(speciestree.getAttribute("SPECIES_TREE_OPACITY"), SPECIES_TREE_OPACITY);
 			SPECIES_LABEL_FONT_SIZE = getValFloat(speciestree.getAttribute("SPECIES_LABEL_FONT_SIZE"), SPECIES_LABEL_FONT_SIZE);
 			SPECIES_TIP_LABEL = getVal(speciestree.getAttribute("SPECIES_TIP_LABEL"), "_none");
-			LATIN_BINOMIAL_SPECIES_TREE = genetree.getAttribute("LATIN_BINOMIAL_SPECIES_TREE") === "true";
+			LATIN_BINOMIAL_SPECIES_TREE = speciestree.getAttribute("LATIN_BINOMIAL_SPECIES_TREE") === "true";
 			SPECIES_INTERNAL_LABEL = getVal(speciestree.getAttribute("SPECIES_INTERNAL_LABEL"), "_none");
 			SUBTREE_SPACER = getValFloat(speciestree.getAttribute("SUBTREE_SPACER"), SUBTREE_SPACER);
 			LABEL_ROUNDING_SF = getValFloat(speciestree.getAttribute("LABEL_ROUNDING_SF"), LABEL_ROUNDING_SF);
