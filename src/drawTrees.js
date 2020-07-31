@@ -376,7 +376,7 @@ function planSpeciesTree(node, maxTreeHeight, alignCX = false) {
 	// Position this node centered between the left child's right and the right child's left
 	var cy = node.height;
 	var cx = (left.coords.topLeft.x + right.coords.topRight.x) / 2;
-	var parentcy = node.parent == null ? maxTreeHeight : node.parent.height;
+	var parentcy = node.parent == null ? cy : node.parent.height;
 
 	
 	//var N = node.populationsizeTop;
