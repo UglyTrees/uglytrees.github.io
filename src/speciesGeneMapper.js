@@ -52,13 +52,15 @@ function initMapper(){
 
 	// A list of functions to determine whether species label s can be mapped to g, for some parameter i
 	MAPPING_STRATEGIES = [	function(s, g, i) { return strContains(s, g, i); }, 
-				function(s, g, i) { return strContains(s.toLowerCase(), g.toLowerCase(), i); }, 
-				function(s, g, i) { return splitBy(s, g, i, "_"); }, 
-				function(s, g, i) { return splitBy(s, g, i, "-"); },
-				function(s, g, i) { return splitBy(s, g, i, "."); },
-				function(s, g, i) { return splitBy(s.toLowerCase(), g.toLowerCase(), i, "_"); },
-				function(s, g, i) { return splitBy(s.toLowerCase(), g.toLowerCase(), i, "-"); },
-				function(s, g, i) { return splitBy(s.toLowerCase(), g.toLowerCase(), i, "."); }
+							function(s, g, i) { return strContains(s.toLowerCase(), g.toLowerCase(), i); }, 
+							function(s, g, i) { return splitBy(s, g, i, "_"); }, 
+							function(s, g, i) { return splitBy(s, g, i, "-"); },
+							function(s, g, i) { return splitBy(s, g, i, "."); },
+							function(s, g, i) { return splitBy(s.toLowerCase(), g.toLowerCase(), i, "_"); },
+							function(s, g, i) { return splitBy(s.toLowerCase(), g.toLowerCase(), i, "-"); },
+							function(s, g, i) { return splitBy(s.toLowerCase(), g.toLowerCase(), i, "."); },
+							function(s, g, i) { return strContains(g, s, i); }, 
+							function(s, g, i) { return strContains(g.toLowerCase(), s.toLowerCase(), i); }
 			];
 
 
