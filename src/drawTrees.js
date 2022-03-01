@@ -500,7 +500,8 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 	
 
 
-	
+
+
 	
 	// Polygon
 	var points = [	tree.scaleX_fn(node.coords.bottomLeft.x), tree.scaleY_fn(node.coords.bottomLeft.y),
@@ -516,6 +517,10 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 
 
 
+	// Concerted evolution events?
+	drawConcertEvents(textGroup, tree, node, styles);
+
+
 	if (node.parent == null) {
 		rootCallback();
 		rootProgress();
@@ -524,6 +529,54 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 
 }
 
+
+
+/*
+ * Draw concerted evolution events onto species tree node, if there are any
+*/
+function drawConcertEvents(textGroup, tree, node, styles = {fontSize: SPECIES_LABEL_FONT_SIZE,  opacity: SPECIES_TREE_OPACITY}){
+	
+	
+	
+	// Concerted evolution event?
+	if (node.annotation["ConcertCount"] != null){
+		
+		
+		var xTop = tree.scaleX_fn((node.coords.topRight.x + node.coords.topLeft.x) / 2);
+		var xBtm = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
+		var length = node.coords.topRight.y - node.coords.bottomRight.y;
+		
+		
+		var concertCount = parseFloat(node.annotation["ConcertCount"]);
+		for (var eventNr = 1; eventNr <= concertCount; eventNr++){
+			
+			var concertTime = parseFloat(node.annotation["ceTime" + eventNr]);
+			var concertFrom = parseFloat(node.annotation["ceFrom" + eventNr]);
+			var concertTo = parseFloat(node.annotation["ceTo" + eventNr]);
+			
+			if (Number.isNaN(concertTime) || Number.isNaN(concertFrom) || Number.isNaN(concertTo)) continue;
+
+			//console.log("event", eventNr, "at time", concertTime);
+			
+			var yProp = (concertTime-node.coords.bottomRight.y) / length;
+			var xPos = xBtm - yProp*(xBtm-xTop)
+			
+			
+			drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: node.htmlID + "_E", 
+							x: xPos, 
+							y: tree.scaleY_fn(concertTime), 
+							style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, "&bull;" + concertFrom + " &rightarrow; " + concertTo);
+
+			
+			
+		}
+			
+		
+		
+	}
+	
+	
+}
 
 
 
@@ -546,6 +599,10 @@ function animateASpeciesTree(speciesGroup, textGroup, tree, treename, node, anim
 	var progress = node.parent == null ? rootProgress : function() { };
 	animateSpeciesBranch(speciesGroup, tree, node, "P", styles, callback, progress, animation_time);
 	animateSpeciesBranch(textGroup, tree, node, "L", styles,  function() { },  function() { }, animation_time);
+	
+	
+	// Concerted evolution events?
+	drawConcertEvents(textGroup, tree, node, styles);
 	
 	
 }
