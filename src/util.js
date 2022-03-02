@@ -1,4 +1,4 @@
-/*
+﻿/*
 	
 	MIT License
 
@@ -119,8 +119,6 @@ function initUtil(){
 
 // Parse a species tree from string and update DOM
 function parseSpeciesTree(e, util_file, fromTemplate = false){
-
-
 
 
 	try {

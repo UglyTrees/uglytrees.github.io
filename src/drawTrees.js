@@ -551,12 +551,12 @@ function drawConcertEvents(textGroup, tree, node, styles = {fontSize: SPECIES_LA
 		for (var eventNr = 1; eventNr <= concertCount; eventNr++){
 			
 			var concertTime = parseFloat(node.annotation["ceTime" + eventNr]);
-			var concertFrom = parseFloat(node.annotation["ceFrom" + eventNr]);
-			var concertTo = parseFloat(node.annotation["ceTo" + eventNr]);
+			var concertFrom = node.annotation["ceFrom" + eventNr];
+			var concertTo = node.annotation["ceTo" + eventNr];
 			
-			if (Number.isNaN(concertTime) || Number.isNaN(concertFrom) || Number.isNaN(concertTo)) continue;
+			if (Number.isNaN(concertTime) || concertFrom == null || concertTo == null) continue;
 
-			//console.log("event", eventNr, "at time", concertTime);
+			console.log("event", eventNr, "at time", concertTime, concertFrom,concertTo);
 			
 			var yProp = (concertTime-node.coords.bottomRight.y) / length;
 			var xPos = xBtm - yProp*(xBtm-xTop)
