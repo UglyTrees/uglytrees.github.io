@@ -89,7 +89,7 @@ function mapGeneTreeToSpeciesTree(g, geneLeaves, speciesLeaves){
 	
 	// Otherwise, try to map from the existing mappings
 	if (!success) {
-		UNMAPPED_GENE_LABELS = checkIfMappingApplies(SPECIES_TO_GENE_MAPPER, UNMAPPED_GENE_LABELS, g, geneLeaves);
+		UNMAPPED_GENE_LABELS = checkIfMappingApplies(SPECIES_TO_GENE_MAPPER, UNMAPPED_GENE_LABELS, g, geneLeaves, speciesLeaves);
 		if (UNMAPPED_GENE_LABELS.length == 0) success = true;
 	}
 	
@@ -198,7 +198,7 @@ function applyTheMapping(speciesLeaves, geneTrees) {
 
 // Checks if the gene to species tree mapper is valid
 // returns a list of gene leaves which can not be mapped
-function checkIfMappingApplies(mapper, unmappedGeneLabels, g, geneLeaves){
+function checkIfMappingApplies(mapper, unmappedGeneLabels, g, geneLeaves, speciesLeaves){
 	
 
 	
@@ -225,9 +225,36 @@ function checkIfMappingApplies(mapper, unmappedGeneLabels, g, geneLeaves){
 		}
 		
 		if (numMapped == 0) {
-			unmappedGeneLabels.push(gene_leaf.label);
+
+
+
+			// Try map it using the same strategy
+			var st = SPECIES_TO_GENE_MAPPER["_mappingStrategy_"];
+			var strategyParameter = SPECIES_TO_GENE_MAPPER["_mappingParameter_"];
+			var strategy = MAPPING_STRATEGIES[st];
+			if (st != null && strategyParameter != null){
+
+				for (var i = 0; i < speciesLeaves.length; i ++){
+					var species_leaf = speciesLeaves[i];
+					var mappingAttempt = strategy(species_leaf.label, gene_leaf.label, strategyParameter);
+
+					if (mappingAttempt) {
+						SPECIES_TO_GENE_MAPPER[species_leaf.label].push(gene_leaf.label);
+						numMapped = 1;
+						break;
+					}
+
+				}
+
+			}
+			
+
+
+
+			if (numMapped == 0) unmappedGeneLabels.push(gene_leaf.label);
 			//console.log(gene_leaf.label + " is unmapped");
 		}
+
 		if (numMapped > 1) console.log("Error:", gene_leaf.label, "is mapped to more than one species");
 		
 		
@@ -359,6 +386,8 @@ function automaticallyDetectMapping(g, geneLeaves, speciesLeaves){
 
 		if (strategyWorks) {
 			console.log("Strategy", st, strategyParameter, "works");
+			SPECIES_TO_GENE_MAPPER["_mappingStrategy_"] = st;
+			SPECIES_TO_GENE_MAPPER["_mappingParameter_"] = strategyParameter;
 			mappedSuccessfully = true;
 			break;
 		}
