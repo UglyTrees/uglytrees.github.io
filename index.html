@@ -532,7 +532,10 @@
 				var tallestTreeHeight =  SPECIES_TREE.root.height;
 				for (var g = 0;  g < GENE_TREES.length; g ++){
 					if (GENE_TREES[g] == null) continue;
-					tallestTreeHeight = Math.max(tallestTreeHeight, GENE_TREES[g].root.height);
+					if (!toRenderGeneTree(g)) continue;
+					var geneTreeHeight = GENE_TREES[g].root.height;
+					if (GENE_TREES[g].root.branchLength != null && GENE_TREES[g].root.branchLength > 0) geneTreeHeight += GENE_TREES[g].root.branchLength;
+					tallestTreeHeight = Math.max(tallestTreeHeight, geneTreeHeight);
 				}
 				var effectiveMaxHeight;
 
@@ -1000,6 +1003,7 @@
 				// Branch length, time, label
 				var branchLength = 0;
 				if (node.parent != null) branchLength = roundToSF(node.parent.height - node.height, 4);
+				else if (node.branchLength != null) branchLength = roundToSF(node.branchLength, 4);
 				else if (node.parent == null && treeName == "speciestree" && MAX_TREE_HEIGHT > node.height) branchLength = roundToSF(MAX_TREE_HEIGHT - node.height, 4);
 				
 				$("#hoverAnnotationTitle").after(`<tr class="annotationRow"><td>Branch length: ` + branchLength + `</td></tr>`);
