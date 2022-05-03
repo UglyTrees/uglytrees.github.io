@@ -857,6 +857,13 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 		// Get species tree node this leaf is mapped to
 		var speciesNode = node.speciesNodeMap;
+
+
+		// If this gene leaf is above its species, do not draw this branch
+		if (node.height > speciesNode.height){
+			//return;
+		}
+
 		
 		// Get number of gene nodes mapped to this same species node 
 		var mappedPos = getPositionInMap(speciesNode.nodeToGeneBranchMap[geneTreeNum], node.id);
@@ -1053,11 +1060,8 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 	// Origin branch
 	if (node.parent == null && node.branchLength != null && node.branchLength > 0){
-
-		//console.log("plot origin for ",  node);
 		node.coords.x.push(thisX);
 		node.coords.y.push(node.height + node.branchLength);
-
 	}
 	
 	

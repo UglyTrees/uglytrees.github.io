@@ -171,9 +171,17 @@ function applyTheMapping(speciesLeaves, geneTrees) {
 				
 				// Apply
 				if (gene_leaf != null) {
-					gene_leaf.speciesNodeMap = species_leaf;
-					species_leaf.branchToGeneNodeMap[g][gene_leaf.id] = gene_leaf;
-					species_leaf.nodeToGeneBranchMap[g][gene_leaf.id] = gene_leaf;
+
+
+					// Go back in time if the gene leaf is above the species leaf
+					var species_node = species_leaf;
+					while (species_node.parent != null && gene_leaf.height > species_node.parent.height){
+						species_node = species_node.parent;
+					}
+
+					gene_leaf.speciesNodeMap = species_node;
+					species_node.branchToGeneNodeMap[g][gene_leaf.id] = gene_leaf;
+					species_node.nodeToGeneBranchMap[g][gene_leaf.id] = gene_leaf;
 					
 					
 					
