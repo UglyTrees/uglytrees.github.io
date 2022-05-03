@@ -310,6 +310,9 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 		saveXML.writeAttributeString('GENE_TREE_OPACITY', GENE_TREE_OPACITY);
 		saveXML.writeAttributeString('GENE_LABEL_FONT_SIZE', GENE_LABEL_FONT_SIZE);
 		saveXML.writeAttributeString('LATIN_BINOMIAL_GENE_TREE', LATIN_BINOMIAL_GENE_TREE);
+		saveXML.writeAttributeString('GENE_TIP_LABEL', GENE_TIP_LABEL);
+
+
 
 
 
@@ -468,7 +471,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 			speciestree = speciestree[0];
 			SPECIES_TREE_OPACITY = getValFloat(speciestree.getAttribute("SPECIES_TREE_OPACITY"), SPECIES_TREE_OPACITY);
 			SPECIES_LABEL_FONT_SIZE = getValFloat(speciestree.getAttribute("SPECIES_LABEL_FONT_SIZE"), SPECIES_LABEL_FONT_SIZE);
-			SPECIES_TIP_LABEL = getVal(speciestree.getAttribute("SPECIES_TIP_LABEL"), "_none");
+			SPECIES_TIP_LABEL = getVal(speciestree.getAttribute("SPECIES_TIP_LABEL"), "Label");
 			LATIN_BINOMIAL_SPECIES_TREE = speciestree.getAttribute("LATIN_BINOMIAL_SPECIES_TREE") === "true";
 			SPECIES_INTERNAL_LABEL = getVal(speciestree.getAttribute("SPECIES_INTERNAL_LABEL"), "_none");
 			SUBTREE_SPACER = getValFloat(speciestree.getAttribute("SUBTREE_SPACER"), SUBTREE_SPACER);
@@ -507,6 +510,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 			GENE_TREE_OPACITY = getValFloat(genetree.getAttribute("GENE_TREE_OPACITY"), GENE_TREE_OPACITY);
 			GENE_LABEL_FONT_SIZE = getValFloat(genetree.getAttribute("GENE_LABEL_FONT_SIZE"), GENE_LABEL_FONT_SIZE);
 			LATIN_BINOMIAL_GENE_TREE = genetree.getAttribute("LATIN_BINOMIAL_GENE_TREE") === "true";
+			GENE_TIP_LABEL = getVal(genetree.getAttribute("GENE_TIP_LABEL"), "Label"); 
 			GROUP_GENES_BY_TAXA = genetree.getAttribute("GROUP_GENES_BY_TAXA") === "true";
 			GENE_NODE_MULTIPLIER = getVal(genetree.getAttribute("GENE_NODE_MULTIPLIER"), "_none");
 			GENE_BRANCH_BGCOL_ANNOTATION = getVal(genetree.getAttribute("GENE_BRANCH_BGCOL_ANNOTATION"), "_none");

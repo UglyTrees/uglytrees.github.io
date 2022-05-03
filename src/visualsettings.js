@@ -64,12 +64,15 @@ function initVisualSettings(){
 	GENE_BRANCH_BGCOL_ANNOTATION = "_none";
 	SPECIES_TIP_LABEL = "Label";
 	SPECIES_INTERNAL_LABEL = "_none";
+	GENE_TIP_LABEL = "_none";
+
 	
 
 	SPECIES_TREE_BG_COL = "#FFFFFF";
 	SPECIES_TREE_BORDER_COL = "#000000";
 	$("#colourboxspeciesBG").css("background-color", SPECIES_TREE_BG_COL);
 	$("#colourboxspeciesBorder").css("background-color", SPECIES_TREE_BORDER_COL);
+
 	
 	EASYPZ = null;
 
@@ -113,7 +116,8 @@ function initVisualSettings(){
 
 	initialiseZoom();
 	resetAnnotations();
-	
+
+
 }
 
 
@@ -137,6 +141,8 @@ function setInterfaceFromVisualParams(){
 	$("#SPECIES_WIDTH_ANNOTATION_BOTTOM").val(SPECIES_WIDTH_ANNOTATION_BOTTOM);
 	$("#SPECIES_TIP_LABEL").val(SPECIES_TIP_LABEL);
 	$("#SPECIES_INTERNAL_LABEL").val(SPECIES_INTERNAL_LABEL);
+	$("#GENE_TIP_LABEL").val(GENE_TIP_LABEL);
+	
 
 
 	$("#LATIN_BINOMIAL_SPECIES_TREE").prop("checked", LATIN_BINOMIAL_SPECIES_TREE);
@@ -318,6 +324,7 @@ function setVisualParams(){
 	SPECIES_BRANCH_BORDER_ANNOTATION = $("#SPECIES_BRANCH_BORDER_ANNOTATION").val();
 	SPECIES_TIP_LABEL = $("#SPECIES_TIP_LABEL").val();
 	SPECIES_INTERNAL_LABEL = $("#SPECIES_INTERNAL_LABEL").val();
+	GENE_TIP_LABEL = $("#GENE_TIP_LABEL").val();
 
 
 
@@ -708,6 +715,10 @@ function resetAnnotations() {
 	all_dropdown_elements.html("");
 	all_dropdown_elements.append(`<option value="_none">Select annotation...</option>`);
 	$(".dropdownWithLabel").append(`<option value="Label">Label</option>`);
+
+
+	$("#SPECIES_TIP_LABEL").val("Label");	
+
 }
 
 // Populate the annotation lists (but do not replace if the elements already exist)

@@ -117,10 +117,8 @@ function scaleTreeRanges(tree, t_minX, t_minY, t_maxX, t_maxY, xMax = null, yMax
 
 
 // Node text
-function whatToWrite(node, latinBinomial = false) {
+function whatToWrite(node, attr, latinBinomial = false, isGeneTree = false) {
 	
-	// Leaf or internal?
-	var attr = node.children.length == 0 ? SPECIES_TIP_LABEL : SPECIES_INTERNAL_LABEL;
 	
 
 
@@ -131,7 +129,15 @@ function whatToWrite(node, latinBinomial = false) {
 	var val = node.annotation[attr];
 	var annotation = getAnnotation(attr);
 
-	if (annotation == null ) return "";
+
+	// If this is a gene tree and the annotation is for a species tree, then the value corresponds to the species node this gene node is mapped to
+	var annotationBelongsToSpeciesNode = annotation != "Label" && isGeneTree && annotation.speciesTree;
+	if (annotationBelongsToSpeciesNode) {
+		val = node.speciesNodeMap.annotation[attr];
+	}
+
+
+	if (annotation == null) return "";
 	
 	var discrete = annotation.format == "nominal";
 	//console.log("discrete?", annotation, discrete, attr, node, val);
@@ -439,8 +445,9 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 	//console.log("node", node);
 
 
-
-	var toWrite = whatToWrite(node, LATIN_BINOMIAL_SPECIES_TREE);
+	// Leaf or internal?
+	var attr = node.children.length == 0 ? SPECIES_TIP_LABEL : SPECIES_INTERNAL_LABEL;
+	var toWrite = whatToWrite(node, attr, LATIN_BINOMIAL_SPECIES_TREE);
 	if (toWrite != "" && toWrite != null) {
 
 
@@ -688,7 +695,8 @@ function animateSpeciesBranch(svg, tree, node, branchLetter = "B", styles, callb
 		//ele.attr("transform", "rotate(90, " + labelX + ", " + labelY + ")");
 		
 		// Build it if it does not exist
-		var toWrite = whatToWrite(node, LATIN_BINOMIAL_SPECIES_TREE);
+		var attr = node.children.length == 0 ? SPECIES_TIP_LABEL : SPECIES_INTERNAL_LABEL;
+		var toWrite = whatToWrite(node, attr, LATIN_BINOMIAL_SPECIES_TREE);
 		var binomial = LATIN_BINOMIAL_SPECIES_TREE ? " binomial" : "";
 		if (toWrite != "" && toWrite != null) {
 			if (true || ele.length == 0){
@@ -1090,17 +1098,25 @@ function drawAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, ge
 	if (node.label != null) {
 
 
-		// Label
-		var labelX = speciesTree.scaleX_fn(node.coords.cx);
-		var labelY = speciesTree.scaleY_fn(node.coords.cy) + 3;
-		var binomial = LATIN_BINOMIAL_GENE_TREE ? " binomial" : "";
-		drawSVGobj(textGroup, "text", {class: "labelText geneText" + binomial, id: node.htmlID + "_T", 
-					x: labelX, 
-					y: labelY, 
-					gNum: geneTreeNum,
-					transform: "rotate(70, " + labelX + ", " + labelY + ")",
-					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize + ";fill:" + geneTree.bgcolour_fn(node, node.speciesNodeMap)}, 
-					toLatinBinomial(node.label, LATIN_BINOMIAL_GENE_TREE));
+		var toWrite = whatToWrite(node, GENE_TIP_LABEL, LATIN_BINOMIAL_GENE_TREE, true);
+
+		if (toWrite != "" && toWrite != null) {
+
+
+			// Gene tip label
+			var labelX = speciesTree.scaleX_fn(node.coords.cx);
+			var labelY = speciesTree.scaleY_fn(node.coords.cy) + 3;
+			var binomial = LATIN_BINOMIAL_GENE_TREE ? " binomial" : "";
+			drawSVGobj(textGroup, "text", {class: "labelText geneText" + binomial, id: node.htmlID + "_T", 
+						x: labelX, 
+						y: labelY, 
+						gNum: geneTreeNum,
+						transform: "rotate(70, " + labelX + ", " + labelY + ")",
+						style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize + ";fill:" + geneTree.bgcolour_fn(node, node.speciesNodeMap)}, 
+						toWrite);
+
+
+		}
 
 	}
 
@@ -1275,11 +1291,11 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 
 
 	// Move a label
-		// Move label
 	else if(branchNumber == "T"){
 		
 
 		var ele = textGroup.find("#" + node.htmlID + "_T");
+		var toWrite = whatToWrite(node, GENE_TIP_LABEL, LATIN_BINOMIAL_GENE_TREE, true);
 
 		//console.log("ELEMENT", ele, node.htmlID + "_T");
 
@@ -1288,7 +1304,9 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 
 		var binomial = LATIN_BINOMIAL_GENE_TREE ? " binomial" : "";
 		if (ele.length == 0) {
-			
+
+			if (toWrite != "" && toWrite != null) {
+
 				
 				drawSVGobj(textGroup, "text", {class: "labelText geneText" + binomial, id: node.htmlID + "_T", 
 					x: labelX, 
@@ -1296,21 +1314,28 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 					gNum: gNum,
 					transform: "rotate(70, " + labelX + ", " + labelY + ")",
 					style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + fontSize + ";fill:" + col}, 
-					toLatinBinomial(node.label, LATIN_BINOMIAL_GENE_TREE));
+					toWrite);
 
+
+			}
 
 		} 
 		
 		// Animate it
 		else {
 
-			
-			ele.velocity( {x: labelX, y: labelY, transform: "rotate(70, " + labelX + ", " + labelY + ")"}, duration );
-			ele.css("font-size", fontSize);
-			ele.css("fill", col);
-			if (LATIN_BINOMIAL_GENE_TREE) ele.addClass("binomial");
-			else ele.removeClass("binomial");
-			ele.html(toLatinBinomial(node.label, LATIN_BINOMIAL_GENE_TREE));
+			if (toWrite != "" && toWrite != null) {
+				ele.velocity( {x: labelX, y: labelY, transform: "rotate(70, " + labelX + ", " + labelY + ")"}, duration );
+				ele.css("font-size", fontSize);
+				ele.css("fill", col);
+				if (LATIN_BINOMIAL_GENE_TREE) ele.addClass("binomial");
+				else ele.removeClass("binomial");
+				ele.html(toLatinBinomial(toWrite, LATIN_BINOMIAL_GENE_TREE));
+			}else{
+
+				// Delete it
+				ele.remove();
+			}
 			
 		}
 

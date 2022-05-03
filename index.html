@@ -615,6 +615,9 @@
 				MAX_TEXT_SIZE = getMaximumLabelTextSizeOfTree(SPECIES_TREE.root, SPECIES_LABEL_FONT_SIZE / ZOOM_SCALE, SPECIES_TIP_LABEL);
 
 
+				
+
+
 
 				//console.log("maxTextSize", MAX_TEXT_SIZE);
 
@@ -673,7 +676,7 @@
 			
 
 					//console.log("newGeneTreeAnnotations", newGeneTreeAnnotations);
-					MAX_TEXT_SIZE = Math.max(MAX_TEXT_SIZE, getMaximumLabelTextSizeOfTree(gene_tree.root, GENE_LABEL_FONT_SIZE / ZOOM_SCALE, "Label"));
+					MAX_TEXT_SIZE = Math.max(MAX_TEXT_SIZE, getMaximumLabelTextSizeOfTree(gene_tree.root, GENE_LABEL_FONT_SIZE / ZOOM_SCALE, GENE_TIP_LABEL));
 					
 					
 
@@ -1656,7 +1659,7 @@
 			</div>
 			
 			
-			<div class="sideNavSetting" title="Species tree internal node labels">
+			<div class="sideNavSetting" title="Species tree tip node labels">
 				Tip labels
 				<select class="dropdown dropdownWithLabel speciesAnnotationsDropdown" id="SPECIES_TIP_LABEL" onchange="setVisualParams();" title="Tree annotation to print on leaf nodes.">
 		
@@ -1842,11 +1845,22 @@
 
 
 
+
+			<div class="sideNavSetting" title="Gene tree tip node labels">
+				Tip labels
+				<select class="dropdown dropdownWithLabel geneAnnotationsDropdown" id="GENE_TIP_LABEL" onchange="setVisualParams();" title="Tree annotation to print on leaf nodes.">
+		
+				</select>
+
+			</div>
+
+
+
 			<div class="sideNavSetting" title="Attempt to express tip labels in latin binomial form (by splitting into separate words and italicising)?">
 				
 				<span style="font-size:100%; vertical-align:middle">Latin binomial tips</span>	
 				<label class="switch">
-						 <input class="modelSetting" type="checkbox" id="LATIN_BINOMIAL_GENE_TREE" OnChange="setVisualParams();"> </input>
+						 <input class="modelSetting" type="checkbox" id="LATIN_BINOMIAL_GENE_TREE" onChange="setVisualParams();"> </input>
 						 <span class="switchslider"></span>
 					</label> 
 
