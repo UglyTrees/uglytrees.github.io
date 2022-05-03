@@ -1330,7 +1330,7 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 				ele.css("fill", col);
 				if (LATIN_BINOMIAL_GENE_TREE) ele.addClass("binomial");
 				else ele.removeClass("binomial");
-				ele.html(toLatinBinomial(toWrite, LATIN_BINOMIAL_GENE_TREE));
+				ele.html(toWrite);
 			}else{
 
 				// Delete it
