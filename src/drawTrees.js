@@ -859,11 +859,6 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 		var speciesNode = node.speciesNodeMap;
 
 
-		// If this gene leaf is above its species, do not draw this branch
-		if (node.height > speciesNode.height){
-			//return;
-		}
-
 		
 		// Get number of gene nodes mapped to this same species node 
 		var mappedPos = getPositionInMap(speciesNode.nodeToGeneBranchMap[geneTreeNum], node.id);
@@ -886,6 +881,62 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 		
 		var cx = xIndex * widthScale + speciesNode.coords.bottomLeft.x;
 		var cy = node.height;
+
+
+		// If this gene leaf is above its species leaf height, adjust the xpos
+		if (node.height > speciesNode.height){
+
+
+
+			var leftX = speciesNode.coords.bottomLeft.x;
+			var leftY = speciesNode.coords.bottomLeft.y;
+			var rightX = speciesNode.coords.bottomRight.x;
+			var rightY = speciesNode.coords.bottomRight.y;
+
+
+			if (leftX > rightX) {
+				leftX = left.coords.x[left.coords.x.length - 1];
+				leftY = left.coords.y[left.coords.y.length - 1];
+				rightX = right.coords.x[right.coords.x.length - 1];
+				rightY = right.coords.y[right.coords.y.length - 1];
+			}
+
+
+
+
+			// Find where the branch *would* intersect the above species node if there was not a coalescence event 
+			var mL = (speciesNode.coords.topLeft.y - speciesNode.coords.bottomLeft.y) / (speciesNode.coords.topLeft.x - speciesNode.coords.bottomLeft.x);	
+			var mR = (speciesNode.coords.topRight.y - speciesNode.coords.bottomRight.y) / (speciesNode.coords.topRight.x - speciesNode.coords.bottomRight.x);
+			
+			
+
+
+			// Linear equation governing this species branch
+			var dT = (speciesNode.coords.topRight.y - speciesNode.coords.bottomRight.y);
+			var popBtm = (speciesNode.coords.bottomRight.x - speciesNode.coords.bottomLeft.x);
+			var popTop = (speciesNode.coords.topRight.x - speciesNode.coords.topLeft.x);
+
+
+			// Find the % along the width the left and right child branches are
+			var populationSizeAtLeftBranch = popBtm + (leftY-speciesNode.coords.bottomRight.y) * (popTop - popBtm)/dT;
+			var populationSizeAtRightBranch = popBtm + (rightY-speciesNode.coords.bottomRight.y) * (popTop - popBtm)/dT;
+			var leftBorderXatLeftBranch = (leftY-speciesNode.coords.bottomRight.y) / mL + speciesNode.coords.bottomLeft.x;
+			var leftBorderXatRightBranch = (rightY-speciesNode.coords.bottomRight.y) / mL + speciesNode.coords.bottomLeft.x;
+			var leftPos = (leftX - leftBorderXatLeftBranch) / populationSizeAtLeftBranch;
+			var rightPos = (rightX - leftBorderXatRightBranch) / populationSizeAtRightBranch;
+
+
+			// Set the % along the width of this node as the midpoint between its two children's %'s
+			var xPos = (leftPos + rightPos) / 2;
+
+			// Compute x coords of this node
+			var populationSizeAtY = popBtm + (cy-speciesNode.coords.bottomRight.y) * (popTop - popBtm)/dT;
+			var leftBorderXatY = (cy-speciesNode.coords.bottomRight.y) / mL + speciesNode.coords.bottomLeft.x;
+			cx = leftBorderXatY + xPos*populationSizeAtY;
+
+
+		}
+
 		
 		//console.log("Mapped", node.id, "to", mappedPos, widthScale, (mappedPos.index + 0.5) * widthScale);
 
@@ -940,7 +991,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				
 				// Map this branch segement to a position on the bottom of the current species tree node
 				var mappedPos = getPositionInMap(leftParentMappedToSpeciesNode.nodeToGeneBranchMap[geneTreeNum], childNode.id, true); // nodeToGeneBranchMap branchToGeneNodeMap
-				if (mappedPos.index == mappedPos.n) alert("2. i = n");
+				//if (mappedPos.index == mappedPos.n) alert("2. i = n");
 			
 			
 				var startX = Math.max(leftParentMappedToSpeciesNode.coords.bottomLeft.x, leftMappedToSpeciesNode.coords.topLeft.x);	
@@ -961,7 +1012,6 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 				var xIndex = 0;
 				if (groupByTaxa) {
 					xIndex = mappedPos.index + (geneTree.offsetIndex+1)/(geneTree.offsetTotal+1);
-					
 				}
 				else {
 					xIndex = (mappedPos.index+1)/(mappedPos.n+1) + geneTree.offsetIndex;
