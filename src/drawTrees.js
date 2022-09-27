@@ -884,7 +884,7 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 
 		// If this gene leaf is above its species leaf height, adjust the xpos
-		if (node.height > speciesNode.height){
+		if (node.height > speciesNode.height + (speciesNode.parent == null ? 0 : speciesNode.parent.height * 0.1)) {
 
 
 

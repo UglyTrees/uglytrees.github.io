@@ -308,6 +308,7 @@
 			function nextGeneTree() {
 
 				if (!READY_TO_DRAW) return;
+				if (GENE_TREES == null || GENE_TREES.length < 2) return;
 
 				CURRENT_GENE_TREE_DISPLAY ++;
 				CURRENT_GENE_TREE_DISPLAY = CURRENT_GENE_TREE_DISPLAY % GENE_TREES.length;
