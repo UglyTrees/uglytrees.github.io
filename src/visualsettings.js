@@ -81,6 +81,7 @@ function initVisualSettings(){
 	GENE_LABEL_FONT_SIZE = !IS_MOBILE ? 11 : 14;
 	SUBTREE_SPACER = 0.2
 	GENE_NODE_SIZE = 4;
+	GENE_ROOT_SIZE = 4;
 	GENE_BRANCH_WIDTH = 1;
 	SPECIES_BRANCH_WIDTH = 1;
 	SPECIES_TREE_OPACITY = 100;
@@ -130,6 +131,7 @@ function setInterfaceFromVisualParams(){
 
 	$("#SUBTREE_SPACER").val(SUBTREE_SPACER);
 	$("#GENE_NODE_SIZE").val(GENE_NODE_SIZE);
+	$("#GENE_ROOT_SIZE").val(GENE_ROOT_SIZE)
 	$("#GENE_BRANCH_WIDTH").val(GENE_BRANCH_WIDTH);
 	$("#SPECIES_BRANCH_WIDTH").val(SPECIES_BRANCH_WIDTH);
 	$("#GROUP_GENES_BY_TAXA").prop("checked", GROUP_GENES_BY_TAXA);
@@ -290,6 +292,10 @@ function setVisualParams(){
 	
 	GENE_NODE_SIZE = parseFloat($("#GENE_NODE_SIZE").val());
 	GENE_NODE_SIZE = Math.max(GENE_NODE_SIZE, 0);
+
+	GENE_ROOT_SIZE = parseFloat($("#GENE_ROOT_SIZE").val());
+	GENE_ROOT_SIZE = Math.max(GENE_ROOT_SIZE, 0);
+	
 	
 	GENE_BRANCH_WIDTH = parseFloat($("#GENE_BRANCH_WIDTH").val());
 	GENE_BRANCH_WIDTH = Math.max(GENE_BRANCH_WIDTH, 0);

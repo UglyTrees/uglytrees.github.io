@@ -169,13 +169,21 @@ function toLatinBinomial(str, latinBinomial = false){
 
 
 // Returns a function for calculating the line width of a branch
-function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false, isRadius = false){
+function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false, isRadius = false, rootNodeSize = null){
 	
 	var linewidth_fn;
 	
-	if (annotation_name == "_none") linewidth_fn = function(node) { return baseLineWidth + "px"; };
+	if (annotation_name == "_none") {
+		let bw = 
+		linewidth_fn = function(node) { 
+			if (rootNodeSize != null && node.parent == null){
+				return rootNodeSize + "px"; 
+			}else{
+				return baseLineWidth + "px"; 
+			}
+		};
 	
-	else {
+	}else {
 		
 
 		// If this is a gene tree and the annotation is for a species tree, then the value corresponds to the species node this gene node is mapped to
@@ -196,8 +204,14 @@ function planLineWidths(tree, annotation_name, baseLineWidth, isGeneTree = false
 			// Missing value
 			if (isNaN(val) || val == null) return baseLineWidth + "px";
 			
-			val = 1 + (isRadius ? 1.5 : 3) * (val - annotation.minVal)/(annotation.maxVal - annotation.minVal) ;
-			return val * baseLineWidth * scaler + "px";
+			val = 1 + (isRadius ? 1.5 : 3) * (val - annotation.minVal)/(annotation.maxVal - annotation.minVal);
+			//console.log("rootNodeSize", rootNodeSize, baseLineWidth, node.parent == null, node);
+			if (rootNodeSize != null && node.parent == null){
+				return val * rootNodeSize * scaler + "px";
+			}else{
+				return val * baseLineWidth * scaler + "px";
+			}
+			
 		};
 		
 	}

@@ -672,7 +672,7 @@
 					var newGeneTreeAnnotations = getTreeAnnotations(gene_tree, false);
 					renderAnnotations(newGeneTreeAnnotations);
 					gene_tree.linewidth_fn = planLineWidths(gene_tree, GENE_BRANCH_MULTIPLIER, GENE_BRANCH_WIDTH, true, false);
-					gene_tree.noderadius_fn = planLineWidths(gene_tree, GENE_NODE_MULTIPLIER, GENE_NODE_SIZE, true, true);
+					gene_tree.noderadius_fn = planLineWidths(gene_tree, GENE_NODE_MULTIPLIER, GENE_NODE_SIZE, true, true, GENE_ROOT_SIZE);
 					gene_tree.bgcolour_fn = planColour(gene_tree, GENE_BRANCH_BGCOL_ANNOTATION, getGeneTreeColour(g), true);
 			
 
@@ -1888,14 +1888,21 @@
 			<hr>
 
 
-			<div class="sideNavSetting" title="Gene tree line widths">
+			<div class="sideNavSetting" title="Gene tree node sizes">
 				Node radius multiplier
 				<select class="dropdown dropdownWithLabel geneAnnotationsDropdown numericalOnly" id="GENE_NODE_MULTIPLIER" onchange="setVisualParams();" title="Tree annotation to describe gene node radius by">
-
-						
 				</select>
 
 			</div>
+
+
+
+
+			<div class="sideNavSetting">
+				<input id="GENE_ROOT_SIZE" class="slider" onchange="setVisualParams();" type="range" min="0" max="10" value="0" step="0.05">
+				Root node radius baseline (<span></span> px)
+			</div>
+
 
 
 			<div class="sideNavSetting">
