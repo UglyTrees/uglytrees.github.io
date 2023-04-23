@@ -507,6 +507,10 @@ function drawASpeciesTree(svg, textGroup, tree, treename, node, rootCallback = f
 										style: "opacity: " + styles.opacity / 100 + ";stroke-linejoin:round; stroke:" + stroke + "; stroke-width:" + strokeWidth}, "", true);		
 		
 
+
+		// Concerted evolution events?
+		drawConcertEvents(textGroup, tree, node, styles);
+
 		
 		return;
 
@@ -577,7 +581,7 @@ function drawConcertEvents(textGroup, tree, node, styles = {fontSize: SPECIES_LA
 			
 			if (Number.isNaN(concertTime) || concertFrom == null || concertTo == null) continue;
 
-			console.log("event", eventNr, "at time", concertTime, concertFrom,concertTo);
+			//console.log("event", eventNr, "at time", concertTime, concertFrom,concertTo);
 			
 			var yProp = (concertTime-node.coords.bottomRight.y) / length;
 			var xPos = xBtm - yProp*(xBtm-xTop)
