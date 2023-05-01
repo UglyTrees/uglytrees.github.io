@@ -119,14 +119,14 @@ function recordRecursive(svg, pngBox){
 
 
 		// Pause the animation
-		svg.velocity("pause");
+		//svg.velocity("pause");
 
 		// Draw the png
 		makePng(svg, pngBox, function(){
 
 
 			// Resume the animation
-			svg.velocity("resume");
+			//svg.velocity("resume");
 			recordRecursive(svg, pngBox);
 
 		});
