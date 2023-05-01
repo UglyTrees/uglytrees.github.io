@@ -49,6 +49,9 @@
 	</script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 		<script language='JavaScript' type='text/JavaScript' src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript" src="/lib/jsgif/LZWEncoder.js"></script>
+		<script type="text/javascript" src="/lib/jsgif/NeuQuant.js"></script>
+		<script type="text/javascript" src="/lib/jsgif/GIFEncoder.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/icytree-master/js/tree.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/icytree-master/js/treeparsing.js"></script>
 		<script language='JavaScript' type='text/JavaScript' src="lib/icytree-master/js/treewriting.js"></script>
@@ -87,6 +90,9 @@
 
 
 			function init(){
+
+
+
 
 
 				
@@ -152,6 +158,9 @@
 				$("#hoverAnnotationDiv").draggable();
 
 
+
+				initRecorder("recordBtn", "stopRecordBtn", "cancelRecordBtn", "recorderProgress");
+
 				
 
 
@@ -210,7 +219,7 @@
 				if (TREE_NUM >= NTREES-1 || TREE_NUM < 0) TREE_NUM = 0;
 
 				
-				
+
 				
 				var animate = resetZoom();
 				planTrees();
@@ -2138,10 +2147,16 @@
 							
 						</td>
 
+
+
+
+
 						<td  style="width:20%"> 
 
 
 							<table id="remoteTable" >
+
+
 								<tr>
 									<td>
 									</td>
@@ -2201,8 +2216,22 @@
 							
 						</td>
 
+						<td style="width:20%; text-align:left; font-size:80%" >
 
-						<td style="width:40%; text-align:left; font-size:80%" >
+
+
+							<span title="Record the animation as a gif" id="recordBtn" class="arrow" style="font-size:200%; margin-left:0.3em;" onclick="startRecording()">&#x23FA;</span> 
+							<span title="Stop recording" id="stopRecordBtn" class="arrow" style="display:none; font-size:200%; margin-left:0.3em;" onclick="stopRecording()">&#9209;</span> 
+							<span title="Cancel recording" id="cancelRecordBtn" class="arrow" style="display:none; font-size:200%; margin-left:0.3em;" onclick="stopEncoding()">&cross;</span> 
+
+							<span id="recorderProgress" style="display:none; font-size:150%;" class="whitefont">Preparing gif... <span></span> </span> <br>
+
+
+
+						</td>
+
+
+						<td style="width:20%; text-align:right; font-size:80%" >
 
 
 
@@ -2216,6 +2245,9 @@
 
 
 						</td>
+
+
+						
 
 					
 					</tr>
