@@ -712,6 +712,7 @@
 					<g id="axisGroup" class="svgG"></g>
 					<g id="speciesGroup" class="svgG"></g>
 					<g id="geneGroup" class="svgG"></g>
+					<g id="geneNodeGroup" class="svgG"></g>
 					<g id="textGroup" class="svgG"></g>
 					<g id="legendGroup" class="svgG"></g>`;
 
@@ -775,11 +776,12 @@
 				
 				
 
-				var axisGroup = svg.find("#axisGroup");
-				var speciesGroup = svg.find("#speciesGroup");
-				var geneGroup = svg.find("#geneGroup");
-				var textGroup = svg.find("#textGroup");
-				var legendGroup = svg.find("#legendGroup");
+				let axisGroup = svg.find("#axisGroup");
+				let speciesGroup = svg.find("#speciesGroup");
+				let geneGroup = svg.find("#geneGroup");
+				let geneNodeGroup = svg.find("#geneNodeGroup");
+				let textGroup = svg.find("#textGroup");
+				let legendGroup = svg.find("#legendGroup");
 
 				
 
@@ -806,6 +808,7 @@
 				if (animate) {
 					speciesGroup.find(".specieshoverbranch").addClass("flagged");
 					geneGroup.find(".genenode").addClass("flagged");
+					geneNodeGroup.find(".genenode").addClass("flagged");
 					geneGroup.find(".genebranch").addClass("flagged");
 					textGroup.find(".labelText").addClass("flagged");
 				}
@@ -827,8 +830,8 @@
 					}
 					
 
-					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, textGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, ZOOM_SCALE, function() { });
-					else animateAGeneTree(geneGroup, textGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME, ZOOM_SCALE, function() { });
+					if (!animate || $(`[gNum="` + g + `"]`).length == 0) drawAGeneTree(geneGroup, geneNodeGroup, textGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, ZOOM_SCALE, function() { });
+					else animateAGeneTree(geneGroup, geneNodeGroup, textGroup, gene_tree, "gene" + g, gene_tree.root, SPECIES_TREE, g, CURRENT_ANIMATION_TIME, ZOOM_SCALE, function() { });
 
 					
 				}
@@ -848,6 +851,7 @@
 				if (animate) {
 					speciesGroup.find(".specieshoverbranch.flagged").remove();
 					geneGroup.find(".genenode.flagged").remove();
+					geneNodeGroup.find(".genenode.flagged").remove();
 					geneGroup.find(".genebranch.flagged").remove();
 					textGroup.find(".labelText.flagged").remove();
 				}
@@ -1921,6 +1925,13 @@
 				<input id="GENE_NODE_SIZE" class="slider" onchange="setVisualParams();" type="range" min="0" max="10" value="0" step="0.05">
 				Node radius baseline (<span></span> px)
 			</div>
+
+
+			<div class="sideNavSetting">
+				<input id="GENE_NODE_OUTLINE" class="slider" onchange="setVisualParams();" type="range" min="0" max="10" value="0" step="0.05">
+				Node radius outline (<span></span> px)
+			</div>
+
 			<hr>
 			
 

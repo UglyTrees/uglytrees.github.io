@@ -1145,7 +1145,8 @@ function planGeneTree(geneTreeNum, node, geneTree, groupByTaxa = false) {
 
 
 // Draws a gene tree onto the svg
-function drawAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, geneTreeNum, zoomScale = 1, rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY, fontSize: GENE_LABEL_FONT_SIZE}) {
+function drawAGeneTree(svg, geneNodeGroup, textGroup, geneTree, treename, node, speciesTree, geneTreeNum, zoomScale = 1, rootCallback = function() { }, 
+	styles = {opacity: GENE_TREE_OPACITY, geneNodeOutline: GENE_NODE_OUTLINE, fontSize: GENE_LABEL_FONT_SIZE}) {
 	
 	
 	
@@ -1160,8 +1161,8 @@ function drawAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, ge
 		//console.log("Drawing", node.coords, speciesTree.scaleX_fn(node.coords.cx));
 
 		// Internal/root node. Draw children first
-		drawAGeneTree(svg, textGroup, geneTree, treename, node.children[0], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
-		drawAGeneTree(svg, textGroup, geneTree, treename, node.children[1], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
+		drawAGeneTree(svg, geneNodeGroup, textGroup, geneTree, treename, node.children[0], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
+		drawAGeneTree(svg, geneNodeGroup, textGroup, geneTree, treename, node.children[1], speciesTree, geneTreeNum, zoomScale, rootCallback, styles)
 
 	}
 
@@ -1228,7 +1229,7 @@ function drawAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, ge
 	var r = geneTree.noderadius_fn(node, node.speciesNodeMap, 1/zoomScale);
 
 	// The circle
-	drawSVGobj(svg, "circle", {class: "node genenode", id: id, 
+	drawSVGobj(geneNodeGroup, "circle", {class: "node genenode", id: id, 
 								cx: speciesTree.scaleX_fn(node.coords.cx), 
 								cy: speciesTree.scaleY_fn(node.coords.cy), 
 								r: r,
@@ -1236,7 +1237,7 @@ function drawAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, ge
 								gNum: geneTreeNum,
 								name: (node.children.length == 0 ? node.id + "," + node.label : node.id),
 								fill: geneTree.bgcolour_fn(node, node.speciesNodeMap),
-								style: "opacity: " + styles.opacity / 100 }, "", true);
+								style: "opacity: " + styles.opacity / 100  + "; stroke:black; stroke-width:" + styles.geneNodeOutline}, "", true);
 
 
 
@@ -1252,7 +1253,8 @@ function drawAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, ge
 
 
 // Animates a pre-rendered gene tree
-function animateAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree, geneTreeNum, animation_time = 1000, zoomScale = 1,  rootCallback = function() { }, styles = {opacity: GENE_TREE_OPACITY, fontSize: GENE_LABEL_FONT_SIZE}) {
+function animateAGeneTree(svg, geneNodeGroup, textGroup, geneTree, treename, node, speciesTree, geneTreeNum, animation_time = 1000, zoomScale = 1,  rootCallback = function() { }, 
+	styles = {opacity: GENE_TREE_OPACITY, geneNodeOutline: GENE_NODE_OUTLINE, fontSize: GENE_LABEL_FONT_SIZE}) {
 
 
 	var id = treename + "_" + node.id;
@@ -1270,7 +1272,7 @@ function animateAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree,
 		var col = geneTree.bgcolour_fn(node, mappedToSpeciesNode);
 
 
-		animateGeneBranch(svg, textGroup, i, speciesTree, node, geneTreeNum, col, strokeWidth, animation_time, function() { }, styles.opacity);
+		animateGeneBranch(svg, geneNodeGroup, textGroup, i, speciesTree, node, geneTreeNum, col, strokeWidth, styles.geneNodeOutline, animation_time, function() { }, styles.opacity);
 		
 		
 			
@@ -1291,18 +1293,18 @@ function animateAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree,
 	var radius = geneTree.noderadius_fn(node, node.speciesNodeMap, 1/zoomScale);
 	var col = geneTree.bgcolour_fn(node, node.speciesNodeMap);
 	var cb = node.parent == null ? rootCallback : function() { };
-	animateGeneBranch(svg, textGroup, -1, speciesTree, node, geneTreeNum, col, radius, animation_time, cb, styles.opacity);
+	animateGeneBranch(svg, geneNodeGroup, textGroup, -1, speciesTree, node, geneTreeNum, col, radius, styles.geneNodeOutline, animation_time, cb, styles.opacity);
 	
 	
 	// Animate children
 	for (var c = 0; c < node.children.length; c++){
-		animateAGeneTree(svg, textGroup, geneTree, treename, node.children[c], speciesTree, geneTreeNum, animation_time, zoomScale = 1, rootCallback, styles);
+		animateAGeneTree(svg, geneNodeGroup, textGroup, geneTree, treename, node.children[c], speciesTree, geneTreeNum, animation_time, zoomScale = 1, rootCallback, styles);
 	}
 
 
 	// Animate label
 	if (node.label != null) {
-		animateGeneBranch(svg, textGroup, "T", speciesTree, node, geneTreeNum, col, radius, animation_time, cb, styles.opacity, styles.fontSize);
+		animateGeneBranch(svg, geneNodeGroup, textGroup, "T", speciesTree, node, geneTreeNum, col, radius, styles.geneNodeOutline, animation_time, cb, styles.opacity, styles.fontSize);
 	}
 	
 	
@@ -1314,7 +1316,7 @@ function animateAGeneTree(svg, textGroup, geneTree, treename, node, speciesTree,
 
 
 
-function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum, col, size, duration = 1000, callback = function() { }, opacity, fontSize = 0) {
+function animateGeneBranch(svg, geneNodeGroup, textGroup, branchNumber, speciestree, node, gNum, col, size, geneNodeOutline, duration = 1000, callback = function() { }, opacity, fontSize = 0) {
 
 
 
@@ -1322,7 +1324,7 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 	// Move the node
 	if (branchNumber == -1){
 		
-		var ele = svg.find("#" + node.htmlID);
+		let ele = geneNodeGroup.find("#" + node.htmlID);
 		
 		var cx = speciestree.scaleX_fn(node.coords.cx);
 		var cy = speciestree.scaleY_fn(node.coords.cy);
@@ -1339,7 +1341,8 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 								r0: r,
 								gNum: gNum,
 								name: (node.children.length == 0 ? node.id + "," + node.label : node.id),
-								fill: fill}, "", true);
+								fill: fill,
+								style: "stroke:black; stroke-width:" + styles.geneNodeOutline}, "", true);
 				callback();
 
 		} 
@@ -1349,6 +1352,7 @@ function animateGeneBranch(svg, textGroup, branchNumber, speciestree, node, gNum
 			var properties = {duration: duration, complete: callback};
 			ele.velocity("finish");
 			ele.velocity( {cx: cx, cy: cy, r: r}, properties);
+			ele.css("stroke-width", geneNodeOutline);
 			ele.css("fill", fill);
 			
 		}

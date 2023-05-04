@@ -322,6 +322,7 @@ function getXMLstringOfSession(datetime = "", callback = function(str) { }){
 
 		saveXML.writeAttributeString('GENE_NODE_MULTIPLIER', GENE_NODE_MULTIPLIER);
 		saveXML.writeAttributeString('GENE_NODE_SIZE', GENE_NODE_SIZE);
+		saveXML.writeAttributeString('GENE_NODE_OUTLINE', GENE_NODE_OUTLINE);
 		saveXML.writeAttributeString('GENE_ROOT_SIZE', GENE_ROOT_SIZE);
 
 
@@ -518,6 +519,7 @@ function loadSessionFromString(text, resolve = function() { }) {
 			GENE_BRANCH_BGCOL_ANNOTATION = getVal(genetree.getAttribute("GENE_BRANCH_BGCOL_ANNOTATION"), "_none");
 			GENE_BRANCH_MULTIPLIER = getVal(genetree.getAttribute("GENE_BRANCH_MULTIPLIER"), "_none");		
 			GENE_NODE_SIZE = getValFloat(genetree.getAttribute("GENE_NODE_SIZE"), GENE_NODE_SIZE);
+			GENE_NODE_OUTLINE = getValFloat(genetree.getAttribute("GENE_NODE_OUTLINE"), GENE_NODE_OUTLINE);
 			GENE_ROOT_SIZE = getValFloat(genetree.getAttribute("GENE_ROOT_SIZE"), GENE_ROOT_SIZE);
 			GENE_BRANCH_WIDTH = getValFloat(genetree.getAttribute("GENE_BRANCH_WIDTH"), GENE_BRANCH_WIDTH);
 
