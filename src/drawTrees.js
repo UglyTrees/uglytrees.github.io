@@ -1319,12 +1319,12 @@ function animateAGeneTree(svg, geneNodeGroup, textGroup, geneTree, treename, nod
 function animateGeneBranch(svg, geneNodeGroup, textGroup, branchNumber, speciestree, node, gNum, col, size, geneNodeOutline, duration = 1000, callback = function() { }, opacity, fontSize = 0) {
 
 
-
+	let ele = null;
 	
 	// Move the node
 	if (branchNumber == -1){
 		
-		let ele = geneNodeGroup.find("#" + node.htmlID);
+		ele = geneNodeGroup.find("#" + node.htmlID);
 		
 		var cx = speciestree.scaleX_fn(node.coords.cx);
 		var cy = speciestree.scaleY_fn(node.coords.cy);
@@ -1370,7 +1370,7 @@ function animateGeneBranch(svg, geneNodeGroup, textGroup, branchNumber, speciest
 	else if(branchNumber == "T"){
 		
 
-		var ele = textGroup.find("#" + node.htmlID + "_T");
+		ele = textGroup.find("#" + node.htmlID + "_T");
 		var toWrite = whatToWrite(node, GENE_TIP_LABEL, LATIN_BINOMIAL_GENE_TREE, true);
 
 		//console.log("ELEMENT", ele, node.htmlID + "_T");
@@ -1424,7 +1424,7 @@ function animateGeneBranch(svg, geneNodeGroup, textGroup, branchNumber, speciest
 	else {
 	
 		
-		var ele = svg.find("#" + node.htmlID + "_B" + branchNumber)
+		ele = svg.find("#" + node.htmlID + "_B" + branchNumber)
 		var x1 = speciestree.scaleX_fn(node.coords.x[branchNumber]);
 		var x2 = speciestree.scaleX_fn(node.coords.x[branchNumber + 1]);
 		var y1 = speciestree.scaleY_fn(node.coords.y[branchNumber]);
@@ -1468,7 +1468,9 @@ function animateGeneBranch(svg, geneNodeGroup, textGroup, branchNumber, speciest
 	
 	}
 
-	ele.removeClass("flagged");
+	if (ele.hasClass("flagged")){
+		ele.removeClass("flagged");
+	}
 	ele.css("opacity", opacity / 100);
 
 
