@@ -567,30 +567,46 @@ function drawConcertEvents(textGroup, tree, node, styles = {fontSize: SPECIES_LA
 	if (node.annotation["ConcertCount"] != null){
 		
 		
-		var xTop = tree.scaleX_fn((node.coords.topRight.x + node.coords.topLeft.x) / 2);
-		var xBtm = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
-		var length = node.coords.topRight.y - node.coords.bottomRight.y;
+		let xTop = tree.scaleX_fn((node.coords.topRight.x + node.coords.topLeft.x) / 2);
+		let xBtm = tree.scaleX_fn((node.coords.bottomRight.x + node.coords.bottomLeft.x) / 2);
+		let length = node.coords.topRight.y - node.coords.bottomRight.y;
 		
 		
-		var concertCount = parseFloat(node.annotation["ConcertCount"]);
+		let concertCount = parseFloat(node.annotation["ConcertCount"]);
 		for (var eventNr = 1; eventNr <= concertCount; eventNr++){
 			
-			var concertTime = parseFloat(node.annotation["ceTime" + eventNr]);
-			var concertFrom = node.annotation["ceFrom" + eventNr];
-			var concertTo = node.annotation["ceTo" + eventNr];
+			let concertTime = parseFloat(node.annotation["ceTime" + eventNr]);
+			let concertFrom = node.annotation["ceFrom" + eventNr];
+			let concertTo = node.annotation["ceTo" + eventNr];
+
+
 			
 			if (Number.isNaN(concertTime) || concertFrom == null || concertTo == null) continue;
 
+			concertFrom = concertFrom.replace(".", "");
+			concertTo = concertTo.replace(".", "");
+
 			//console.log("event", eventNr, "at time", concertTime, concertFrom,concertTo);
 			
-			var yProp = (concertTime-node.coords.bottomRight.y) / length;
-			var xPos = xBtm - yProp*(xBtm-xTop)
+			let yProp = (concertTime-node.coords.bottomRight.y) / length;
+			let xPos = xBtm - yProp*(xBtm-xTop)
+			let label = concertFrom + ">" + concertTo; // "&bull;" + 
 			
-			
+
+			// Draw box around
+			let w = label.length*styles.fontSize*0.75;
+			let h = styles.fontSize*1.1;
+			drawSVGobj(textGroup, "rect", {class: "labelText speciesText", 
+							x: xPos-w/2, 
+							y: tree.scaleY_fn(concertTime) - h/2, 
+							width: w,
+							height: h,
+							style: "stroke:black;stroke-width:1.5;fill:white"});
+
 			drawSVGobj(textGroup, "text", {class: "labelText speciesText", id: node.htmlID + "_E", 
 							x: xPos, 
 							y: tree.scaleY_fn(concertTime), 
-							style: "text-anchor:left; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, "&bull;" + concertFrom + " &rightarrow; " + concertTo);
+							style: "text-anchor:middle; dominant-baseline:central; font-family:Source Sans Pro; font-size:" + styles.fontSize}, label);
 
 			
 			
